@@ -1,9 +1,15 @@
 /core/bootstrap.js
 /core/version.js
+/core/hwgw-controller.js
+/core/controller-pool.js
+/core/target-selector.js
 /lib/scanner.js
 /lib/utils.js
+/lib/formulas.js
 /hack/basic-hack.js
 /hack/xp-grind.js
+/workers/hwgw.js
+/kernel/orchestrator.js
 /managers/target-manager.js
 /managers/server-manager.js
 /managers/deploy-manager.js
