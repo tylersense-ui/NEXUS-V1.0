@@ -1,3 +1,30 @@
+/**
+ * ╔═══════════════════════════════════════════════════════════╗
+ * ║ NEXUS Framework v0.2-alpha                                 ║
+ * ║ Module: Deploy Manager                                     ║
+ * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @file        /managers/deploy-manager.js
+ * @version     0.2.0
+ * @author      NEXUS AI Architect
+ * @created     2026-03-08
+ * @modified    2026-03-08
+ * 
+ * @description
+ * Déploie le script de hack sur tous les serveurs rootés.
+ * Trouve automatiquement la meilleure cible.
+ * Optimise l'utilisation de la RAM.
+ * 
+ * @usage
+ * run /managers/deploy-manager.js
+ * 
+ * @dependencies
+ * - /hack/basic-hack.js
+ * 
+ * @ram
+ * 3.20GB
+ */
+
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog('ALL');
@@ -6,7 +33,9 @@ export async function main(ns) {
     const hackScript = '/hack/basic-hack.js';
     const scriptRam = ns.getScriptRam(hackScript);
     
-    ns.print('=== NEXUS DEPLOY MANAGER ===');
+    ns.print('╔═══════════════════════════════════════════════════════════╗');
+    ns.print('║ Deploy Manager v0.2                                        ║');
+    ns.print('╚═══════════════════════════════════════════════════════════╝');
     ns.print('');
     
     // Trouver la meilleure cible
@@ -47,10 +76,10 @@ export async function main(ns) {
     }
     
     ns.print('');
-    ns.print('═══════════════════════════════');
+    ns.print('═══════════════════════════════════════════════════════════');
     ns.print(`⚡ ${totalThreads} threads déployés`);
     ns.print(`🖥️  ${serversUsed} serveurs utilisés`);
-    ns.print('═══════════════════════════════');
+    ns.print('═══════════════════════════════════════════════════════════');
 }
 
 function scanNetwork(ns) {

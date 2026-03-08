@@ -1,3 +1,27 @@
+/**
+ * ╔═══════════════════════════════════════════════════════════╗
+ * ║ NEXUS Framework v0.2-alpha                                 ║
+ * ║ Module: Status Monitor Lite                                ║
+ * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @file        /monitor/status-lite.js
+ * @version     0.2.0
+ * @author      NEXUS AI Architect
+ * @created     2026-03-08
+ * @modified    2026-03-08
+ * 
+ * @description
+ * Dashboard ultra-léger (0.6GB RAM).
+ * Affiche : argent, niveau, nombre de serveurs, threads actifs.
+ * Idéal quand la RAM est limitée.
+ * 
+ * @usage
+ * run /monitor/status-lite.js
+ * 
+ * @ram
+ * 0.60GB
+ */
+
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog('ALL');
@@ -11,14 +35,14 @@ export async function main(ns) {
         const servers = ns.getPurchasedServers();
         
         ns.print('╔══════════════════════════╗');
-        ns.print('║   NEXUS v0.1-lite        ║');
+        ns.print('║   NEXUS v0.2-lite        ║');
         ns.print('╚══════════════════════════╝');
         ns.print('');
         ns.print(`💰 ${formatMoney(money)}`);
         ns.print(`🎯 Hack lvl ${hackLevel}`);
         ns.print(`🖥️  Serveurs: ${servers.length}`);
         
-        // Calculer revenu total
+        // Calculer threads totaux
         let totalThreads = 0;
         for (const s of servers) {
             const procs = ns.ps(s);

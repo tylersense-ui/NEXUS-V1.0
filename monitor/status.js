@@ -1,3 +1,32 @@
+/**
+ * ╔═══════════════════════════════════════════════════════════╗
+ * ║ NEXUS Framework v0.2-alpha                                 ║
+ * ║ Module: Status Monitor                                     ║
+ * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @file        /monitor/status.js
+ * @version     0.2.0
+ * @author      NEXUS AI Architect
+ * @created     2026-03-08
+ * @modified    2026-03-08
+ * 
+ * @description
+ * Dashboard complet du framework NEXUS.
+ * Affiche : argent, niveau, serveurs, cible, runtime.
+ * Lit les états depuis /state/
+ * 
+ * @usage
+ * run /monitor/status.js
+ * 
+ * @dependencies
+ * - /state/world-state.txt
+ * - /state/strategy-state.txt
+ * - /state/progress-state.txt
+ * 
+ * @ram
+ * 1.85GB
+ */
+
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog('ALL');
@@ -36,10 +65,10 @@ export async function main(ns) {
         const hackLevel = ns.getHackingLevel();
         
         ns.print('╔════════════════════════════════════╗');
-        ns.print('║      NEXUS v0.1-bootstrap          ║');
+        ns.print('║      NEXUS v0.2-alpha              ║');
         ns.print('╚════════════════════════════════════╝');
         ns.print('');
-        ns.print(`💰 Argent: $${formatMoney(money)}`);
+        ns.print(`💰 Argent: ${formatMoney(money)}`);
         ns.print(`🎯 Niveau Hack: ${hackLevel}`);
         ns.print('');
         
@@ -59,7 +88,7 @@ export async function main(ns) {
                 const current = ns.getServerMoneyAvailable(target);
                 const max = ns.getServerMaxMoney(target);
                 const percent = max > 0 ? ((current / max) * 100).toFixed(1) : 0;
-                ns.print(`💵 Argent cible: $${formatMoney(current)} / $${formatMoney(max)} (${percent}%)`);
+                ns.print(`💵 Argent cible: ${formatMoney(current)} / ${formatMoney(max)} (${percent}%)`);
             } catch (e) {
                 ns.print(`💵 Cible non accessible`);
             }

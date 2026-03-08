@@ -1,9 +1,45 @@
+/**
+ * ╔═══════════════════════════════════════════════════════════╗
+ * ║ NEXUS Framework v0.2-alpha                                 ║
+ * ║ Module: Target Manager                                     ║
+ * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @file        /managers/target-manager.js
+ * @version     0.2.0
+ * @author      NEXUS AI Architect
+ * @created     2026-03-08
+ * @modified    2026-03-08
+ * 
+ * @description
+ * Gestionnaire de cibles intelligent :
+ * - Rooter automatiquement les serveurs accessibles
+ * - Sélectionner la meilleure cible selon le niveau
+ * - Mettre à jour la stratégie
+ * - Déployer le hack sur home
+ * 
+ * @usage
+ * run /managers/target-manager.js
+ * 
+ * @dependencies
+ * - /lib/utils.js
+ * - /hack/basic-hack.js
+ * - /state/world-state.txt
+ * 
+ * @ram
+ * 2.95GB
+ */
+
 import { readState, writeState } from '/lib/utils.js';
 
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog('ALL');
     ns.tail();
+    
+    ns.print('╔═══════════════════════════════════════════════════════════╗');
+    ns.print('║ Target Manager v0.2                                        ║');
+    ns.print('╚═══════════════════════════════════════════════════════════╝');
+    ns.print('');
     
     while (true) {
         const worldState = readState(ns, 'world');

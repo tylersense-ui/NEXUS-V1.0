@@ -11,17 +11,18 @@
  * @modified    2026-03-08
  * 
  * @description
- * Gestionnaire unifié pour l'achat, l'upgrade et la gestion des serveurs.
- * Achète automatiquement des serveurs quand l'argent est disponible.
- * Upgrade les serveurs existants quand rentable.
- * Déploie automatiquement les scripts de hack.
+ * Gestionnaire unifié pour les serveurs achetés :
+ * - Achète automatiquement des serveurs (8GB initial)
+ * - Upgrade les serveurs existants quand rentable
+ * - Déploie automatiquement les scripts de hack
+ * - Gère jusqu'à 25 serveurs (limite du jeu)
  * 
  * @usage
  * run /managers/server-manager.js
  * 
  * @dependencies
- * - /hack/basic-hack.js (script à déployer)
- * - /state/strategy-state.txt (pour la cible)
+ * - /hack/basic-hack.js
+ * - /state/strategy-state.txt
  * 
  * @ram
  * 3.50GB
@@ -43,7 +44,7 @@ export async function main(ns) {
     };
     
     ns.print('╔═══════════════════════════════════════════════════════════╗');
-    ns.print('║ NEXUS Server Manager v0.2                                 ║');
+    ns.print('║ Server Manager v0.2                                        ║');
     ns.print('╚═══════════════════════════════════════════════════════════╝');
     ns.print('');
     
@@ -60,7 +61,7 @@ export async function main(ns) {
                 const purchased = ns.purchaseServer(hostname, CONFIG.minServerRam);
                 
                 if (purchased) {
-                    ns.print(`✓ ACHAT: ${purchased} (${CONFIG.minServerRam}GB) - $${formatMoney(cost)}`);
+                    ns.print(`✓ ACHAT: ${purchased} (${CONFIG.minServerRam}GB) - ${formatMoney(cost)}`);
                     await deployHack(ns, purchased);
                 }
             }
@@ -77,7 +78,7 @@ export async function main(ns) {
                     
                     if (upgradeCost > 0 && money > upgradeCost * CONFIG.upgradeMargin) {
                         if (ns.upgradePurchasedServer(server, nextRam)) {
-                            ns.print(`↑ UPGRADE: ${server} ${currentRam}GB → ${nextRam}GB - $${formatMoney(upgradeCost)}`);
+                            ns.print(`↑ UPGRADE: ${server} ${currentRam}GB → ${nextRam}GB - ${formatMoney(upgradeCost)}`);
                             await deployHack(ns, server);
                         }
                     }
@@ -123,8 +124,8 @@ async function deployHack(ns, server) {
 }
 
 function formatMoney(m) {
-    if (m >= 1e9) return `${(m/1e9).toFixed(2)}b`;
-    if (m >= 1e6) return `${(m/1e6).toFixed(2)}m`;
-    if (m >= 1e3) return `${(m/1e3).toFixed(0)}k`;
+    if (m >= 1e9) return `$${(m/1e9).toFixed(2)}b`;
+    if (m >= 1e6) return `$${(m/1e6).toFixed(2)}m`;
+    if (m >= 1e3) return `$${(m/1e3).toFixed(0)}k`;
     return `${m.toFixed(0)}`;
 }

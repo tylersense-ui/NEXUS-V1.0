@@ -11,3 +11,5 @@
 /monitor/status-lite.js
 /tools/deploy.js
 /tools/rooter.js
+/manifest.txt
+/README.md

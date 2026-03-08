@@ -1,9 +1,35 @@
+/**
+ * ╔═══════════════════════════════════════════════════════════╗
+ * ║ NEXUS Framework v0.2-alpha                                 ║
+ * ║ Module: Mass Rooter                                        ║
+ * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @file        /tools/rooter.js
+ * @version     0.2.0
+ * @author      NEXUS AI Architect
+ * @created     2026-03-08
+ * @modified    2026-03-08
+ * 
+ * @description
+ * Rooter massif de tous les serveurs accessibles.
+ * Détecte automatiquement les outils disponibles (BruteSSH, FTPCrack, etc).
+ * Tente de rooter tous les serveurs compatibles.
+ * 
+ * @usage
+ * run /tools/rooter.js
+ * 
+ * @ram
+ * 3.00GB
+ */
+
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog('ALL');
     ns.tail();
     
-    ns.print('=== NEXUS MASS ROOTER ===');
+    ns.print('╔═══════════════════════════════════════════════════════════╗');
+    ns.print('║ NEXUS Mass Rooter v0.2                                     ║');
+    ns.print('╚═══════════════════════════════════════════════════════════╝');
     ns.print('');
     
     // Vérifier les outils disponibles
@@ -17,7 +43,7 @@ export async function main(ns) {
     
     const portsAvailable = Object.values(tools).filter(x => x).length;
     
-    ns.print(`🔧 Outils disponibles: ${portsAvailable}`);
+    ns.print(`🔧 Outils disponibles: ${portsAvailable}/5`);
     if (tools.brutessh) ns.print('  ✓ BruteSSH.exe');
     if (tools.ftpcrack) ns.print('  ✓ FTPCrack.exe');
     if (tools.relaysmtp) ns.print('  ✓ relaySMTP.exe');
@@ -71,12 +97,12 @@ export async function main(ns) {
     }
     
     ns.print('');
-    ns.print('═══════════════════════════════');
+    ns.print('═══════════════════════════════════════════════════════════');
     ns.print(`✓ Nouveaux roots: ${rooted}`);
     ns.print(`  Déjà rootés: ${alreadyRooted}`);
     ns.print(`  Impossibles: ${cannotRoot}`);
     ns.print(`  TOTAL: ${rooted + alreadyRooted} serveurs rootés`);
-    ns.print('═══════════════════════════════');
+    ns.print('═══════════════════════════════════════════════════════════');
 }
 
 function scanNetwork(ns) {
@@ -104,3 +130,24 @@ function scanNetwork(ns) {
     
     return servers;
 }
+```
+
+---
+
+# FICHIERS ADDITIONNELS
+
+## `/manifest.txt`
+```
+/core/bootstrap.js
+/core/version.js
+/lib/scanner.js
+/lib/utils.js
+/hack/basic-hack.js
+/hack/xp-grind.js
+/managers/target-manager.js
+/managers/server-manager.js
+/managers/deploy-manager.js
+/monitor/status.js
+/monitor/status-lite.js
+/tools/deploy.js
+/tools/rooter.js

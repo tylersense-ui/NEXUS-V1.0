@@ -34,7 +34,8 @@ export const CHANGELOG = {
         'Refonte architecture complète',
         'Headers standardisés sur tous les fichiers',
         'Fusion server-manager + server-buyer',
-        'Versioning explicite'
+        'Versioning explicite',
+        'Documentation inline complète'
     ],
     '0.1.0-bootstrap': [
         'Première version',
