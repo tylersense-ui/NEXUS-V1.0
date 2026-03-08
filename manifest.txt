@@ -8,3 +8,5 @@
 /monitor/status-lite.js
 /tools/deploy.js
 /tools/casino.js
+/tools/rooter.js
+/managers/deploy-manager.js
