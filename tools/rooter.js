@@ -5,7 +5,7 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/rooter.js
- * @version     0.2.0
+ * @version     0.2.1
  * @author      NEXUS AI Architect
  * @created     2026-03-08
  * @modified    2026-03-08
@@ -28,7 +28,7 @@ export async function main(ns) {
     ns.tail();
     
     ns.print('╔═══════════════════════════════════════════════════════════╗');
-    ns.print('║ NEXUS Mass Rooter v0.2                                     ║');
+    ns.print('║ NEXUS Mass Rooter v0.2.1                                   ║');
     ns.print('╚═══════════════════════════════════════════════════════════╝');
     ns.print('');
     
@@ -54,6 +54,10 @@ export async function main(ns) {
     // Scanner le réseau
     const servers = scanNetwork(ns);
     const myHackLevel = ns.getHackingLevel();
+    
+    ns.print(`📊 Niveau de hacking: ${myHackLevel}`);
+    ns.print(`🌐 Serveurs trouvés: ${servers.length}`);
+    ns.print('');
     
     let rooted = 0;
     let alreadyRooted = 0;
@@ -91,7 +95,7 @@ export async function main(ns) {
             ns.print(`✓ ROOT: ${server}`);
             rooted++;
         } catch (e) {
-            ns.print(`✗ FAIL: ${server} - ${e}`);
+            ns.print(`✗ FAIL: ${server}`);
             cannotRoot++;
         }
     }
@@ -105,6 +109,11 @@ export async function main(ns) {
     ns.print('═══════════════════════════════════════════════════════════');
 }
 
+/**
+ * Scanne le réseau complet
+ * @param {NS} ns 
+ * @returns {Array<string>} Liste des hostnames
+ */
 function scanNetwork(ns) {
     const visited = new Set();
     const servers = [];
@@ -130,24 +139,3 @@ function scanNetwork(ns) {
     
     return servers;
 }
-```
-
----
-
-# FICHIERS ADDITIONNELS
-
-## `/manifest.txt`
-```
-/core/bootstrap.js
-/core/version.js
-/lib/scanner.js
-/lib/utils.js
-/hack/basic-hack.js
-/hack/xp-grind.js
-/managers/target-manager.js
-/managers/server-manager.js
-/managers/deploy-manager.js
-/monitor/status.js
-/monitor/status-lite.js
-/tools/deploy.js
-/tools/rooter.js

@@ -11,5 +11,6 @@
 /monitor/status-lite.js
 /tools/deploy.js
 /tools/rooter.js
+/tools/global-kill.js
 /manifest.txt
 /README.md
