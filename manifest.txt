@@ -1,12 +1,13 @@
 /core/bootstrap.js
+/core/version.js
 /lib/scanner.js
 /lib/utils.js
 /hack/basic-hack.js
+/hack/xp-grind.js
 /managers/target-manager.js
 /managers/server-manager.js
+/managers/deploy-manager.js
 /monitor/status.js
 /monitor/status-lite.js
 /tools/deploy.js
-/tools/casino.js
 /tools/rooter.js
-/managers/deploy-manager.js

@@ -1,45 +1,83 @@
+/**
+ * ╔═══════════════════════════════════════════════════════════╗
+ * ║ NEXUS Framework v0.2-alpha                                 ║
+ * ║ Module: Server Manager                                     ║
+ * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @file        /managers/server-manager.js
+ * @version     0.2.0
+ * @author      NEXUS AI Architect
+ * @created     2026-03-08
+ * @modified    2026-03-08
+ * 
+ * @description
+ * Gestionnaire unifié pour l'achat, l'upgrade et la gestion des serveurs.
+ * Achète automatiquement des serveurs quand l'argent est disponible.
+ * Upgrade les serveurs existants quand rentable.
+ * Déploie automatiquement les scripts de hack.
+ * 
+ * @usage
+ * run /managers/server-manager.js
+ * 
+ * @dependencies
+ * - /hack/basic-hack.js (script à déployer)
+ * - /state/strategy-state.txt (pour la cible)
+ * 
+ * @ram
+ * 3.50GB
+ */
+
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog('ALL');
     ns.tail();
     
-    const minServerRam = 8; // Commencer avec 8GB
-    const maxServers = 25; // Limite du jeu
-    const prefix = 'nexus-';
+    const CONFIG = {
+        minServerRam: 8,          // RAM initiale (8GB)
+        maxServers: 25,           // Limite du jeu
+        prefix: 'nexus-',         // Préfixe des serveurs
+        buyMargin: 2,             // Garder 2x le prix en réserve
+        upgradeMargin: 3,         // Garder 3x le prix pour upgrade
+        upgradeThreshold: 10000000, // 10m$ minimum pour upgrade
+        checkInterval: 10000      // Check toutes les 10s
+    };
+    
+    ns.print('╔═══════════════════════════════════════════════════════════╗');
+    ns.print('║ NEXUS Server Manager v0.2                                 ║');
+    ns.print('╚═══════════════════════════════════════════════════════════╝');
+    ns.print('');
     
     while (true) {
         const money = ns.getServerMoneyAvailable('home');
-        const ownedServers = ns.getPurchasedServers();
+        const owned = ns.getPurchasedServers();
         
-        // Acheter un nouveau serveur si on a l'argent
-        if (ownedServers.length < maxServers) {
-            const cost = ns.getPurchasedServerCost(minServerRam);
+        // PHASE 1: Acheter de nouveaux serveurs
+        if (owned.length < CONFIG.maxServers) {
+            const cost = ns.getPurchasedServerCost(CONFIG.minServerRam);
             
-            if (money > cost * 2) { // Garder une marge
-                const hostname = `${prefix}${ownedServers.length}`;
-                const purchased = ns.purchaseServer(hostname, minServerRam);
+            if (money > cost * CONFIG.buyMargin) {
+                const hostname = `${CONFIG.prefix}${owned.length}`;
+                const purchased = ns.purchaseServer(hostname, CONFIG.minServerRam);
                 
                 if (purchased) {
-                    ns.print(`✓ Serveur acheté: ${purchased} (${minServerRam}GB)`);
-                    
-                    // Déployer le hack dessus
+                    ns.print(`✓ ACHAT: ${purchased} (${CONFIG.minServerRam}GB) - $${formatMoney(cost)}`);
                     await deployHack(ns, purchased);
                 }
             }
         }
         
-        // Upgrader les serveurs existants si on a beaucoup d'argent
-        if (money > 10000000) { // 10m+
-            for (const server of ownedServers) {
+        // PHASE 2: Upgrader les serveurs existants
+        if (money > CONFIG.upgradeThreshold) {
+            for (const server of owned) {
                 const currentRam = ns.getServerMaxRam(server);
                 const nextRam = currentRam * 2;
                 
-                if (nextRam <= 1048576) { // Max RAM possible
+                if (nextRam <= 1048576) { // Max RAM = 1PB
                     const upgradeCost = ns.getPurchasedServerUpgradeCost(server, nextRam);
                     
-                    if (upgradeCost > 0 && money > upgradeCost * 3) {
+                    if (upgradeCost > 0 && money > upgradeCost * CONFIG.upgradeMargin) {
                         if (ns.upgradePurchasedServer(server, nextRam)) {
-                            ns.print(`↑ Upgrade: ${server} → ${nextRam}GB`);
+                            ns.print(`↑ UPGRADE: ${server} ${currentRam}GB → ${nextRam}GB - $${formatMoney(upgradeCost)}`);
                             await deployHack(ns, server);
                         }
                     }
@@ -47,18 +85,20 @@ export async function main(ns) {
             }
         }
         
-        await ns.sleep(10000); // Check toutes les 10s
+        await ns.sleep(CONFIG.checkInterval);
     }
 }
 
+/**
+ * Déploie le script de hack sur un serveur
+ * @param {NS} ns 
+ * @param {string} server 
+ */
 async function deployHack(ns, server) {
     const script = '/hack/basic-hack.js';
     
-    // Copier le script
-    await ns.scp(script, server);
-    
-    // Trouver la meilleure cible
-    let target = 'foodnstuff';
+    // Trouver la cible
+    let target = 'n00dles';
     try {
         const strategyData = ns.read('/state/strategy-state.txt');
         if (strategyData) {
@@ -66,10 +106,11 @@ async function deployHack(ns, server) {
             if (strategy.target) target = strategy.target;
         }
     } catch (e) {
-        // Utiliser foodnstuff par défaut
+        // Fallback sur n00dles
     }
     
-    // Lancer avec tous les threads disponibles
+    // Copier et lancer
+    await ns.scp(script, server);
     const ram = ns.getServerMaxRam(server);
     const scriptRam = ns.getScriptRam(script);
     const threads = Math.floor(ram / scriptRam);
@@ -79,4 +120,11 @@ async function deployHack(ns, server) {
         ns.exec(script, server, threads, target);
         ns.print(`  → ${threads} threads sur ${target}`);
     }
+}
+
+function formatMoney(m) {
+    if (m >= 1e9) return `${(m/1e9).toFixed(2)}b`;
+    if (m >= 1e6) return `${(m/1e6).toFixed(2)}m`;
+    if (m >= 1e3) return `${(m/1e3).toFixed(0)}k`;
+    return `${m.toFixed(0)}`;
 }

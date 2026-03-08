@@ -17,13 +17,19 @@ export async function main(ns) {
     // Scanner tous les serveurs rootés
     const servers = scanNetwork(ns).filter(s => ns.hasRootAccess(s));
     
+    // Ajouter les serveurs achetés
+    const purchased = ns.getPurchasedServers();
+    for (const p of purchased) {
+        if (!servers.includes(p)) servers.push(p);
+    }
+    
     let totalThreads = 0;
     let serversUsed = 0;
     
     for (const server of servers) {
         const maxRam = ns.getServerMaxRam(server);
         
-        if (maxRam === 0) continue; // Serveur sans RAM
+        if (maxRam === 0) continue;
         
         const availableRam = maxRam - ns.getServerUsedRam(server);
         const threads = Math.floor(availableRam / scriptRam);
@@ -83,24 +89,3 @@ function findBestTarget(ns) {
     viable.sort((a, b) => ns.getServerMaxMoney(b) - ns.getServerMaxMoney(a));
     return viable[0];
 }
-```
-
----
-
-# INSTRUCTIONS POUR L'OPÉRATEUR
-
-**ÉTAPE 1** : Ajoute ces fichiers dans VS Code
-
-**ÉTAPE 2** : Mets à jour le manifest.txt
-```
-/core/bootstrap.js
-/lib/scanner.js
-/lib/utils.js
-/hack/basic-hack.js
-/managers/target-manager.js
-/managers/server-manager.js
-/managers/deploy-manager.js
-/monitor/status.js
-/monitor/status-lite.js
-/tools/deploy.js
-/tools/rooter.js
