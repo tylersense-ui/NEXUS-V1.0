@@ -1,0 +1,10 @@
+/core/bootstrap.js
+/lib/scanner.js
+/lib/utils.js
+/hack/basic-hack.js
+/managers/target-manager.js
+/managers/server-manager.js
+/monitor/status.js
+/monitor/status-lite.js
+/tools/deploy.js
+/tools/casino.js
