@@ -1,16 +1,15 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Batcher Phase 4                   ║
+ * ║ NEXUS v0.5-PROMETHEUS - Batcher Simple Mode               ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/batcher.js
- * @version     0.5.3
- * @description Génération jobs HWGW synchronisés (Phase 4)
+ * @version     0.5.7
+ * @description Mode SIMPLE sans Phase 4 (early game)
  */
 
 import { CONFIG } from "/lib/constants.js";
 import { Logger } from "/lib/logger.js";
-import { TimingCalculator } from "/lib/timing.js";
 
 export class Batcher {
     constructor(ns, network, ramManager, portHandler, capabilities) {
@@ -20,45 +19,14 @@ export class Batcher {
         this.portHandler = portHandler;
         this.caps = capabilities;
         this.log = new Logger(ns, "BATCHER");
-        this.timing = new TimingCalculator(ns);
-        
-        // Tracking des derniers batchs par target
-        this.lastBatchTimes = new Map();
     }
     
-    /**
-     * Dispatch un batch HWGW synchronisé
-     */
     dispatchBatch(target, options = {}) {
         const hackPercent = options.hackPercent || CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
         const maxThreads = options.maxThreadsPerJob || CONFIG.BATCHER.MAX_THREADS_PER_JOB;
         
         try {
-            // ═══════════════════════════════════════════════════════
-            // PHASE 1 : PREP (si nécessaire)
-            // ═══════════════════════════════════════════════════════
-            
-            if (CONFIG.BATCHER.ENABLE_PREP && !this.isServerReady(target)) {
-                return this.prepServer(target);
-            }
-            
-            // ═══════════════════════════════════════════════════════
-            // PHASE 2 : VÉRIFIER SI ON PEUT LANCER UN BATCH
-            // ═══════════════════════════════════════════════════════
-            
-            const lastBatchTime = this.lastBatchTimes.get(target);
-            
-            if (!this.timing.canLaunchBatch(target, lastBatchTime)) {
-                return {
-                    success: false,
-                    error: "Batch cooldown (waiting for previous batch)"
-                };
-            }
-            
-            // ═══════════════════════════════════════════════════════
-            // PHASE 3 : CALCULER THREADS & TIMINGS
-            // ═══════════════════════════════════════════════════════
-            
+            // Pas de prep en mode simple
             const threads = this.calculateThreads(target, hackPercent);
             
             if (!threads) {
@@ -68,13 +36,8 @@ export class Batcher {
                 };
             }
             
-            const timings = this.timing.calculateBatchTimings(target);
-            
-            // ═══════════════════════════════════════════════════════
-            // PHASE 4 : GÉNÉRER JOBS SYNCHRONISÉS
-            // ═══════════════════════════════════════════════════════
-            
-            const jobs = this.generateSynchronizedJobs(target, threads, timings, maxThreads);
+            // Mode simple : delays fixes courts
+            const jobs = this.generateSimpleJobs(target, threads, maxThreads);
             
             if (jobs.length === 0) {
                 return {
@@ -83,22 +46,14 @@ export class Batcher {
                 };
             }
             
-            // ═══════════════════════════════════════════════════════
-            // PHASE 5 : ENVOYER DANS PORT 4
-            // ═══════════════════════════════════════════════════════
-            
             for (const job of jobs) {
                 this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, job);
             }
             
-            // Tracker le temps de ce batch
-            this.lastBatchTimes.set(target, Date.now());
-            
             return {
                 success: true,
                 totalThreads: threads.total,
-                jobsDispatched: jobs.length,
-                batchDuration: timings.totalDuration
+                jobsDispatched: jobs.length
             };
             
         } catch (error) {
@@ -110,88 +65,6 @@ export class Batcher {
         }
     }
     
-    /**
-     * Prep un serveur (weaken + grow jusqu'à ready)
-     */
-    prepServer(target) {
-        const currentSec = this.ns.getServerSecurityLevel(target);
-        const minSec = this.ns.getServerMinSecurityLevel(target);
-        const currentMoney = this.ns.getServerMoneyAvailable(target);
-        const maxMoney = this.ns.getServerMaxMoney(target);
-        
-        const jobs = [];
-        
-        // Besoin de weaken ?
-        if (currentSec > minSec + CONFIG.HACKING.SECURITY_BUFFER) {
-            const weakenThreads = CONFIG.BATCHER.PREP_WEAKEN_THREADS;
-            const allocation = this.ramMgr.allocateThreads(weakenThreads);
-            
-            if (allocation.success) {
-                for (const alloc of allocation.allocations) {
-                    jobs.push({
-                        type: 'weaken',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: 0,
-                        uuid: this.generateUUID(),
-                        script: CONFIG.WORKERS.WEAKEN
-                    });
-                }
-            }
-        }
-        
-        // Besoin de grow ?
-        if (currentMoney < maxMoney * 0.9) {
-            const growThreads = CONFIG.BATCHER.PREP_GROW_THREADS;
-            const allocation = this.ramMgr.allocateThreads(growThreads);
-            
-            if (allocation.success) {
-                for (const alloc of allocation.allocations) {
-                    jobs.push({
-                        type: 'grow',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: 0,
-                        uuid: this.generateUUID(),
-                        script: CONFIG.WORKERS.GROW
-                    });
-                }
-            }
-        }
-        
-        // Envoyer les jobs de prep
-        for (const job of jobs) {
-            this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, job);
-        }
-        
-        return {
-            success: true,
-            prep: true,
-            jobsDispatched: jobs.length,
-            totalThreads: jobs.reduce((sum, j) => sum + j.threads, 0)
-        };
-    }
-    
-    /**
-     * Vérifie si serveur est prêt
-     */
-    isServerReady(target) {
-        const currentMoney = this.ns.getServerMoneyAvailable(target);
-        const maxMoney = this.ns.getServerMaxMoney(target);
-        const currentSec = this.ns.getServerSecurityLevel(target);
-        const minSec = this.ns.getServerMinSecurityLevel(target);
-        
-        const moneyReady = currentMoney > maxMoney * 0.9;
-        const securityReady = currentSec < minSec + CONFIG.HACKING.SECURITY_BUFFER;
-        
-        return moneyReady && securityReady;
-    }
-    
-    /**
-     * Calcule threads nécessaires
-     */
     calculateThreads(target, hackPercent) {
         try {
             const maxMoney = this.ns.getServerMaxMoney(target);
@@ -226,36 +99,34 @@ export class Batcher {
         }
     }
     
-    /**
-     * Génère jobs avec timings synchronisés (Phase 4)
-     */
-    generateSynchronizedJobs(target, threads, timings, maxThreadsPerJob) {
+    generateSimpleJobs(target, threads, maxThreadsPerJob) {
         const jobs = [];
+        const buffer = CONFIG.HACKING.TIME_BUFFER_MS;
         
-        // Job types avec delays calculés pour synchronisation
+        // Mode simple : delays fixes courts
         const jobTypes = [
             { 
                 action: 'hack', 
                 threads: threads.hack, 
-                delay: timings.hackDelay,
+                delay: 0,  // ← Immédiat
                 script: CONFIG.WORKERS.HACK
             },
             { 
                 action: 'weaken', 
                 threads: threads.weaken1, 
-                delay: timings.weakenDelay1,
+                delay: buffer,  // ← 50ms
                 script: CONFIG.WORKERS.WEAKEN
             },
             { 
                 action: 'grow', 
                 threads: threads.grow, 
-                delay: timings.growDelay,
+                delay: buffer * 2,  // ← 100ms
                 script: CONFIG.WORKERS.GROW
             },
             { 
                 action: 'weaken', 
                 threads: threads.weaken2, 
-                delay: timings.weakenDelay2,
+                delay: buffer * 3,  // ← 150ms
                 script: CONFIG.WORKERS.WEAKEN
             }
         ];
