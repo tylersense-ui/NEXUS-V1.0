@@ -28,7 +28,7 @@ export async function main(ns) {
     ns.tail();
     
     ns.print('╔═══════════════════════════════════════════════════════════╗');
-    ns.print('║ NEXUS Global Kill v0.2                                     ║');
+    ns.print('║ NEXUS Global Kill v0.2                                    ║');
     ns.print('╚═══════════════════════════════════════════════════════════╝');
     ns.print('');
     ns.print('⚠️  ARRÊT DE TOUS LES SCRIPTS SUR TOUS LES SERVEURS');

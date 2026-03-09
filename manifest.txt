@@ -9,7 +9,9 @@
 /lib/capabilities.js
 /lib/network.js
 /lib/utils.js
-/workers/hwgw.js
+/workers/hack.js
+/workers/grow.js
+/workers/weaken.js
 /managers/server-manager.js
 /tools/cleanup.js
 /tools/deploy.js

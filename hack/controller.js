@@ -32,7 +32,6 @@ export async function main(ns) {
     
     while (true) {
         try {
-            // Drainage instantané du port 4
             while (!portHandler.isEmpty(COMMANDS_PORT)) {
                 const job = portHandler.readJSON(COMMANDS_PORT);
                 
@@ -41,7 +40,6 @@ export async function main(ns) {
                     continue;
                 }
                 
-                // Validation
                 if (!job.type || !job.host || !job.threads || job.threads < 1) {
                     log.warn(`Job invalide: ${JSON.stringify(job)}`);
                     jobsFailed++;
@@ -54,7 +52,6 @@ export async function main(ns) {
                     continue;
                 }
                 
-                // Copier worker sur serveur
                 try {
                     await ns.scp(job.script, job.host);
                 } catch (e) {
@@ -63,14 +60,12 @@ export async function main(ns) {
                     continue;
                 }
                 
-                // Exécuter worker
                 try {
                     const pid = ns.exec(
                         job.script,
                         job.host,
                         job.threads,
                         job.target,
-                        job.type,
                         job.delay,
                         job.uuid
                     );
@@ -79,7 +74,7 @@ export async function main(ns) {
                         jobsSucceeded++;
                         jobsProcessed++;
                     } else {
-                        log.warn(`Échec exec ${job.type} sur ${job.host}`);
+                        log.warn(`Échec exec sur ${job.host}`);
                         jobsFailed++;
                     }
                     

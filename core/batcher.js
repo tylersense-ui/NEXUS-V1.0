@@ -21,18 +21,11 @@ export class Batcher {
         this.log = new Logger(ns, "BATCHER");
     }
     
-    /**
-     * Dispatch un batch HWGW complet
-     * @param {string} target - Serveur cible
-     * @param {Object} options - Options du batch
-     * @returns {Object} Résultat du dispatch
-     */
     dispatchBatch(target, options = {}) {
         const hackPercent = options.hackPercent || CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
         const maxThreads = options.maxThreadsPerJob || CONFIG.BATCHER.MAX_THREADS_PER_JOB;
         
         try {
-            // Vérifier préparation serveur
             if (CONFIG.BATCHER.ENABLE_PREP && !this.isServerReady(target)) {
                 return {
                     success: false,
@@ -40,7 +33,6 @@ export class Batcher {
                 };
             }
             
-            // Calculer threads nécessaires
             const threads = this.calculateThreads(target, hackPercent);
             
             if (!threads) {
@@ -50,7 +42,6 @@ export class Batcher {
                 };
             }
             
-            // Générer jobs
             const jobs = this.generateJobs(target, threads, maxThreads);
             
             if (jobs.length === 0) {
@@ -60,7 +51,6 @@ export class Batcher {
                 };
             }
             
-            // Envoyer jobs dans port 4
             for (const job of jobs) {
                 this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, job);
             }
@@ -80,9 +70,6 @@ export class Batcher {
         }
     }
     
-    /**
-     * Vérifie si serveur est prêt (argent + sécurité)
-     */
     isServerReady(target) {
         const currentMoney = this.ns.getServerMoneyAvailable(target);
         const maxMoney = this.ns.getServerMaxMoney(target);
@@ -95,30 +82,23 @@ export class Batcher {
         return moneyReady && securityReady;
     }
     
-    /**
-     * Calcule threads nécessaires pour HWGW
-     */
     calculateThreads(target, hackPercent) {
         try {
             const maxMoney = this.ns.getServerMaxMoney(target);
             const currentMoney = this.ns.getServerMoneyAvailable(target);
             
-            // Hack threads
             const hackThreads = Math.max(1, Math.floor(
                 this.ns.hackAnalyzeThreads(target, currentMoney * hackPercent)
             ));
             
-            // Weaken threads (après hack)
             const hackSecIncrease = this.ns.hackAnalyzeSecurity(hackThreads, target);
             const weakenThreads1 = Math.ceil(hackSecIncrease / 0.05);
             
-            // Grow threads
             const moneyAfterHack = currentMoney * (1 - hackPercent);
             const growThreads = Math.max(1, Math.ceil(
                 this.ns.growthAnalyze(target, maxMoney / Math.max(1, moneyAfterHack))
             ));
             
-            // Weaken threads (après grow)
             const growSecIncrease = this.ns.growthAnalyzeSecurity(growThreads, target);
             const weakenThreads2 = Math.ceil(growSecIncrease / 0.05);
             
@@ -136,28 +116,40 @@ export class Batcher {
         }
     }
     
-    /**
-     * Génère les jobs avec allocation RAM
-     */
     generateJobs(target, threads, maxThreadsPerJob) {
         const jobs = [];
-        const workerPath = "/workers/hwgw.js";
-        
-        // Délais entre actions
         const baseDelay = CONFIG.HACKING.TIME_BUFFER_MS;
         
-        // Job types
         const jobTypes = [
-            { action: 'hack', threads: threads.hack, delay: 0 },
-            { action: 'weaken', threads: threads.weaken1, delay: baseDelay },
-            { action: 'grow', threads: threads.grow, delay: baseDelay * 2 },
-            { action: 'weaken', threads: threads.weaken2, delay: baseDelay * 3 }
+            { 
+                action: 'hack', 
+                threads: threads.hack, 
+                delay: 0,
+                script: CONFIG.WORKERS.HACK
+            },
+            { 
+                action: 'weaken', 
+                threads: threads.weaken1, 
+                delay: baseDelay,
+                script: CONFIG.WORKERS.WEAKEN
+            },
+            { 
+                action: 'grow', 
+                threads: threads.grow, 
+                delay: baseDelay * 2,
+                script: CONFIG.WORKERS.GROW
+            },
+            { 
+                action: 'weaken', 
+                threads: threads.weaken2, 
+                delay: baseDelay * 3,
+                script: CONFIG.WORKERS.WEAKEN
+            }
         ];
         
         for (const jobType of jobTypes) {
             if (jobType.threads === 0) continue;
             
-            // Allouer threads sur réseau
             const allocation = this.ramMgr.allocateThreads(
                 Math.min(jobType.threads, maxThreadsPerJob)
             );
@@ -167,7 +159,6 @@ export class Batcher {
                 continue;
             }
             
-            // Créer jobs par serveur
             for (const alloc of allocation.allocations) {
                 const uuid = this.generateUUID();
                 
@@ -178,7 +169,7 @@ export class Batcher {
                     host: alloc.hostname,
                     delay: jobType.delay,
                     uuid: uuid,
-                    script: workerPath
+                    script: jobType.script
                 });
             }
         }
@@ -186,9 +177,6 @@ export class Batcher {
         return jobs;
     }
     
-    /**
-     * Génère UUID unique
-     */
     generateUUID() {
         return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     }
