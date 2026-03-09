@@ -4,8 +4,8 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/dashboard.js
- * @version     0.5.5
- * @description Dashboard temps réel ultra-visuel ULTIME
+ * @version     0.5.6
+ * @description Dashboard temps réel ultra-visuel (FIXED)
  */
 
 /** @param {NS} ns */
@@ -40,18 +40,17 @@ export async function main(ns) {
         lastMoney = currentMoney;
         lastTime = now;
         
-        // ═══════════════════════════════════════════════════════════
-        // STATS SYSTÈME
-        // ═══════════════════════════════════════════════════════════
-        
         const hackLevel = ns.getHackingLevel();
         const homeRam = ns.getServerMaxRam('home');
         const homeUsedRam = ns.getServerUsedRam('home');
         
-        // BitNode et playtime
+        // BitNode (FIXED - use getResetInfo)
+        const resetInfo = ns.getResetInfo();
+        const bitnode = resetInfo.currentNode || 1;
+        
+        // Playtime
         const player = ns.getPlayer();
-        const bitnode = player.bitNodeN || 1;
-        const playtime = player.totalPlaytime || 0; // En millisecondes
+        const playtime = player.totalPlaytime || 0;
         
         // Heure réelle
         const realTime = new Date();
@@ -76,7 +75,7 @@ export async function main(ns) {
         }
         
         // Détecter les actions en cours par cible
-        const targetActions = new Map(); // target → {hack, grow, weaken}
+        const targetActions = new Map();
         
         for (const s of allServers) {
             const procs = ns.ps(s);
@@ -104,18 +103,10 @@ export async function main(ns) {
             }
         }
         
-        // ═══════════════════════════════════════════════════════════
-        // HEADER AMÉLIORÉ
-        // ═══════════════════════════════════════════════════════════
-        
         ns.print('╔═══════════════════════════════════════════════════════════╗');
         ns.print(`║   🔥 NEXUS DASHBOARD v0.5   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}   ║`);
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
-        
-        // ───────────────────────────────────────────────────────────
-        // ARGENT & REVENUS
-        // ───────────────────────────────────────────────────────────
         
         ns.print('💰 ARGENT & REVENUS');
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -131,10 +122,6 @@ export async function main(ns) {
         ns.print(`📈 Tendance: ${moneySparkline}`);
         ns.print('');
         
-        // ───────────────────────────────────────────────────────────
-        // HACKING
-        // ───────────────────────────────────────────────────────────
-        
         ns.print('🎯 HACKING');
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         
@@ -142,7 +129,7 @@ export async function main(ns) {
         ns.print(`⚡ Threads actifs: ${ns.formatNumber(totalThreads)}`);
         ns.print(`🎯 Cibles: ${targetActions.size}`);
         
-        // Barres de progression avec actions
+        // Barres de progression avec actions (FIXED)
         const targetList = Array.from(targetActions.keys()).slice(0, 5);
         for (const target of targetList) {
             const currentTargetMoney = ns.getServerMoneyAvailable(target);
@@ -155,12 +142,13 @@ export async function main(ns) {
             const moneyReady = moneyPercent > 90;
             const isReady = secReady && moneyReady;
             
+            // Barre sans cercle (FIXED)
             const bar = generateProgressBar(moneyPercent, 20);
             const percentStr = moneyPercent.toFixed(1).padStart(5);
             
             // Icônes actions
             const actions = targetActions.get(target);
-            let actionIcon = '';
+            let actionIcon = '  ';
             
             if (actions.hack > 0) actionIcon = '💰';
             else if (actions.grow > 0) actionIcon = '🌱';
@@ -169,13 +157,10 @@ export async function main(ns) {
             // Status ready
             const statusIcon = isReady ? '🟢' : '🔴';
             
+            // Affichage : status + action + barre (sans cercle dedans)
             ns.print(`  ${target.padEnd(20)} ${statusIcon}${actionIcon} ${bar} ${percentStr}%`);
         }
         ns.print('');
-        
-        // ───────────────────────────────────────────────────────────
-        // RAM & SERVEURS
-        // ───────────────────────────────────────────────────────────
         
         ns.print('💾 RAM & SERVEURS');
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -197,10 +182,6 @@ export async function main(ns) {
         ns.print(`🔧 Upgrade: ${upgradeBar} ${upgradePercent.toFixed(2)}%`);
         ns.print('');
         
-        // ───────────────────────────────────────────────────────────
-        // FOOTER AMÉLIORÉ
-        // ───────────────────────────────────────────────────────────
-        
         const playtimeFormatted = formatPlaytime(playtime);
         ns.print(`⏱️  Playtime: ${playtimeFormatted} | 🔄 Update: ${UPDATE_INTERVAL / 1000}s`);
         
@@ -208,16 +189,12 @@ export async function main(ns) {
     }
 }
 
+// FIXED: Pas de cercle dans la barre
 function generateProgressBar(percent, width) {
     const filled = Math.floor((percent / 100) * width);
     const empty = width - filled;
     
-    const bar = '█'.repeat(filled) + '░'.repeat(empty);
-    
-    if (percent >= 80) return `🟢 ${bar}`;
-    if (percent >= 50) return `🟡 ${bar}`;
-    if (percent >= 20) return `🟠 ${bar}`;
-    return `🔴 ${bar}`;
+    return '█'.repeat(filled) + '░'.repeat(empty);
 }
 
 function generateSparkline(data) {
