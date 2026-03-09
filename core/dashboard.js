@@ -1,11 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Dashboard                         ║
+ * ║ NEXUS v0.5-PROMETHEUS - Dashboard Ultimate                ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/dashboard.js
- * @version     0.5.1
- * @description Dashboard temps réel ultra-visuel (CORRIGÉ)
+ * @version     0.5.5
+ * @description Dashboard temps réel ultra-visuel ULTIME
  */
 
 /** @param {NS} ns */
@@ -21,7 +21,6 @@ export async function main(ns) {
     
     let lastMoney = ns.getServerMoneyAvailable('home');
     let lastTime = Date.now();
-    const startTime = Date.now(); // Pour uptime manuel
     
     while (true) {
         ns.clearLog();
@@ -41,9 +40,25 @@ export async function main(ns) {
         lastMoney = currentMoney;
         lastTime = now;
         
+        // ═══════════════════════════════════════════════════════════
+        // STATS SYSTÈME
+        // ═══════════════════════════════════════════════════════════
+        
         const hackLevel = ns.getHackingLevel();
         const homeRam = ns.getServerMaxRam('home');
         const homeUsedRam = ns.getServerUsedRam('home');
+        
+        // BitNode et playtime
+        const player = ns.getPlayer();
+        const bitnode = player.bitNodeN || 1;
+        const playtime = player.totalPlaytime || 0; // En millisecondes
+        
+        // Heure réelle
+        const realTime = new Date();
+        const hours = String(realTime.getHours()).padStart(2, '0');
+        const minutes = String(realTime.getMinutes()).padStart(2, '0');
+        const seconds = String(realTime.getSeconds()).padStart(2, '0');
+        const timeStr = `${hours}:${minutes}:${seconds}`;
         
         const purchasedServers = ns.getPurchasedServers();
         let totalPurchasedRam = 0;
@@ -60,18 +75,47 @@ export async function main(ns) {
             }
         }
         
-        const activeTargets = new Set();
+        // Détecter les actions en cours par cible
+        const targetActions = new Map(); // target → {hack, grow, weaken}
+        
         for (const s of allServers) {
             const procs = ns.ps(s);
             for (const p of procs) {
-                if (p.args[0]) activeTargets.add(p.args[0]);
+                const target = p.args[0];
+                if (!target) continue;
+                
+                if (!targetActions.has(target)) {
+                    targetActions.set(target, {
+                        hack: 0,
+                        grow: 0,
+                        weaken: 0
+                    });
+                }
+                
+                const actions = targetActions.get(target);
+                
+                if (p.filename.includes('hack.js')) {
+                    actions.hack += p.threads;
+                } else if (p.filename.includes('grow.js')) {
+                    actions.grow += p.threads;
+                } else if (p.filename.includes('weaken.js')) {
+                    actions.weaken += p.threads;
+                }
             }
         }
         
+        // ═══════════════════════════════════════════════════════════
+        // HEADER AMÉLIORÉ
+        // ═══════════════════════════════════════════════════════════
+        
         ns.print('╔═══════════════════════════════════════════════════════════╗');
-        ns.print('║   🔥 NEXUS DASHBOARD v0.5-PROMETHEUS                      ║');
+        ns.print(`║   🔥 NEXUS DASHBOARD v0.5   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}   ║`);
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
+        
+        // ───────────────────────────────────────────────────────────
+        // ARGENT & REVENUS
+        // ───────────────────────────────────────────────────────────
         
         ns.print('💰 ARGENT & REVENUS');
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -87,25 +131,51 @@ export async function main(ns) {
         ns.print(`📈 Tendance: ${moneySparkline}`);
         ns.print('');
         
+        // ───────────────────────────────────────────────────────────
+        // HACKING
+        // ───────────────────────────────────────────────────────────
+        
         ns.print('🎯 HACKING');
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         
         ns.print(`🎓 Niveau: ${hackLevel}`);
         ns.print(`⚡ Threads actifs: ${ns.formatNumber(totalThreads)}`);
-        ns.print(`🎯 Cibles: ${activeTargets.size}`);
+        ns.print(`🎯 Cibles: ${targetActions.size}`);
         
-        const targetList = Array.from(activeTargets).slice(0, 5);
+        // Barres de progression avec actions
+        const targetList = Array.from(targetActions.keys()).slice(0, 5);
         for (const target of targetList) {
             const currentTargetMoney = ns.getServerMoneyAvailable(target);
             const maxTargetMoney = ns.getServerMaxMoney(target);
-            const percent = maxTargetMoney > 0 ? (currentTargetMoney / maxTargetMoney) * 100 : 0;
+            const currentSec = ns.getServerSecurityLevel(target);
+            const minSec = ns.getServerMinSecurityLevel(target);
             
-            const bar = generateProgressBar(percent, 20);
-            const percentStr = percent.toFixed(1).padStart(5);
+            const moneyPercent = maxTargetMoney > 0 ? (currentTargetMoney / maxTargetMoney) * 100 : 0;
+            const secReady = currentSec < minSec + 5;
+            const moneyReady = moneyPercent > 90;
+            const isReady = secReady && moneyReady;
             
-            ns.print(`  ${target.padEnd(20)} ${bar} ${percentStr}%`);
+            const bar = generateProgressBar(moneyPercent, 20);
+            const percentStr = moneyPercent.toFixed(1).padStart(5);
+            
+            // Icônes actions
+            const actions = targetActions.get(target);
+            let actionIcon = '';
+            
+            if (actions.hack > 0) actionIcon = '💰';
+            else if (actions.grow > 0) actionIcon = '🌱';
+            else if (actions.weaken > 0) actionIcon = '🔧';
+            
+            // Status ready
+            const statusIcon = isReady ? '🟢' : '🔴';
+            
+            ns.print(`  ${target.padEnd(20)} ${statusIcon}${actionIcon} ${bar} ${percentStr}%`);
         }
         ns.print('');
+        
+        // ───────────────────────────────────────────────────────────
+        // RAM & SERVEURS
+        // ───────────────────────────────────────────────────────────
         
         ns.print('💾 RAM & SERVEURS');
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -127,9 +197,12 @@ export async function main(ns) {
         ns.print(`🔧 Upgrade: ${upgradeBar} ${upgradePercent.toFixed(2)}%`);
         ns.print('');
         
-        // Uptime manuel (ms → format)
-        const uptime = formatUptime(now - startTime);
-        ns.print(`⏱️  Uptime: ${uptime} | 🔄 Update: ${UPDATE_INTERVAL / 1000}s`);
+        // ───────────────────────────────────────────────────────────
+        // FOOTER AMÉLIORÉ
+        // ───────────────────────────────────────────────────────────
+        
+        const playtimeFormatted = formatPlaytime(playtime);
+        ns.print(`⏱️  Playtime: ${playtimeFormatted} | 🔄 Update: ${UPDATE_INTERVAL / 1000}s`);
         
         await ns.sleep(UPDATE_INTERVAL);
     }
@@ -165,12 +238,22 @@ function generateSparkline(data) {
     }).join('');
 }
 
-function formatUptime(ms) {
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
+function formatPlaytime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const totalHours = Math.floor(totalMinutes / 60);
+    const totalDays = Math.floor(totalHours / 24);
     
-    if (hours > 0) return `${hours}h ${minutes % 60}m`;
-    if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
-    return `${seconds}s`;
+    const days = totalDays;
+    const hours = totalHours % 24;
+    const minutes = totalMinutes % 60;
+    const seconds = totalSeconds % 60;
+    
+    const parts = [];
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+    if (seconds > 0 || parts.length === 0) parts.push(`${seconds}s`);
+    
+    return parts.join(' ');
 }
