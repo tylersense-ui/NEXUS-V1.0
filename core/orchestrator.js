@@ -4,7 +4,7 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/orchestrator.js
- * @version     0.5.0
+ * @version     0.5.2
  * @description Coordinateur central du système NEXUS
  */
 
@@ -21,7 +21,6 @@ export async function main(ns) {
     ns.disableLog("ALL");
     ns.tail();
     
-    // Banner
     ns.print("╔═══════════════════════════════════════════════════════════╗");
     ns.print("║                                                           ║");
     ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5-PROMETHEUS                   ║");
@@ -32,45 +31,40 @@ export async function main(ns) {
     
     const log = new Logger(ns, "ORCHESTRATOR");
     
-    // ═══════════════════════════════════════════════════════════════════
-    // INITIALISATION
-    // ═══════════════════════════════════════════════════════════════════
-    
     try {
-        // Capabilities
+        // ═══════════════════════════════════════════════════════════
+        // INITIALISATION
+        // ═══════════════════════════════════════════════════════════
+        
         log.info("📋 Initialisation Capabilities...");
         const caps = new Capabilities(ns);
         ns.print("");
         
-        // Network
         log.info("🌐 Initialisation Network...");
         const network = new Network(ns, caps);
         const servers = network.refresh();
         ns.print(`✅ ${servers.length} serveurs détectés`);
         ns.print("");
         
-        // PortHandler
         log.info("📨 Initialisation PortHandler...");
         const portHandler = new PortHandler(ns);
         portHandler.clear(CONFIG.PORTS.COMMANDS);
         ns.print("✅ PortHandler initialisé");
         ns.print("");
         
-        // RamManager
         log.info("💾 Initialisation RamManager...");
         const ramMgr = new RamManager(ns);
         ns.print("✅ RamManager initialisé");
         ns.print("");
         
-        // Batcher
         log.info("🔥 Initialisation Batcher...");
         const batcher = new Batcher(ns, network, ramMgr, portHandler, caps);
         ns.print("✅ Batcher initialisé");
         ns.print("");
         
-        // ═══════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         // LANCEMENT CONTROLLER
-        // ═══════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         
         log.info("🎮 Démarrage Controller...");
         
@@ -89,9 +83,54 @@ export async function main(ns) {
         ns.print(`✅ Controller démarré (PID: ${controllerPID})`);
         ns.print("");
         
-        // ═══════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
+        // LANCEMENT DASHBOARD (AUTO)
+        // ═══════════════════════════════════════════════════════════
+        
+        log.info("📊 Démarrage Dashboard...");
+        
+        if (!ns.fileExists("/core/dashboard.js")) {
+            log.warn("Dashboard introuvable: /core/dashboard.js");
+        } else {
+            const dashboardPID = ns.run("/core/dashboard.js");
+            
+            if (dashboardPID === 0) {
+                log.warn("Échec démarrage dashboard");
+            } else {
+                ns.print(`✅ Dashboard démarré (PID: ${dashboardPID})`);
+                
+                // Auto-tail du dashboard après 1 seconde
+                await ns.sleep(1000);
+                ns.tail(dashboardPID);
+                ns.print("✅ Dashboard auto-tail activé");
+            }
+        }
+        
+        ns.print("");
+        
+        // ═══════════════════════════════════════════════════════════
+        // LANCEMENT SERVER-MANAGER (AUTO)
+        // ═══════════════════════════════════════════════════════════
+        
+        log.info("🖥️  Démarrage Server Manager...");
+        
+        if (!ns.fileExists("/managers/server-manager.js")) {
+            log.warn("Server Manager introuvable");
+        } else {
+            const serverMgrPID = ns.run("/managers/server-manager.js");
+            
+            if (serverMgrPID === 0) {
+                log.warn("Échec démarrage server manager");
+            } else {
+                ns.print(`✅ Server Manager démarré (PID: ${serverMgrPID})`);
+            }
+        }
+        
+        ns.print("");
+        
+        // ═══════════════════════════════════════════════════════════
         // CONFIGURATION
-        // ═══════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         
         const REFRESH_INTERVAL = CONFIG.ORCHESTRATOR.REFRESH_INTERVAL_MS;
         const MIN_TARGETS = CONFIG.ORCHESTRATOR.MIN_TARGETS;
@@ -109,16 +148,16 @@ export async function main(ns) {
         
         await ns.sleep(2000);
         
-        // ═══════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         // MÉTRIQUES
-        // ═══════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         
         let lastRefreshTime = Date.now();
         let cycleCount = 0;
         
-        // ═══════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         // BOUCLE PRINCIPALE
-        // ═══════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         
         while (true) {
             cycleCount++;
@@ -132,9 +171,9 @@ export async function main(ns) {
             ns.print(`━━━━━━━━━━ CYCLE ${cycleCount} ━━━━━━━━━━`);
             ns.print("");
             
-            // ═══════════════════════════════════════════════════════════
+            // ═══════════════════════════════════════════════════════
             // REFRESH RÉSEAU (périodique)
-            // ═══════════════════════════════════════════════════════════
+            // ═══════════════════════════════════════════════════════
             
             const timeSinceRefresh = Date.now() - lastRefreshTime;
             
@@ -167,9 +206,9 @@ export async function main(ns) {
                 }
             }
             
-            // ═══════════════════════════════════════════════════════════
+            // ═══════════════════════════════════════════════════════
             // SÉLECTION CIBLES
-            // ═══════════════════════════════════════════════════════════
+            // ═══════════════════════════════════════════════════════
             
             let targets = [];
             
@@ -201,9 +240,9 @@ export async function main(ns) {
                 ns.print("");
             }
             
-            // ═══════════════════════════════════════════════════════════
+            // ═══════════════════════════════════════════════════════
             // DISPATCH BATCHS
-            // ═══════════════════════════════════════════════════════════
+            // ═══════════════════════════════════════════════════════
             
             if (targets.length > 0) {
                 for (const target of targets) {
@@ -226,9 +265,9 @@ export async function main(ns) {
                 ns.print("");
             }
             
-            // ═══════════════════════════════════════════════════════════
+            // ═══════════════════════════════════════════════════════
             // STATS
-            // ═══════════════════════════════════════════════════════════
+            // ═══════════════════════════════════════════════════════
             
             const cycleDuration = Date.now() - cycleStart;
             const money = ns.getServerMoneyAvailable("home");
