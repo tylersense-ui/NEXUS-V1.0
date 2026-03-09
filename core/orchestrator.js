@@ -13,20 +13,22 @@ import { Logger } from "/lib/logger.js";
 import { Capabilities } from "/lib/capabilities.js";
 import { Network } from "/lib/network.js";
 import { PortHandler } from "/core/port-handler.js";
+import { RamManager } from "/core/ram-manager.js";
+import { Batcher } from "/core/batcher.js";
 
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog("ALL");
+    ns.tail();
     
     // Banner
-    ns.tprint("");
-    ns.tprint("╔═══════════════════════════════════════════════════════════╗");
-    ns.tprint("║                                                           ║");
-    ns.tprint("║   🔥 NEXUS ORCHESTRATOR v0.5-PROMETHEUS                   ║");
-    ns.tprint("║   'Stealing Fire From The Gods'                           ║");
-    ns.tprint("║                                                           ║");
-    ns.tprint("╚═══════════════════════════════════════════════════════════╝");
-    ns.tprint("");
+    ns.print("╔═══════════════════════════════════════════════════════════╗");
+    ns.print("║                                                           ║");
+    ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5-PROMETHEUS                   ║");
+    ns.print("║   'Stealing Fire From The Gods'                           ║");
+    ns.print("║                                                           ║");
+    ns.print("╚═══════════════════════════════════════════════════════════╝");
+    ns.print("");
     
     const log = new Logger(ns, "ORCHESTRATOR");
     
@@ -38,22 +40,54 @@ export async function main(ns) {
         // Capabilities
         log.info("📋 Initialisation Capabilities...");
         const caps = new Capabilities(ns);
-        caps.printReport(true);
-        ns.tprint("");
+        ns.print("");
         
         // Network
         log.info("🌐 Initialisation Network...");
         const network = new Network(ns, caps);
         const servers = network.refresh();
-        ns.tprint(`✅ ${servers.length} serveurs détectés`);
-        ns.tprint("");
+        ns.print(`✅ ${servers.length} serveurs détectés`);
+        ns.print("");
         
         // PortHandler
         log.info("📨 Initialisation PortHandler...");
         const portHandler = new PortHandler(ns);
         portHandler.clear(CONFIG.PORTS.COMMANDS);
-        ns.tprint("✅ PortHandler initialisé");
-        ns.tprint("");
+        ns.print("✅ PortHandler initialisé");
+        ns.print("");
+        
+        // RamManager
+        log.info("💾 Initialisation RamManager...");
+        const ramMgr = new RamManager(ns);
+        ns.print("✅ RamManager initialisé");
+        ns.print("");
+        
+        // Batcher
+        log.info("🔥 Initialisation Batcher...");
+        const batcher = new Batcher(ns, network, ramMgr, portHandler, caps);
+        ns.print("✅ Batcher initialisé");
+        ns.print("");
+        
+        // ═══════════════════════════════════════════════════════════════
+        // LANCEMENT CONTROLLER
+        // ═══════════════════════════════════════════════════════════════
+        
+        log.info("🎮 Démarrage Controller...");
+        
+        if (!ns.fileExists("/hack/controller.js")) {
+            log.error("Controller introuvable: /hack/controller.js");
+            return;
+        }
+        
+        const controllerPID = ns.run("/hack/controller.js");
+        
+        if (controllerPID === 0) {
+            log.error("Échec démarrage controller");
+            return;
+        }
+        
+        ns.print(`✅ Controller démarré (PID: ${controllerPID})`);
+        ns.print("");
         
         // ═══════════════════════════════════════════════════════════════
         // CONFIGURATION
@@ -64,14 +98,16 @@ export async function main(ns) {
         const MAX_TARGETS = CONFIG.ORCHESTRATOR.MAX_TARGETS;
         const CYCLE_DELAY = CONFIG.ORCHESTRATOR.CYCLE_DELAY_MS;
         
-        log.success("✅ Système NEXUS initialisé !");
-        log.info(`⏱️  Refresh interval: ${REFRESH_INTERVAL / 1000}s`);
+        log.success("✅ Système NEXUS opérationnel !");
+        log.info(`⏱️  Refresh: ${REFRESH_INTERVAL / 1000}s`);
         log.info(`🎯 Targets: ${MIN_TARGETS}-${MAX_TARGETS}`);
-        ns.tprint("");
-        ns.tprint("═══════════════════════════════════════════════════════════");
-        ns.tprint("🔥 NEXUS v0.5-PROMETHEUS - OPÉRATIONNEL");
-        ns.tprint("═══════════════════════════════════════════════════════════");
-        ns.tprint("");
+        ns.print("");
+        ns.print("═══════════════════════════════════════════════════════════");
+        ns.print("🔥 NEXUS v0.5-PROMETHEUS - OPÉRATIONNEL");
+        ns.print("═══════════════════════════════════════════════════════════");
+        ns.print("");
+        
+        await ns.sleep(2000);
         
         // ═══════════════════════════════════════════════════════════════
         // MÉTRIQUES
@@ -84,14 +120,17 @@ export async function main(ns) {
         // BOUCLE PRINCIPALE
         // ═══════════════════════════════════════════════════════════════
         
-        log.info("🔄 Démarrage de la boucle principale...");
-        ns.tprint("");
-        
         while (true) {
             cycleCount++;
             const cycleStart = Date.now();
             
-            log.info(`━━━━━━━━━━ CYCLE ${cycleCount} ━━━━━━━━━━`);
+            ns.clearLog();
+            ns.print("╔═══════════════════════════════════════════════════════════╗");
+            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5-PROMETHEUS                   ║");
+            ns.print("╚═══════════════════════════════════════════════════════════╝");
+            ns.print("");
+            ns.print(`━━━━━━━━━━ CYCLE ${cycleCount} ━━━━━━━━━━`);
+            ns.print("");
             
             // ═══════════════════════════════════════════════════════════
             // REFRESH RÉSEAU (périodique)
@@ -101,33 +140,30 @@ export async function main(ns) {
             
             if (timeSinceRefresh > REFRESH_INTERVAL) {
                 try {
-                    log.info("🌐 Refresh réseau...");
+                    ns.print("🌐 Refresh réseau...");
                     
-                    // Re-scan capabilities (nouveau niveau, nouveaux outils)
                     caps.scan();
-                    
-                    // Refresh network
                     network.refresh(true);
                     
-                    // Auto-crack nouveaux serveurs
                     let newCracked = 0;
                     for (const server of servers) {
                         if (!ns.hasRootAccess(server)) {
                             if (network.crack(server)) {
                                 newCracked++;
-                                log.success(`🔓 Root: ${server}`);
+                                ns.print(`🔓 Root: ${server}`);
                             }
                         }
                     }
                     
                     if (newCracked > 0) {
-                        log.success(`✅ ${newCracked} nouveaux serveurs crackés`);
+                        ns.print(`✅ ${newCracked} nouveaux serveurs crackés`);
                     }
                     
                     lastRefreshTime = Date.now();
+                    ns.print("");
                     
                 } catch (error) {
-                    log.error(`Erreur refresh: ${error.message}`);
+                    ns.print(`❌ Erreur refresh: ${error.message}`);
                 }
             }
             
@@ -138,7 +174,6 @@ export async function main(ns) {
             let targets = [];
             
             try {
-                // Calcul dynamique du nombre de cibles
                 const targetCount = Math.min(
                     Math.max(
                         MIN_TARGETS,
@@ -150,52 +185,68 @@ export async function main(ns) {
                 targets = network.getTopTargets(targetCount);
                 
                 if (targets.length === 0) {
-                    log.warn("⚠️  Aucune cible disponible");
+                    ns.print("⚠️  Aucune cible disponible");
                 } else {
-                    log.info(`🎯 Cibles sélectionnées (${targets.length}):`);
+                    ns.print(`🎯 Cibles (${targets.length}):`);
                     for (const t of targets) {
                         const money = ns.getServerMaxMoney(t);
                         const level = ns.getServerRequiredHackingLevel(t);
-                        log.info(`  • ${t} ($${ns.formatNumber(money)}, lvl ${level})`);
+                        ns.print(`  • ${t} ($${ns.formatNumber(money)}, lvl ${level})`);
                     }
                 }
+                ns.print("");
                 
             } catch (error) {
-                log.error(`Erreur sélection cibles: ${error.message}`);
+                ns.print(`❌ Erreur sélection: ${error.message}`);
+                ns.print("");
             }
             
             // ═══════════════════════════════════════════════════════════
-            // PLACEHOLDER: HACKING (Phase 2)
+            // DISPATCH BATCHS
             // ═══════════════════════════════════════════════════════════
             
             if (targets.length > 0) {
-                log.info("💤 Phase 2 non implémentée (batcher + controller)");
-                log.info("   Le système attend Phase 2 pour hacker...");
+                for (const target of targets) {
+                    try {
+                        const result = batcher.dispatchBatch(target, {
+                            hackPercent: 0.1,
+                            maxThreadsPerJob: 5000
+                        });
+                        
+                        if (result.success) {
+                            ns.print(`✅ ${target}: ${result.totalThreads} threads`);
+                        } else {
+                            ns.print(`⚠️  ${target}: ${result.error}`);
+                        }
+                        
+                    } catch (error) {
+                        ns.print(`❌ Erreur batch ${target}: ${error.message}`);
+                    }
+                }
+                ns.print("");
             }
             
             // ═══════════════════════════════════════════════════════════
-            // STATS CYCLE
+            // STATS
             // ═══════════════════════════════════════════════════════════
             
             const cycleDuration = Date.now() - cycleStart;
             const money = ns.getServerMoneyAvailable("home");
-            const level = caps.hackingLevel;
             
-            log.info(`💰 Money: $${ns.formatNumber(money)} | 🎯 Level: ${level}`);
-            log.info(`⏱️  Cycle duration: ${cycleDuration}ms`);
-            log.info("");
+            ns.print(`💰 Money: $${ns.formatNumber(money)}`);
+            ns.print(`🎯 Level: ${caps.hackingLevel}`);
+            ns.print(`⏱️  Cycle: ${cycleDuration}ms`);
+            ns.print("");
             
-            // Attendre avant prochain cycle
             await ns.sleep(CYCLE_DELAY);
         }
         
     } catch (error) {
-        log.error(`ERREUR CRITIQUE: ${error.message}`);
-        log.error(`Stack: ${error.stack}`);
-        
-        ns.tprint("═══════════════════════════════════════════════════════════");
-        ns.tprint("❌ ORCHESTRATOR CRASHED");
-        ns.tprint(`Erreur: ${error.message}`);
-        ns.tprint("═══════════════════════════════════════════════════════════");
+        ns.print("");
+        ns.print("═══════════════════════════════════════════════════════════");
+        ns.print("❌ ORCHESTRATOR CRASHED");
+        ns.print(`Erreur: ${error.message}`);
+        ns.print(`Stack: ${error.stack}`);
+        ns.print("═══════════════════════════════════════════════════════════");
     }
 }

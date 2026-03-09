@@ -1,11 +1,15 @@
 /boot.js
 /core/orchestrator.js
 /core/port-handler.js
+/core/ram-manager.js
+/core/batcher.js
+/hack/controller.js
 /lib/constants.js
 /lib/logger.js
 /lib/capabilities.js
 /lib/network.js
 /lib/utils.js
+/workers/hwgw.js
 /managers/server-manager.js
 /tools/cleanup.js
 /tools/deploy.js
