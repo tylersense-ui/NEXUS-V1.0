@@ -1,94 +1,200 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Controller                        ║
+ * ║ NEXUS v0.5-PROMETHEUS - Controller DEBUG                  ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /hack/controller.js
- * @version     0.5.0
- * @description Dispatcher ultra-rapide qui lit port 4
+ * @version     0.5.9
+ * @description Controller avec MEGA DEBUG
  */
 
 import { CONFIG } from "/lib/constants.js";
-import { PortHandler } from "/core/port-handler.js";
 import { Logger } from "/lib/logger.js";
+import { PortHandler } from "/core/port-handler.js";
 
 /** @param {NS} ns */
 export async function main(ns) {
-    ns.disableLog("ALL");
+    ns.disableLog('ALL');
+    ns.tail();
     
     const log = new Logger(ns, "CONTROLLER");
     const portHandler = new PortHandler(ns);
     
-    log.info("🎮 Controller démarré");
-    
-    const COMMANDS_PORT = CONFIG.PORTS.COMMANDS;
     const POLL_INTERVAL = CONFIG.CONTROLLER.POLL_INTERVAL_MS;
+    const COMMAND_PORT = CONFIG.PORTS.COMMANDS;
     
-    let jobsProcessed = 0;
-    let jobsSucceeded = 0;
-    let jobsFailed = 0;
+    log.info(`🎮 Controller démarré (DEBUG MODE)`);
+    log.info(`📨 Écoute port ${COMMAND_PORT} | Polling: ${POLL_INTERVAL}ms`);
     
-    log.info(`📨 Écoute port ${COMMANDS_PORT} | Polling: ${POLL_INTERVAL}ms`);
+    let totalJobsReceived = 0;
+    let totalJobsSuccess = 0;
+    let totalJobsFailed = 0;
+    let lastReport = Date.now();
+    
+    const failureReasons = new Map(); // host → [reasons]
     
     while (true) {
         try {
-            while (!portHandler.isEmpty(COMMANDS_PORT)) {
-                const job = portHandler.readJSON(COMMANDS_PORT);
+            while (!portHandler.isEmpty(COMMAND_PORT)) {
+                const job = portHandler.readJSON(COMMAND_PORT);
                 
                 if (!job) {
-                    log.warn("Job invalide dans port 4");
+                    log.warn("Job vide ou invalide");
                     continue;
                 }
                 
-                if (!job.type || !job.host || !job.threads || job.threads < 1) {
-                    log.warn(`Job invalide: ${JSON.stringify(job)}`);
-                    jobsFailed++;
+                totalJobsReceived++;
+                
+                const { type, target, threads, host, delay, uuid, script } = job;
+                
+                // ════════════════════════════════════════════════════
+                // DEBUG : AFFICHER LE JOB
+                // ════════════════════════════════════════════════════
+                
+                ns.print(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+                ns.print(`📦 JOB #${totalJobsReceived}`);
+                ns.print(`   Type: ${type}`);
+                ns.print(`   Target: ${target}`);
+                ns.print(`   Threads: ${threads}`);
+                ns.print(`   Host: ${host}`);
+                ns.print(`   Script: ${script}`);
+                ns.print(`   UUID: ${uuid}`);
+                ns.print(`   Delay: ${delay}ms`);
+                
+                // ════════════════════════════════════════════════════
+                // ÉTAPE 1 : VÉRIFIER HOST EXISTE
+                // ════════════════════════════════════════════════════
+                
+                if (!ns.serverExists(host)) {
+                    ns.print(`   ❌ ERREUR: Host '${host}' n'existe pas !`);
+                    totalJobsFailed++;
                     continue;
                 }
                 
-                if (!job.target) {
-                    log.warn(`Job sans target: ${JSON.stringify(job)}`);
-                    jobsFailed++;
-                    continue;
-                }
+                ns.print(`   ✅ Host existe`);
                 
-                try {
-                    await ns.scp(job.script, job.host);
-                } catch (e) {
-                    log.error(`Erreur scp sur ${job.host}: ${e}`);
-                    jobsFailed++;
-                    continue;
-                }
+                // ════════════════════════════════════════════════════
+                // ÉTAPE 2 : VÉRIFIER RAM DISPONIBLE
+                // ════════════════════════════════════════════════════
                 
-                try {
-                    const pid = ns.exec(
-                        job.script,
-                        job.host,
-                        job.threads,
-                        job.target,
-                        job.delay,
-                        job.uuid
-                    );
+                const maxRam = ns.getServerMaxRam(host);
+                const usedRam = ns.getServerUsedRam(host);
+                const availableRam = maxRam - usedRam;
+                const scriptRam = ns.getScriptRam(script, 'home');
+                const neededRam = scriptRam * threads;
+                
+                ns.print(`   📊 RAM:`);
+                ns.print(`      Total: ${maxRam.toFixed(2)}GB`);
+                ns.print(`      Utilisée: ${usedRam.toFixed(2)}GB`);
+                ns.print(`      Disponible: ${availableRam.toFixed(2)}GB`);
+                ns.print(`      Besoin: ${neededRam.toFixed(2)}GB (${scriptRam}GB × ${threads})`);
+                
+                if (neededRam > availableRam) {
+                    ns.print(`   ❌ ERREUR: Pas assez de RAM !`);
+                    ns.print(`      Manque: ${(neededRam - availableRam).toFixed(2)}GB`);
                     
-                    if (pid > 0) {
-                        jobsSucceeded++;
-                        jobsProcessed++;
-                    } else {
-                        log.warn(`Échec exec sur ${job.host}`);
-                        jobsFailed++;
+                    if (!failureReasons.has(host)) failureReasons.set(host, []);
+                    failureReasons.get(host).push(`RAM insuffisante (besoin ${neededRam.toFixed(2)}GB)`);
+                    
+                    totalJobsFailed++;
+                    continue;
+                }
+                
+                ns.print(`   ✅ RAM suffisante`);
+                
+                // ════════════════════════════════════════════════════
+                // ÉTAPE 3 : COPIER WORKER
+                // ════════════════════════════════════════════════════
+                
+                if (!ns.fileExists(script, host)) {
+                    ns.print(`   📁 Worker absent, copie en cours...`);
+                    
+                    const scpResult = await ns.scp(script, host, 'home');
+                    
+                    if (!scpResult) {
+                        ns.print(`   ❌ ERREUR: Échec SCP !`);
+                        
+                        if (!failureReasons.has(host)) failureReasons.set(host, []);
+                        failureReasons.get(host).push(`Échec SCP de ${script}`);
+                        
+                        totalJobsFailed++;
+                        continue;
                     }
                     
-                } catch (e) {
-                    log.error(`Erreur exec: ${e}`);
-                    jobsFailed++;
+                    ns.print(`   ✅ Worker copié`);
+                } else {
+                    ns.print(`   ✅ Worker déjà présent`);
                 }
+                
+                // ════════════════════════════════════════════════════
+                // ÉTAPE 4 : EXEC
+                // ════════════════════════════════════════════════════
+                
+                ns.print(`   🚀 Lancement...`);
+                
+                const pid = ns.exec(
+                    script,
+                    host,
+                    threads,
+                    target,
+                    delay,
+                    uuid
+                );
+                
+                if (pid === 0) {
+                    ns.print(`   ❌ ERREUR: Échec exec (PID = 0) !`);
+                    
+                    if (!failureReasons.has(host)) failureReasons.set(host, []);
+                    failureReasons.get(host).push(`Exec failed (PID=0)`);
+                    
+                    totalJobsFailed++;
+                } else {
+                    ns.print(`   ✅ SUCCÈS (PID: ${pid})`);
+                    totalJobsSuccess++;
+                }
+                
+                ns.print(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+                ns.print(``);
             }
             
-            await ns.sleep(POLL_INTERVAL);
+            // ════════════════════════════════════════════════════
+            // RAPPORT TOUTES LES 10 SECONDES
+            // ════════════════════════════════════════════════════
+            
+            if (Date.now() - lastReport > 10000) {
+                ns.print(`╔═══════════════════════════════════════════════════╗`);
+                ns.print(`║          CONTROLLER DEBUG REPORT                   ║`);
+                ns.print(`╚═══════════════════════════════════════════════════╝`);
+                ns.print(``);
+                ns.print(`📊 STATISTIQUES:`);
+                ns.print(`   Total jobs reçus: ${totalJobsReceived}`);
+                ns.print(`   ✅ Succès: ${totalJobsSuccess} (${totalJobsReceived > 0 ? ((totalJobsSuccess / totalJobsReceived) * 100).toFixed(1) : 0}%)`);
+                ns.print(`   ❌ Échecs: ${totalJobsFailed} (${totalJobsReceived > 0 ? ((totalJobsFailed / totalJobsReceived) * 100).toFixed(1) : 0}%)`);
+                ns.print(``);
+                
+                if (failureReasons.size > 0) {
+                    ns.print(`🚨 RAISONS D'ÉCHEC PAR SERVEUR:`);
+                    for (const [host, reasons] of failureReasons.entries()) {
+                        ns.print(`   ${host}:`);
+                        const counts = new Map();
+                        for (const reason of reasons) {
+                            counts.set(reason, (counts.get(reason) || 0) + 1);
+                        }
+                        for (const [reason, count] of counts.entries()) {
+                            ns.print(`      • ${reason} (×${count})`);
+                        }
+                    }
+                    ns.print(``);
+                }
+                
+                lastReport = Date.now();
+            }
             
         } catch (error) {
-            log.error(`Erreur controller: ${error.message}`);
-            await ns.sleep(1000);
+            log.error(`Controller error: ${error.message}`);
+            ns.print(`❌ CRASH: ${error.stack}`);
         }
+        
+        await ns.sleep(POLL_INTERVAL);
     }
 }
