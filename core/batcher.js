@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.7.1 - Batcher (FIX allocation partielle)         ║
+ * ║ NEXUS v0.7.3 - Batcher (FIX multiplier)                   ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -23,10 +23,12 @@ export class Batcher {
             const maxMoney = this.ns.getServerMaxMoney(target);
             const moneyPercent = maxMoney > 0 ? (currentMoney / maxMoney) : 0;
             
+            // Si moins de 75% d'argent → GROW seulement
             if (moneyPercent < 0.75) {
                 return this.dispatchGrow(target);
             }
             
+            // Sinon → HWGW
             return this.dispatchHWGW(target);
             
         } catch (error) {
@@ -46,7 +48,6 @@ export class Batcher {
         
         const allocation = this.ramMgr.allocateThreads(growThreads);
         
-        // ← FIX : Accepter allocation partielle !
         if (allocation.allocations.length === 0) {
             return { success: false, error: "No allocations" };
         }
@@ -78,7 +79,12 @@ export class Batcher {
     
     dispatchHWGW(target) {
         const maxMoney = this.ns.getServerMaxMoney(target);
-        const hackPercent = 0.25;
+        
+        // ════════════════════════════════════════════════════
+        // FIX : Réduire hackPercent à 5% au lieu de 25%
+        // ════════════════════════════════════════════════════
+        
+        const hackPercent = 0.05;  // ← 5% seulement !
         
         const hackThreads = Math.max(1, Math.floor(
             this.ns.hackAnalyzeThreads(target, maxMoney * hackPercent)
@@ -95,35 +101,19 @@ export class Batcher {
         const growSec = this.ns.growthAnalyzeSecurity(growThreads, target);
         const w2Threads = Math.max(0, Math.ceil(growSec / 0.05));
         
-        const totalRam = this.ramMgr.getTotalAvailableRam();
+        // ════════════════════════════════════════════════════
+        // FIX : NE PAS UTILISER DE MULTIPLIER !
+        // ════════════════════════════════════════════════════
         
-        const hackRam = this.ns.getScriptRam(CONFIG.WORKERS.HACK);
-        const growRam = this.ns.getScriptRam(CONFIG.WORKERS.GROW);
-        const weakenRam = this.ns.getScriptRam(CONFIG.WORKERS.WEAKEN);
-        
-        const ramPerBatch = 
-            (hackThreads * hackRam) +
-            (w1Threads * weakenRam) +
-            (growThreads * growRam) +
-            (w2Threads * weakenRam);
-        
-        if (ramPerBatch === 0 || totalRam < ramPerBatch) {
-            return { success: false, error: "Not enough RAM for 1 batch" };
-        }
-        
-        const multiplier = Math.floor(totalRam / ramPerBatch);
-        
-        if (multiplier === 0) {
-            return { success: false, error: "Multiplier = 0" };
-        }
+        // On lance juste 1 batch, c'est tout !
+        // Le cycle va se répéter toutes les 500ms de toute façon
         
         let jobsSent = 0;
         let totalAllocated = 0;
         
         // HACK
         if (hackThreads > 0) {
-            const hAlloc = this.ramMgr.allocateThreads(hackThreads * multiplier);
-            // ← FIX : Accepter partiel !
+            const hAlloc = this.ramMgr.allocateThreads(hackThreads);
             if (hAlloc.allocations.length > 0) {
                 for (const alloc of hAlloc.allocations) {
                     this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -143,7 +133,7 @@ export class Batcher {
         
         // WEAKEN1
         if (w1Threads > 0) {
-            const w1Alloc = this.ramMgr.allocateThreads(w1Threads * multiplier);
+            const w1Alloc = this.ramMgr.allocateThreads(w1Threads);
             if (w1Alloc.allocations.length > 0) {
                 for (const alloc of w1Alloc.allocations) {
                     this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -163,7 +153,7 @@ export class Batcher {
         
         // GROW
         if (growThreads > 0) {
-            const gAlloc = this.ramMgr.allocateThreads(growThreads * multiplier);
+            const gAlloc = this.ramMgr.allocateThreads(growThreads);
             if (gAlloc.allocations.length > 0) {
                 for (const alloc of gAlloc.allocations) {
                     this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -183,7 +173,7 @@ export class Batcher {
         
         // WEAKEN2
         if (w2Threads > 0) {
-            const w2Alloc = this.ramMgr.allocateThreads(w2Threads * multiplier);
+            const w2Alloc = this.ramMgr.allocateThreads(w2Threads);
             if (w2Alloc.allocations.length > 0) {
                 for (const alloc of w2Alloc.allocations) {
                     this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -201,7 +191,7 @@ export class Batcher {
             }
         }
         
-        this.log.info(`💰 HWGW: ${totalAllocated} threads (${jobsSent} jobs)`);
+        this.log.info(`💰 HWGW(5%): ${totalAllocated} threads (${jobsSent} jobs)`);
         
         return {
             success: true,
