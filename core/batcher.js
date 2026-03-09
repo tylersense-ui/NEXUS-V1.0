@@ -1,11 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Batcher SATURATION                ║
+ * ║ NEXUS v0.6-PROMETHEUS - Batcher STABLE                    ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/batcher.js
- * @version     0.6.0
- * @description SATURATION MODE - Utilise TOUTE la RAM
+ * @version     0.6.1
+ * @description STABLE MODE - 1 batch optimal par cycle
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -19,6 +19,9 @@ export class Batcher {
         this.portHandler = portHandler;
         this.caps = capabilities;
         this.log = new Logger(ns, "BATCHER");
+        
+        // Tracking des derniers batchs
+        this.lastBatchTime = new Map(); // target → timestamp
     }
     
     dispatchBatch(target, options = {}) {
@@ -28,18 +31,31 @@ export class Batcher {
             const moneyPercent = maxMoney > 0 ? (currentMoney / maxMoney) : 0;
             
             // ════════════════════════════════════════════════════
-            // MODE 1 : SERVEUR VIDE → GROW SATURATION
+            // COOLDOWN : Éviter de spammer le même target
             // ════════════════════════════════════════════════════
             
-            if (moneyPercent < 0.1) {
-                return this.saturateGrow(target);
+            const now = Date.now();
+            const lastTime = this.lastBatchTime.get(target) || 0;
+            const timeSinceLastBatch = now - lastTime;
+            const hackTime = this.ns.getHackTime(target);
+            
+            // Attendre au moins 50% du hackTime avant nouveau batch
+            if (timeSinceLastBatch < hackTime * 0.5) {
+                return {
+                    success: false,
+                    error: "Batch cooldown"
+                };
             }
             
             // ════════════════════════════════════════════════════
-            // MODE 2 : SERVEUR PLEIN → HWGW SATURATION
+            // MODE SELECTION
             // ════════════════════════════════════════════════════
             
-            return this.saturateHWGW(target);
+            if (moneyPercent < 0.5) {
+                return this.dispatchGrowBatch(target);
+            }
+            
+            return this.dispatchHWGWBatch(target);
             
         } catch (error) {
             this.log.error(`Error dispatching batch: ${error.message}`);
@@ -51,36 +67,40 @@ export class Batcher {
     }
     
     /**
-     * SATURATION GROW : Utiliser TOUTE la RAM pour grow
+     * GROW BATCH : 1 méga batch de grow
      */
-    saturateGrow(target) {
-        this.log.info(`🌱 SATURATION GROW sur ${target}`);
-        
-        // Calculer TOUTE la RAM disponible
-        const totalRamAvailable = this.ramMgr.getTotalAvailableRam();
+    dispatchGrowBatch(target) {
+        // Calculer RAM MAINTENANT (pas 5 secondes avant)
+        const totalRam = this.ramMgr.getTotalAvailableRam();
         const growRam = this.ns.getScriptRam(CONFIG.WORKERS.GROW);
-        const maxGrowThreads = Math.floor(totalRamAvailable / growRam);
         
-        if (maxGrowThreads === 0) {
+        // Utiliser 80% de la RAM (pas 100% pour éviter race condition)
+        const safeRam = totalRam * 0.8;
+        const growThreads = Math.floor(safeRam / growRam);
+        
+        if (growThreads === 0) {
             return {
                 success: false,
                 error: "No RAM for grow"
             };
         }
         
-        this.log.info(`   RAM dispo: ${totalRamAvailable.toFixed(2)}GB`);
-        this.log.info(`   Grow threads: ${maxGrowThreads}`);
+        this.log.info(`🌱 GROW BATCH sur ${target}`);
+        this.log.info(`   RAM: ${totalRam.toFixed(2)}GB (safe: ${safeRam.toFixed(2)}GB)`);
+        this.log.info(`   Threads: ${growThreads}`);
         
-        // Allouer TOUT
-        const allocation = this.ramMgr.allocateThreads(maxGrowThreads);
+        // Allouer
+        const allocation = this.ramMgr.allocateThreads(growThreads);
         
         if (!allocation.success) {
+            this.log.warn(`   Allocation échouée (${allocation.allocated}/${growThreads})`);
             return {
                 success: false,
                 error: "Allocation failed"
             };
         }
         
+        // Générer jobs
         const jobs = [];
         
         for (const alloc of allocation.allocations) {
@@ -100,26 +120,25 @@ export class Batcher {
             this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, job);
         }
         
+        this.lastBatchTime.set(target, Date.now());
+        
         return {
             success: true,
-            mode: 'GROW_SATURATION',
-            totalThreads: maxGrowThreads,
+            mode: 'GROW',
+            totalThreads: growThreads,
             jobsDispatched: jobs.length
         };
     }
     
     /**
-     * SATURATION HWGW : Utiliser TOUTE la RAM pour HWGW
+     * HWGW BATCH : 1 méga batch HWGW optimal
      */
-    saturateHWGW(target) {
-        this.log.info(`💰 SATURATION HWGW sur ${target}`);
-        
-        // Calculer ratio HWGW optimal
+    dispatchHWGWBatch(target) {
         const currentMoney = this.ns.getServerMoneyAvailable(target);
         const maxMoney = this.ns.getServerMaxMoney(target);
         const hackPercent = CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
         
-        // Calculer threads pour 1 batch
+        // Calculer threads pour 1 batch parfait
         const hackThreads = Math.max(1, Math.floor(
             this.ns.hackAnalyzeThreads(target, maxMoney * hackPercent)
         ));
@@ -135,7 +154,7 @@ export class Batcher {
         const growSecIncrease = this.ns.growthAnalyzeSecurity(growThreads, target);
         const weakenThreads2 = Math.ceil(growSecIncrease / 0.05);
         
-        // RAM par batch
+        // RAM nécessaire pour 1 batch
         const hackRam = this.ns.getScriptRam(CONFIG.WORKERS.HACK);
         const growRam = this.ns.getScriptRam(CONFIG.WORKERS.GROW);
         const weakenRam = this.ns.getScriptRam(CONFIG.WORKERS.WEAKEN);
@@ -146,104 +165,123 @@ export class Batcher {
             (growThreads * growRam) +
             (weakenThreads2 * weakenRam);
         
-        // Combien de batchs on peut lancer ?
-        const totalRamAvailable = this.ramMgr.getTotalAvailableRam();
-        const numBatches = Math.floor(totalRamAvailable / ramPerBatch);
+        // Calculer combien de fois on peut multiplier ce batch
+        const totalRam = this.ramMgr.getTotalAvailableRam();
+        const safeRam = totalRam * 0.8; // 80% pour sécurité
         
-        if (numBatches === 0) {
+        const multiplier = Math.floor(safeRam / ramPerBatch);
+        
+        if (multiplier === 0) {
             return {
                 success: false,
-                error: "No RAM for batch"
+                error: "Not enough RAM for 1 batch"
             };
         }
         
-        this.log.info(`   RAM dispo: ${totalRamAvailable.toFixed(2)}GB`);
+        this.log.info(`💰 HWGW BATCH sur ${target}`);
+        this.log.info(`   RAM: ${totalRam.toFixed(2)}GB (safe: ${safeRam.toFixed(2)}GB)`);
         this.log.info(`   RAM/batch: ${ramPerBatch.toFixed(2)}GB`);
-        this.log.info(`   Batchs: ${numBatches}`);
-        this.log.info(`   Total H/W1/G/W2: ${hackThreads * numBatches}/${weakenThreads1 * numBatches}/${growThreads * numBatches}/${weakenThreads2 * numBatches}`);
+        this.log.info(`   Multiplier: x${multiplier}`);
+        this.log.info(`   H/W1/G/W2: ${hackThreads}/${weakenThreads1}/${growThreads}/${weakenThreads2}`);
+        this.log.info(`   Total threads: ${(hackThreads + weakenThreads1 + growThreads + weakenThreads2) * multiplier}`);
+        
+        // Allouer TOUT d'un coup (atomique)
+        const totalHack = hackThreads * multiplier;
+        const totalW1 = weakenThreads1 * multiplier;
+        const totalGrow = growThreads * multiplier;
+        const totalW2 = weakenThreads2 * multiplier;
         
         const jobs = [];
         const buffer = CONFIG.HACKING.TIME_BUFFER_MS;
         
-        // Générer N batchs
-        for (let i = 0; i < numBatches; i++) {
-            const batchDelay = i * (buffer * 4); // Décaler chaque batch
-            
-            // Hack
-            const hackAlloc = this.ramMgr.allocateThreads(hackThreads);
-            if (hackAlloc.success) {
-                for (const alloc of hackAlloc.allocations) {
-                    jobs.push({
-                        type: 'hack',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: batchDelay,
-                        uuid: this.generateUUID(),
-                        script: CONFIG.WORKERS.HACK
-                    });
-                }
-            }
-            
-            // Weaken1
-            const w1Alloc = this.ramMgr.allocateThreads(weakenThreads1);
-            if (w1Alloc.success) {
-                for (const alloc of w1Alloc.allocations) {
-                    jobs.push({
-                        type: 'weaken',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: batchDelay + buffer,
-                        uuid: this.generateUUID(),
-                        script: CONFIG.WORKERS.WEAKEN
-                    });
-                }
-            }
-            
-            // Grow
-            const growAlloc = this.ramMgr.allocateThreads(growThreads);
-            if (growAlloc.success) {
-                for (const alloc of growAlloc.allocations) {
-                    jobs.push({
-                        type: 'grow',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: batchDelay + (buffer * 2),
-                        uuid: this.generateUUID(),
-                        script: CONFIG.WORKERS.GROW
-                    });
-                }
-            }
-            
-            // Weaken2
-            const w2Alloc = this.ramMgr.allocateThreads(weakenThreads2);
-            if (w2Alloc.success) {
-                for (const alloc of w2Alloc.allocations) {
-                    jobs.push({
-                        type: 'weaken',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: batchDelay + (buffer * 3),
-                        uuid: this.generateUUID(),
-                        script: CONFIG.WORKERS.WEAKEN
-                    });
-                }
-            }
+        // Allouer HACK
+        const hackAlloc = this.ramMgr.allocateThreads(totalHack);
+        if (!hackAlloc.success) {
+            this.log.warn(`   Hack allocation failed (${hackAlloc.allocated}/${totalHack})`);
+            return { success: false, error: "Hack allocation failed" };
         }
         
-        // Envoyer
+        for (const alloc of hackAlloc.allocations) {
+            jobs.push({
+                type: 'hack',
+                target: target,
+                threads: alloc.threads,
+                host: alloc.hostname,
+                delay: 0,
+                uuid: this.generateUUID(),
+                script: CONFIG.WORKERS.HACK
+            });
+        }
+        
+        // Allouer WEAKEN1
+        const w1Alloc = this.ramMgr.allocateThreads(totalW1);
+        if (!w1Alloc.success) {
+            this.log.warn(`   W1 allocation failed (${w1Alloc.allocated}/${totalW1})`);
+            return { success: false, error: "W1 allocation failed" };
+        }
+        
+        for (const alloc of w1Alloc.allocations) {
+            jobs.push({
+                type: 'weaken',
+                target: target,
+                threads: alloc.threads,
+                host: alloc.hostname,
+                delay: buffer,
+                uuid: this.generateUUID(),
+                script: CONFIG.WORKERS.WEAKEN
+            });
+        }
+        
+        // Allouer GROW
+        const growAlloc = this.ramMgr.allocateThreads(totalGrow);
+        if (!growAlloc.success) {
+            this.log.warn(`   Grow allocation failed (${growAlloc.allocated}/${totalGrow})`);
+            return { success: false, error: "Grow allocation failed" };
+        }
+        
+        for (const alloc of growAlloc.allocations) {
+            jobs.push({
+                type: 'grow',
+                target: target,
+                threads: alloc.threads,
+                host: alloc.hostname,
+                delay: buffer * 2,
+                uuid: this.generateUUID(),
+                script: CONFIG.WORKERS.GROW
+            });
+        }
+        
+        // Allouer WEAKEN2
+        const w2Alloc = this.ramMgr.allocateThreads(totalW2);
+        if (!w2Alloc.success) {
+            this.log.warn(`   W2 allocation failed (${w2Alloc.allocated}/${totalW2})`);
+            return { success: false, error: "W2 allocation failed" };
+        }
+        
+        for (const alloc of w2Alloc.allocations) {
+            jobs.push({
+                type: 'weaken',
+                target: target,
+                threads: alloc.threads,
+                host: alloc.hostname,
+                delay: buffer * 3,
+                uuid: this.generateUUID(),
+                script: CONFIG.WORKERS.WEAKEN
+            });
+        }
+        
+        // Envoyer TOUS les jobs
         for (const job of jobs) {
             this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, job);
         }
         
+        this.lastBatchTime.set(target, Date.now());
+        
         return {
             success: true,
-            mode: 'HWGW_SATURATION',
-            batches: numBatches,
-            totalThreads: hackThreads + weakenThreads1 + growThreads + weakenThreads2,
+            mode: 'HWGW',
+            multiplier: multiplier,
+            totalThreads: totalHack + totalW1 + totalGrow + totalW2,
             jobsDispatched: jobs.length
         };
     }
