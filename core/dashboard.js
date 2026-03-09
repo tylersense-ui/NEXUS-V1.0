@@ -1,11 +1,7 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Dashboard Ultimate                ║
+ * ║ NEXUS v0.7.2 - Dashboard ULTIMATE (Network Load)          ║
  * ╚═══════════════════════════════════════════════════════════╝
- * 
- * @file        /core/dashboard.js
- * @version     0.5.8
- * @description Dashboard avec tracking RECORD
  */
 
 /** @param {NS} ns */
@@ -22,7 +18,6 @@ export async function main(ns) {
     let lastMoney = ns.getServerMoneyAvailable('home');
     let lastTime = Date.now();
     
-    // Tracking RECORD
     let maxIncome = 0;
     let maxMoney = 0;
     
@@ -35,7 +30,6 @@ export async function main(ns) {
         const timeDelta = (now - lastTime) / 1000;
         const incomePerSec = timeDelta > 0 ? moneyDelta / timeDelta : 0;
         
-        // Update RECORD
         if (incomePerSec > maxIncome) maxIncome = incomePerSec;
         if (currentMoney > maxMoney) maxMoney = currentMoney;
         
@@ -69,6 +63,21 @@ export async function main(ns) {
         for (const s of purchasedServers) {
             totalPurchasedRam += ns.getServerMaxRam(s);
         }
+        
+        // ════════════════════════════════════════════════════
+        // NOUVEAU : CALCUL CHARGE RÉSEAU
+        // ════════════════════════════════════════════════════
+        
+        let totalNetworkRam = homeRam + totalPurchasedRam;
+        let totalNetworkUsed = homeUsedRam;
+        
+        for (const s of purchasedServers) {
+            totalNetworkUsed += ns.getServerUsedRam(s);
+        }
+        
+        const networkLoadPercent = totalNetworkRam > 0 ? (totalNetworkUsed / totalNetworkRam) * 100 : 0;
+        
+        // ════════════════════════════════════════════════════
         
         let totalThreads = 0;
         const allServers = ['home', ...purchasedServers];
@@ -121,7 +130,6 @@ export async function main(ns) {
         
         ns.print(`💵 Total: ${moneyStr}`);
         
-        // Revenu avec RECORD
         const recordStr = maxIncome > 0 ? `[RECORD: $${ns.formatNumber(maxIncome)}/s]` : '';
         ns.print(`${incomeColor} Revenu: ${incomeStr} ${recordStr}`);
         
@@ -171,11 +179,24 @@ export async function main(ns) {
         const homeBar = generateProgressBar(homeRamPercent, 20);
         
         ns.print(`🏠 Home: ${ns.formatRam(homeUsedRam)} / ${ns.formatRam(homeRam)}`);
-        ns.print(`   ${homeBar} ${homeRamPercent.toFixed(1)}% (cycle normal)`);
+        ns.print(`   ${homeBar} ${homeRamPercent.toFixed(1)}%`);
         ns.print('');
         
+        // ════════════════════════════════════════════════════
+        // NOUVEAU : BARRE RÉSEAU
+        // ════════════════════════════════════════════════════
+        
+        ns.print(`📡 RÉSEAU TOTAL`);
+        ns.print(`   RAM: ${ns.formatRam(totalNetworkUsed)} / ${ns.formatRam(totalNetworkRam)}`);
+        
+        const networkBar = generateProgressBar(networkLoadPercent, 20);
+        ns.print(`   ${networkBar} ${networkLoadPercent.toFixed(1)}%`);
+        ns.print('');
+        
+        // ════════════════════════════════════════════════════
+        
         ns.print(`🖥️  Serveurs achetés: ${purchasedServers.length}/25`);
-        ns.print(`📊 RAM totale: ${ns.formatRam(totalPurchasedRam)}`);
+        ns.print(`📊 RAM serveurs: ${ns.formatRam(totalPurchasedRam)}`);
         
         const maxPossibleRam = 1048576 * 25;
         const upgradePercent = (totalPurchasedRam / maxPossibleRam) * 100;
