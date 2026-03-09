@@ -1,5 +1,6 @@
 /boot.js
 /core/orchestrator.js
+/core/dashboard.js
 /core/port-handler.js
 /core/ram-manager.js
 /core/batcher.js
@@ -13,8 +14,8 @@
 /workers/grow.js
 /workers/weaken.js
 /managers/server-manager.js
+/managers/server-upgrader.js
 /tools/cleanup.js
 /tools/deploy.js
 /tools/global-kill.js
 /manifest.txt
-/README.md
