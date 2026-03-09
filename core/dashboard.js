@@ -4,8 +4,8 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/dashboard.js
- * @version     0.5.6
- * @description Dashboard temps réel ultra-visuel (FIXED)
+ * @version     0.5.8
+ * @description Dashboard avec tracking RECORD
  */
 
 /** @param {NS} ns */
@@ -22,6 +22,10 @@ export async function main(ns) {
     let lastMoney = ns.getServerMoneyAvailable('home');
     let lastTime = Date.now();
     
+    // Tracking RECORD
+    let maxIncome = 0;
+    let maxMoney = 0;
+    
     while (true) {
         ns.clearLog();
         
@@ -30,6 +34,10 @@ export async function main(ns) {
         const moneyDelta = currentMoney - lastMoney;
         const timeDelta = (now - lastTime) / 1000;
         const incomePerSec = timeDelta > 0 ? moneyDelta / timeDelta : 0;
+        
+        // Update RECORD
+        if (incomePerSec > maxIncome) maxIncome = incomePerSec;
+        if (currentMoney > maxMoney) maxMoney = currentMoney;
         
         moneyHistory.push(currentMoney);
         if (moneyHistory.length > HISTORY_SIZE) moneyHistory.shift();
@@ -44,15 +52,12 @@ export async function main(ns) {
         const homeRam = ns.getServerMaxRam('home');
         const homeUsedRam = ns.getServerUsedRam('home');
         
-        // BitNode (FIXED - use getResetInfo)
         const resetInfo = ns.getResetInfo();
         const bitnode = resetInfo.currentNode || 1;
         
-        // Playtime
         const player = ns.getPlayer();
         const playtime = player.totalPlaytime || 0;
         
-        // Heure réelle
         const realTime = new Date();
         const hours = String(realTime.getHours()).padStart(2, '0');
         const minutes = String(realTime.getMinutes()).padStart(2, '0');
@@ -74,7 +79,6 @@ export async function main(ns) {
             }
         }
         
-        // Détecter les actions en cours par cible
         const targetActions = new Map();
         
         for (const s of allServers) {
@@ -116,7 +120,10 @@ export async function main(ns) {
         const incomeColor = incomePerSec > 0 ? '🟢' : '🔴';
         
         ns.print(`💵 Total: ${moneyStr}`);
-        ns.print(`${incomeColor} Revenu: ${incomeStr}`);
+        
+        // Revenu avec RECORD
+        const recordStr = maxIncome > 0 ? `[RECORD: $${ns.formatNumber(maxIncome)}/s]` : '';
+        ns.print(`${incomeColor} Revenu: ${incomeStr} ${recordStr}`);
         
         const moneySparkline = generateSparkline(moneyHistory);
         ns.print(`📈 Tendance: ${moneySparkline}`);
@@ -129,7 +136,6 @@ export async function main(ns) {
         ns.print(`⚡ Threads actifs: ${ns.formatNumber(totalThreads)}`);
         ns.print(`🎯 Cibles: ${targetActions.size}`);
         
-        // Barres de progression avec actions (FIXED)
         const targetList = Array.from(targetActions.keys()).slice(0, 5);
         for (const target of targetList) {
             const currentTargetMoney = ns.getServerMoneyAvailable(target);
@@ -142,11 +148,9 @@ export async function main(ns) {
             const moneyReady = moneyPercent > 90;
             const isReady = secReady && moneyReady;
             
-            // Barre sans cercle (FIXED)
             const bar = generateProgressBar(moneyPercent, 20);
             const percentStr = moneyPercent.toFixed(1).padStart(5);
             
-            // Icônes actions
             const actions = targetActions.get(target);
             let actionIcon = '  ';
             
@@ -154,10 +158,8 @@ export async function main(ns) {
             else if (actions.grow > 0) actionIcon = '🌱';
             else if (actions.weaken > 0) actionIcon = '🔧';
             
-            // Status ready
             const statusIcon = isReady ? '🟢' : '🔴';
             
-            // Affichage : status + action + barre (sans cercle dedans)
             ns.print(`  ${target.padEnd(20)} ${statusIcon}${actionIcon} ${bar} ${percentStr}%`);
         }
         ns.print('');
@@ -169,7 +171,7 @@ export async function main(ns) {
         const homeBar = generateProgressBar(homeRamPercent, 20);
         
         ns.print(`🏠 Home: ${ns.formatRam(homeUsedRam)} / ${ns.formatRam(homeRam)}`);
-        ns.print(`   ${homeBar} ${homeRamPercent.toFixed(1)}%`);
+        ns.print(`   ${homeBar} ${homeRamPercent.toFixed(1)}% (cycle normal)`);
         ns.print('');
         
         ns.print(`🖥️  Serveurs achetés: ${purchasedServers.length}/25`);
@@ -189,7 +191,6 @@ export async function main(ns) {
     }
 }
 
-// FIXED: Pas de cercle dans la barre
 function generateProgressBar(percent, width) {
     const filled = Math.floor((percent / 100) * width);
     const empty = width - filled;
