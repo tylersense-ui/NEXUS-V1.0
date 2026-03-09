@@ -1,11 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Orchestrator                      ║
+ * ║ NEXUS v0.5-PROMETHEUS - Orchestrator Phase 4              ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/orchestrator.js
- * @version     0.5.2
- * @description Coordinateur central du système NEXUS
+ * @version     0.5.3
+ * @description Coordinateur central (Phase 4 batching)
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -23,8 +23,8 @@ export async function main(ns) {
     
     ns.print("╔═══════════════════════════════════════════════════════════╗");
     ns.print("║                                                           ║");
-    ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5-PROMETHEUS                   ║");
-    ns.print("║   'Stealing Fire From The Gods'                           ║");
+    ns.print("║   🔥 NEXUS v0.5.3-PROMETHEUS PHASE 4                      ║");
+    ns.print("║   'Synchronized Batching - The Real Deal'                ║");
     ns.print("║                                                           ║");
     ns.print("╚═══════════════════════════════════════════════════════════╝");
     ns.print("");
@@ -32,10 +32,6 @@ export async function main(ns) {
     const log = new Logger(ns, "ORCHESTRATOR");
     
     try {
-        // ═══════════════════════════════════════════════════════════
-        // INITIALISATION
-        // ═══════════════════════════════════════════════════════════
-        
         log.info("📋 Initialisation Capabilities...");
         const caps = new Capabilities(ns);
         ns.print("");
@@ -57,19 +53,15 @@ export async function main(ns) {
         ns.print("✅ RamManager initialisé");
         ns.print("");
         
-        log.info("🔥 Initialisation Batcher...");
+        log.info("🔥 Initialisation Batcher Phase 4...");
         const batcher = new Batcher(ns, network, ramMgr, portHandler, caps);
-        ns.print("✅ Batcher initialisé");
+        ns.print("✅ Batcher Phase 4 (synchronized timing)");
         ns.print("");
-        
-        // ═══════════════════════════════════════════════════════════
-        // LANCEMENT CONTROLLER
-        // ═══════════════════════════════════════════════════════════
         
         log.info("🎮 Démarrage Controller...");
         
         if (!ns.fileExists("/hack/controller.js")) {
-            log.error("Controller introuvable: /hack/controller.js");
+            log.error("Controller introuvable");
             return;
         }
         
@@ -83,14 +75,10 @@ export async function main(ns) {
         ns.print(`✅ Controller démarré (PID: ${controllerPID})`);
         ns.print("");
         
-        // ═══════════════════════════════════════════════════════════
-        // LANCEMENT DASHBOARD (AUTO)
-        // ═══════════════════════════════════════════════════════════
-        
         log.info("📊 Démarrage Dashboard...");
         
         if (!ns.fileExists("/core/dashboard.js")) {
-            log.warn("Dashboard introuvable: /core/dashboard.js");
+            log.warn("Dashboard introuvable");
         } else {
             const dashboardPID = ns.run("/core/dashboard.js");
             
@@ -98,8 +86,6 @@ export async function main(ns) {
                 log.warn("Échec démarrage dashboard");
             } else {
                 ns.print(`✅ Dashboard démarré (PID: ${dashboardPID})`);
-                
-                // Auto-tail du dashboard après 1 seconde
                 await ns.sleep(1000);
                 ns.tail(dashboardPID);
                 ns.print("✅ Dashboard auto-tail activé");
@@ -107,10 +93,6 @@ export async function main(ns) {
         }
         
         ns.print("");
-        
-        // ═══════════════════════════════════════════════════════════
-        // LANCEMENT SERVER-MANAGER (AUTO)
-        // ═══════════════════════════════════════════════════════════
         
         log.info("🖥️  Démarrage Server Manager...");
         
@@ -128,36 +110,26 @@ export async function main(ns) {
         
         ns.print("");
         
-        // ═══════════════════════════════════════════════════════════
-        // CONFIGURATION
-        // ═══════════════════════════════════════════════════════════
-        
         const REFRESH_INTERVAL = CONFIG.ORCHESTRATOR.REFRESH_INTERVAL_MS;
         const MIN_TARGETS = CONFIG.ORCHESTRATOR.MIN_TARGETS;
         const MAX_TARGETS = CONFIG.ORCHESTRATOR.MAX_TARGETS;
         const CYCLE_DELAY = CONFIG.ORCHESTRATOR.CYCLE_DELAY_MS;
         
-        log.success("✅ Système NEXUS opérationnel !");
+        log.success("✅ NEXUS Phase 4 opérationnel !");
         log.info(`⏱️  Refresh: ${REFRESH_INTERVAL / 1000}s`);
         log.info(`🎯 Targets: ${MIN_TARGETS}-${MAX_TARGETS}`);
+        log.info(`🔥 Batching: SYNCHRONIZED (Phase 4)`);
+        log.info(`🔧 Prep: ${CONFIG.BATCHER.ENABLE_PREP ? 'ENABLED' : 'DISABLED'}`);
         ns.print("");
         ns.print("═══════════════════════════════════════════════════════════");
-        ns.print("🔥 NEXUS v0.5-PROMETHEUS - OPÉRATIONNEL");
+        ns.print("🔥 NEXUS v0.5.3-PROMETHEUS PHASE 4 - OPÉRATIONNEL");
         ns.print("═══════════════════════════════════════════════════════════");
         ns.print("");
         
         await ns.sleep(2000);
         
-        // ═══════════════════════════════════════════════════════════
-        // MÉTRIQUES
-        // ═══════════════════════════════════════════════════════════
-        
         let lastRefreshTime = Date.now();
         let cycleCount = 0;
-        
-        // ═══════════════════════════════════════════════════════════
-        // BOUCLE PRINCIPALE
-        // ═══════════════════════════════════════════════════════════
         
         while (true) {
             cycleCount++;
@@ -165,15 +137,11 @@ export async function main(ns) {
             
             ns.clearLog();
             ns.print("╔═══════════════════════════════════════════════════════════╗");
-            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5-PROMETHEUS                   ║");
+            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5.3-PHASE4                    ║");
             ns.print("╚═══════════════════════════════════════════════════════════╝");
             ns.print("");
             ns.print(`━━━━━━━━━━ CYCLE ${cycleCount} ━━━━━━━━━━`);
             ns.print("");
-            
-            // ═══════════════════════════════════════════════════════
-            // REFRESH RÉSEAU (périodique)
-            // ═══════════════════════════════════════════════════════
             
             const timeSinceRefresh = Date.now() - lastRefreshTime;
             
@@ -206,10 +174,6 @@ export async function main(ns) {
                 }
             }
             
-            // ═══════════════════════════════════════════════════════
-            // SÉLECTION CIBLES
-            // ═══════════════════════════════════════════════════════
-            
             let targets = [];
             
             try {
@@ -240,34 +204,30 @@ export async function main(ns) {
                 ns.print("");
             }
             
-            // ═══════════════════════════════════════════════════════
-            // DISPATCH BATCHS
-            // ═══════════════════════════════════════════════════════
-            
             if (targets.length > 0) {
                 for (const target of targets) {
                     try {
                         const result = batcher.dispatchBatch(target, {
-                            hackPercent: 0.1,
+                            hackPercent: 0.05,
                             maxThreadsPerJob: 5000
                         });
                         
                         if (result.success) {
-                            ns.print(`✅ ${target}: ${result.totalThreads} threads`);
+                            if (result.prep) {
+                                ns.print(`🔧 ${target}: PREP (${result.totalThreads} threads)`);
+                            } else {
+                                ns.print(`✅ ${target}: BATCH (${result.totalThreads} threads)`);
+                            }
                         } else {
-                            ns.print(`⚠️  ${target}: ${result.error}`);
+                            ns.print(`⏳ ${target}: ${result.error}`);
                         }
                         
                     } catch (error) {
-                        ns.print(`❌ Erreur batch ${target}: ${error.message}`);
+                        ns.print(`❌ Erreur ${target}: ${error.message}`);
                     }
                 }
                 ns.print("");
             }
-            
-            // ═══════════════════════════════════════════════════════
-            // STATS
-            // ═══════════════════════════════════════════════════════
             
             const cycleDuration = Date.now() - cycleStart;
             const money = ns.getServerMoneyAvailable("home");
