@@ -14,7 +14,6 @@
 /workers/grow.js
 /workers/weaken.js
 /managers/server-manager.js
-/managers/server-upgrader.js
 /tools/cleanup.js
 /tools/deploy.js
 /tools/global-kill.js
