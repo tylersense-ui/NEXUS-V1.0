@@ -9,13 +9,12 @@
 /lib/logger.js
 /lib/capabilities.js
 /lib/network.js
-/lib/timing.js
 /lib/utils.js
-/lib/formulas-helper.js
 /workers/hack.js
 /workers/grow.js
 /workers/weaken.js
 /managers/server-manager.js
+/managers/stock-manager.js
 /tools/deploy.js
 /tools/global-kill.js
 /tools/network-audit.js

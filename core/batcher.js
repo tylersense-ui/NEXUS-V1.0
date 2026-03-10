@@ -1,12 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.8.2 - Batcher (FORMULAS + DELAYS COURTS)         ║
+ * ║ NEXUS v0.9.0 - Batcher (RESET-READY, NO FORMULAS REQ)     ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
 import { CONFIG } from "/lib/constants.js";
 import { Logger } from "/lib/logger.js";
-import { FormulasHelper } from "/lib/formulas-helper.js";
 
 export class Batcher {
     constructor(ns, network, ramManager, portHandler, capabilities) {
@@ -16,7 +15,9 @@ export class Batcher {
         this.portHandler = portHandler;
         this.caps = capabilities;
         this.log = new Logger(ns, "BATCHER");
-        this.formulas = new FormulasHelper(ns);
+        
+        // Détection Formulas (optionnel)
+        this.hasFormulas = ns.fileExists("Formulas.exe");
     }
     
     dispatchBatch(target, options = {}) {
@@ -160,33 +161,34 @@ export class Batcher {
     }
     
     /**
-     * HWGW v0.8.2 : FORMULAS pour threads, DELAYS COURTS pour throughput
+     * HWGW SANS FORMULAS REQUIS
+     * Utilise ns.hackAnalyzeThreads() et ns.growthAnalyze()
      */
     dispatchHWGW(target) {
         const hackPercent = CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
+        const maxMoney = this.ns.getServerMaxMoney(target);
         
         // ════════════════════════════════════════════════════
-        // CALCULS PRÉCIS AVEC FORMULAS
+        // CALCUL THREADS (fonctionne avec ou sans Formulas)
         // ════════════════════════════════════════════════════
         
-        const hackThreads = this.formulas.calculateHackThreads(target, hackPercent);
-        
-        if (hackThreads === 0) {
-            return { success: false, error: "Cannot hack target" };
-        }
+        const hackThreads = Math.max(1, Math.floor(
+            this.ns.hackAnalyzeThreads(target, maxMoney * hackPercent)
+        ));
         
         const hackSec = this.ns.hackAnalyzeSecurity(hackThreads, target);
         const w1Threads = Math.max(0, Math.ceil(hackSec / 0.05));
         
-        const growThreads = this.formulas.calculateGrowThreads(target, hackPercent);
+        const moneyAfterHack = maxMoney * (1 - hackPercent);
+        const growThreads = Math.max(1, Math.ceil(
+            this.ns.growthAnalyze(target, maxMoney / Math.max(1, moneyAfterHack))
+        ));
         
         const growSec = this.ns.growthAnalyzeSecurity(growThreads, target);
         const w2Threads = Math.max(0, Math.ceil(growSec / 0.05));
         
-        const hackChance = this.formulas.getHackChance(target);
-        
         // ════════════════════════════════════════════════════
-        // DELAYS COURTS ET FIXES (comme v0.7.4)
+        // DELAYS FIXES (pas de Formulas requis)
         // ════════════════════════════════════════════════════
         
         const hackDelay = 0;
@@ -281,11 +283,12 @@ export class Batcher {
             }
         }
         
-        this.log.info(`💰 HWGW(10%): ${totalAllocated} threads | Chance: ${(hackChance * 100).toFixed(1)}%`);
+        const mode = this.hasFormulas ? "HWGW(10%)" : "HWGW(10%-NoF)";
+        this.log.info(`💰 ${mode}: ${totalAllocated} threads (${jobsSent} jobs)`);
         
         return {
             success: true,
-            mode: 'HWGW_FORMULAS',
+            mode: mode,
             totalThreads: totalAllocated,
             jobsDispatched: jobsSent
         };

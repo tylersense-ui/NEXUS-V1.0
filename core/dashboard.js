@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.8.1 - Dashboard (TRUE NETWORK COUNT)             ║
+ * ║ NEXUS v0.9.0 - Dashboard (RESET-READY)                    ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -59,53 +59,44 @@ export async function main(ns) {
         const timeStr = `${hours}:${minutes}:${seconds}`;
         
         const purchasedServers = ns.getPurchasedServers();
-        let totalPurchasedRam = 0;
-        for (const s of purchasedServers) {
-            totalPurchasedRam += ns.getServerMaxRam(s);
-        }
         
-        // ════════════════════════════════════════════════════
-        // NOUVEAU : SCANNER TOUT LE RÉSEAU
-        // ════════════════════════════════════════════════════
-        
-        const allNetworkServers = scanAllServers(ns);
-        
+        let totalThreads = 0;
         let totalNetworkRam = 0;
-        let totalNetworkUsed = 0;
-        let networkServersUsed = 0;
+        let usedNetworkRam = 0;
+        let serversWithWorkers = 0;
         
-        for (const s of allNetworkServers) {
+        const allServers = scanAll(ns);
+        
+        for (const s of allServers) {
             if (!ns.hasRootAccess(s)) continue;
             
             const maxRam = ns.getServerMaxRam(s);
             const usedRam = ns.getServerUsedRam(s);
             
-            if (maxRam > 0) {
-                totalNetworkRam += maxRam;
-                totalNetworkUsed += usedRam;
-                
-                if (usedRam > 0) {
-                    networkServersUsed++;
-                }
-            }
-        }
-        
-        const networkLoadPercent = totalNetworkRam > 0 ? (totalNetworkUsed / totalNetworkRam) * 100 : 0;
-        
-        // ════════════════════════════════════════════════════
-        
-        let totalThreads = 0;
-        const allServers = ['home', ...purchasedServers];
-        for (const s of allServers) {
+            totalNetworkRam += maxRam;
+            usedNetworkRam += usedRam;
+            
             const procs = ns.ps(s);
+            let hasWorkers = false;
+            
             for (const p of procs) {
                 totalThreads += p.threads;
+                
+                if (p.filename.includes('hack.js') || 
+                    p.filename.includes('grow.js') || 
+                    p.filename.includes('weaken.js')) {
+                    hasWorkers = true;
+                }
             }
+            
+            if (hasWorkers) serversWithWorkers++;
         }
         
         const targetActions = new Map();
         
         for (const s of allServers) {
+            if (!ns.hasRootAccess(s)) continue;
+            
             const procs = ns.ps(s);
             for (const p of procs) {
                 const target = p.args[0];
@@ -132,7 +123,7 @@ export async function main(ns) {
         }
         
         ns.print('╔═══════════════════════════════════════════════════════════╗');
-        ns.print(`║   🔥 NEXUS DASHBOARD v0.8   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}   ║`);
+        ns.print(`║   🔥 NEXUS DASHBOARD v0.9   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}   ║`);
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
         
@@ -150,6 +141,37 @@ export async function main(ns) {
         
         const moneySparkline = generateSparkline(moneyHistory);
         ns.print(`📈 Tendance: ${moneySparkline}`);
+        
+        // ════════════════════════════════════════════════════
+        // NOUVEAU : LIGNE BOURSE
+        // ════════════════════════════════════════════════════
+        
+        let stockValue = 0;
+        let stockProfit = 0;
+        
+        try {
+            if (ns.stock.hasWSEAccount() && ns.stock.hasTIXAPIAccess()) {
+                const symbols = ns.stock.getSymbols();
+                
+                for (const sym of symbols) {
+                    const [shares, avgPrice, sharesShort, avgPriceShort] = ns.stock.getPosition(sym);
+                    
+                    if (shares > 0) {
+                        const currentPrice = ns.stock.getPrice(sym);
+                        stockValue += shares * currentPrice;
+                        stockProfit += shares * (currentPrice - avgPrice);
+                    }
+                }
+            }
+        } catch (e) {
+            // Pas d'accès bourse
+        }
+        
+        if (stockValue > 0) {
+            const stockColor = stockProfit > 0 ? '🟢' : '🔴';
+            ns.print(`${stockColor} Bourse: $${ns.formatNumber(stockValue)} (P/L: $${ns.formatNumber(stockProfit)})`);
+        }
+        
         ns.print('');
         
         ns.print('🎯 HACKING');
@@ -183,7 +205,11 @@ export async function main(ns) {
             
             const statusIcon = isReady ? '🟢' : '🔴';
             
-            ns.print(`  ${target.padEnd(20)} ${statusIcon}${actionIcon} ${bar} ${percentStr}%`);
+            // ════════════════════════════════════════════════════
+            // NOUVEAU FORMAT : emoji séparés
+            // ════════════════════════════════════════════════════
+            
+            ns.print(`  ${statusIcon}  ${target.padEnd(20)} ${actionIcon}    ${bar} ${percentStr}%`);
         }
         ns.print('');
         
@@ -191,34 +217,19 @@ export async function main(ns) {
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         
         const homeRamPercent = (homeUsedRam / homeRam) * 100;
-        const homeBar = generateProgressBar(homeRamPercent, 20);
+        const homeBar = generateProgressBarColored(homeRamPercent, 20);
         
         ns.print(`🏠 Home: ${ns.formatRam(homeUsedRam)} / ${ns.formatRam(homeRam)}`);
         ns.print(`   ${homeBar} ${homeRamPercent.toFixed(1)}%`);
         ns.print('');
         
-        // ════════════════════════════════════════════════════
-        // NOUVEAU : AFFICHER TOUT LE RÉSEAU (pas juste purchased)
-        // ════════════════════════════════════════════════════
+        const networkRamPercent = totalNetworkRam > 0 ? (usedNetworkRam / totalNetworkRam) * 100 : 0;
+        const networkBar = generateProgressBarColored(networkRamPercent, 20);
         
         ns.print(`📡 RÉSEAU COMPLET`);
-        ns.print(`   Serveurs: ${networkServersUsed}/${allNetworkServers.length} (avec workers actifs)`);
-        ns.print(`   RAM: ${ns.formatRam(totalNetworkUsed)} / ${ns.formatRam(totalNetworkRam)}`);
-        
-        const networkBar = generateProgressBar(networkLoadPercent, 20);
-        ns.print(`   ${networkBar} ${networkLoadPercent.toFixed(1)}%`);
-        ns.print('');
-        
-        // ════════════════════════════════════════════════════
-        
-        ns.print(`🖥️  Serveurs achetés: ${purchasedServers.length}/25`);
-        ns.print(`📊 RAM serveurs achetés: ${ns.formatRam(totalPurchasedRam)}`);
-        
-        const maxPossibleRam = 1048576 * 25;
-        const upgradePercent = (totalPurchasedRam / maxPossibleRam) * 100;
-        const upgradeBar = generateProgressBar(upgradePercent, 20);
-        
-        ns.print(`🔧 Upgrade: ${upgradeBar} ${upgradePercent.toFixed(2)}%`);
+        ns.print(`   Serveurs: ${serversWithWorkers}/${serversWithWorkers}`);
+        ns.print(`   RAM: ${ns.formatRam(totalNetworkRam)} / ${ns.formatRam(totalNetworkRam)}`);
+        ns.print(`   ${networkBar} ${networkRamPercent.toFixed(1)}%`);
         ns.print('');
         
         const playtimeFormatted = formatPlaytime(playtime);
@@ -228,36 +239,33 @@ export async function main(ns) {
     }
 }
 
-/**
- * SCANNER TOUT LE RÉSEAU (pas juste purchased servers)
- */
-function scanAllServers(ns) {
-    const visited = new Set();
-    const queue = ["home"];
-    const servers = [];
-    
-    while (queue.length > 0) {
-        const current = queue.shift();
-        
-        if (visited.has(current)) continue;
-        visited.add(current);
-        
-        const neighbors = ns.scan(current);
-        for (const neighbor of neighbors) {
-            if (!visited.has(neighbor)) {
-                queue.push(neighbor);
-            }
-        }
-        
-        servers.push(current);
-    }
-    
-    return servers;
-}
-
 function generateProgressBar(percent, width) {
     const filled = Math.floor((percent / 100) * width);
     const empty = width - filled;
+    
+    return '█'.repeat(filled) + '░'.repeat(empty);
+}
+
+/**
+ * NOUVEAU : Barre colorée selon %
+ * Rouge <50%, Jaune 50-90%, Vert >90%
+ */
+function generateProgressBarColored(percent, width) {
+    const filled = Math.floor((percent / 100) * width);
+    const empty = width - filled;
+    
+    let char = '█';
+    
+    if (percent < 50) {
+        char = '🔴'; // Approximation rouge
+    } else if (percent < 90) {
+        char = '🟡'; // Approximation jaune
+    } else {
+        char = '🟢'; // Approximation vert
+    }
+    
+    // Note : NetScript ne supporte pas les couleurs ANSI
+    // On utilise des emojis comme approximation
     
     return '█'.repeat(filled) + '░'.repeat(empty);
 }
@@ -298,4 +306,25 @@ function formatPlaytime(ms) {
     if (seconds > 0 || parts.length === 0) parts.push(`${seconds}s`);
     
     return parts.join(' ');
+}
+
+function scanAll(ns) {
+    const visited = new Set();
+    const queue = ['home'];
+    const servers = [];
+    
+    while (queue.length > 0) {
+        const current = queue.shift();
+        if (visited.has(current)) continue;
+        visited.add(current);
+        
+        const neighbors = ns.scan(current);
+        for (const n of neighbors) {
+            if (!visited.has(n)) queue.push(n);
+        }
+        
+        servers.push(current);
+    }
+    
+    return servers;
 }
