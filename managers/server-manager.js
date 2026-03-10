@@ -1,11 +1,7 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Server Manager                    ║
+ * ║ NEXUS v0.8.3 - Server Manager (AUTO-STOP)                 ║
  * ╚═══════════════════════════════════════════════════════════╝
- * 
- * @file        /managers/server-manager.js
- * @version     0.5.1
- * @description Achat ET upgrade automatique des serveurs
  */
 
 /** @param {NS} ns */
@@ -14,15 +10,14 @@ export async function main(ns) {
     ns.tail();
     
     const MAX_SERVERS = 25;
-    const MAX_RAM = 1048576; // 1 PB
-    const CHECK_INTERVAL = 30000; // 30s
-    const MIN_RAM = 8; // Démarrer avec 8GB
+    const MAX_RAM = 1048576;
+    const CHECK_INTERVAL = 30000;
     
     while (true) {
         ns.clearLog();
         
         ns.print('╔═══════════════════════════════════════════════════════════╗');
-        ns.print('║   🖥️  NEXUS SERVER MANAGER (Buy + Upgrade)                ║');
+        ns.print('║   🖥️  NEXUS SERVER MANAGER v0.8.3                         ║');
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
         
@@ -34,11 +29,38 @@ export async function main(ns) {
         ns.print('');
         
         // ═══════════════════════════════════════════════════════════
-        // PHASE 1 : ACHETER NOUVEAUX SERVEURS
+        // VÉRIFIER SI TOUT EST MAX
+        // ═══════════════════════════════════════════════════════════
+        
+        let allMaxed = servers.length === MAX_SERVERS;
+        
+        if (allMaxed) {
+            for (const server of servers) {
+                const ram = ns.getServerMaxRam(server);
+                if (ram < MAX_RAM) {
+                    allMaxed = false;
+                    break;
+                }
+            }
+        }
+        
+        if (allMaxed) {
+            ns.print('╔═══════════════════════════════════════════════════════════╗');
+            ns.print('║   ✅ MISSION ACCOMPLIE !                                  ║');
+            ns.print('║                                                           ║');
+            ns.print('║   25/25 serveurs @ 1PB chacun                             ║');
+            ns.print('║   Server Manager s\'arrête automatiquement.                ║');
+            ns.print('║                                                           ║');
+            ns.print('╚═══════════════════════════════════════════════════════════╝');
+            return;
+        }
+        
+        // ═══════════════════════════════════════════════════════════
+        // ACHAT NOUVEAUX SERVEURS
         // ═══════════════════════════════════════════════════════════
         
         if (servers.length < MAX_SERVERS) {
-            const buyRam = MIN_RAM;
+            const buyRam = 8;
             const buyCost = ns.getPurchasedServerCost(buyRam);
             
             if (money > buyCost * 2) {
@@ -48,7 +70,7 @@ export async function main(ns) {
                 if (purchased) {
                     ns.print(`✅ ACHAT: ${purchased} (${ns.formatRam(buyRam)}) - $${ns.formatNumber(buyCost)}`);
                     ns.print('');
-                    continue; // Retour immédiat pour acheter le suivant
+                    continue;
                 }
             } else {
                 ns.print(`⏳ ACHAT: Besoin $${ns.formatNumber(buyCost)} pour serveur ${servers.length + 1}`);
@@ -60,7 +82,7 @@ export async function main(ns) {
         }
         
         // ═══════════════════════════════════════════════════════════
-        // PHASE 2 : UPGRADER SERVEURS EXISTANTS
+        // UPGRADE SERVEURS EXISTANTS
         // ═══════════════════════════════════════════════════════════
         
         if (servers.length === 0) {
@@ -120,7 +142,6 @@ export async function main(ns) {
             ns.print('');
         }
         
-        // Stats finales
         let totalRam = 0;
         for (const server of servers) {
             totalRam += ns.getServerMaxRam(server);

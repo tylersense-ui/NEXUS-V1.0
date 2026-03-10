@@ -19,4 +19,5 @@
 /tools/cleanup.js
 /tools/deploy.js
 /tools/global-kill.js
+/tools/network-audit.js
 /manifest.txt
