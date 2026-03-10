@@ -9,6 +9,7 @@
 /lib/logger.js
 /lib/capabilities.js
 /lib/network.js
+/lib/batch-calculator.js
 /lib/timing.js
 /lib/utils.js
 /workers/hack.js
