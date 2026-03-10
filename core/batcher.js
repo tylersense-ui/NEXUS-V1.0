@@ -1,11 +1,12 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.7.4 - Batcher (ROLLBACK - WORKING VERSION)       ║
+ * ║ NEXUS v0.8.1 - Batcher (FORMULAS OPTIMIZED)               ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
 import { CONFIG } from "/lib/constants.js";
 import { Logger } from "/lib/logger.js";
+import { FormulasHelper } from "/lib/formulas-helper.js";
 
 export class Batcher {
     constructor(ns, network, ramManager, portHandler, capabilities) {
@@ -15,6 +16,7 @@ export class Batcher {
         this.portHandler = portHandler;
         this.caps = capabilities;
         this.log = new Logger(ns, "BATCHER");
+        this.formulas = new FormulasHelper(ns);
     }
     
     dispatchBatch(target, options = {}) {
@@ -79,7 +81,7 @@ export class Batcher {
         const currentSec = this.ns.getServerSecurityLevel(target);
         const minSec = this.ns.getServerMinSecurityLevel(target);
         
-        this.log.info(`🔧 WEAKEN: ${allocation.allocated}/${weakenThreads} threads (${jobsSent} jobs) | Sec: ${currentSec.toFixed(1)}/${minSec.toFixed(1)}`);
+        this.log.info(`🔧 WEAKEN: ${allocation.allocated} threads | Sec: ${currentSec.toFixed(1)}/${minSec.toFixed(1)}`);
         
         return {
             success: true,
@@ -91,7 +93,6 @@ export class Batcher {
     
     dispatchGrowPrep(target) {
         const totalRam = this.ramMgr.getTotalAvailableRam();
-        
         const growRam = this.ns.getScriptRam(CONFIG.WORKERS.GROW);
         const weakenRam = this.ns.getScriptRam(CONFIG.WORKERS.WEAKEN);
         
@@ -148,7 +149,7 @@ export class Batcher {
         const maxMoney = this.ns.getServerMaxMoney(target);
         const moneyPercent = (currentMoney / maxMoney) * 100;
         
-        this.log.info(`🌱 GROW+WEAKEN: ${totalAllocated} threads (${jobsSent} jobs) | Money: ${moneyPercent.toFixed(1)}%`);
+        this.log.info(`🌱 GROW+WEAKEN: ${totalAllocated} threads | Money: ${moneyPercent.toFixed(1)}%`);
         
         return {
             success: true,
@@ -159,23 +160,24 @@ export class Batcher {
     }
     
     dispatchHWGW(target) {
-        const maxMoney = this.ns.getServerMaxMoney(target);
-        const hackPercent = 0.05;
+        const hackPercent = CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
         
-        const hackThreads = Math.max(1, Math.floor(
-            this.ns.hackAnalyzeThreads(target, maxMoney * hackPercent)
-        ));
+        const hackThreads = this.formulas.calculateHackThreads(target, hackPercent);
+        
+        if (hackThreads === 0) {
+            return { success: false, error: "Cannot hack target" };
+        }
         
         const hackSec = this.ns.hackAnalyzeSecurity(hackThreads, target);
         const w1Threads = Math.max(0, Math.ceil(hackSec / 0.05));
         
-        const moneyAfterHack = maxMoney * (1 - hackPercent);
-        const growThreads = Math.max(1, Math.ceil(
-            this.ns.growthAnalyze(target, maxMoney / Math.max(1, moneyAfterHack))
-        ));
+        const growThreads = this.formulas.calculateGrowThreads(target, hackPercent);
         
         const growSec = this.ns.growthAnalyzeSecurity(growThreads, target);
         const w2Threads = Math.max(0, Math.ceil(growSec / 0.05));
+        
+        const timings = this.formulas.calculateTimings(target, CONFIG.HACKING.TIME_BUFFER_MS);
+        const hackChance = this.formulas.getHackChance(target);
         
         let jobsSent = 0;
         let totalAllocated = 0;
@@ -189,7 +191,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: 0,
+                        delay: timings.hackDelay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.HACK
                     });
@@ -208,7 +210,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: 50,
+                        delay: timings.weaken1Delay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.WEAKEN
                     });
@@ -227,7 +229,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: 100,
+                        delay: timings.growDelay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.GROW
                     });
@@ -246,7 +248,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: 150,
+                        delay: timings.weaken2Delay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.WEAKEN
                     });
@@ -256,11 +258,11 @@ export class Batcher {
             }
         }
         
-        this.log.info(`💰 HWGW(5%): ${totalAllocated} threads (${jobsSent} jobs)`);
+        this.log.info(`💰 HWGW(10%): ${totalAllocated} threads | Chance: ${(hackChance * 100).toFixed(1)}%`);
         
         return {
             success: true,
-            mode: 'HWGW',
+            mode: 'HWGW_FORMULAS',
             totalThreads: totalAllocated,
             jobsDispatched: jobsSent
         };

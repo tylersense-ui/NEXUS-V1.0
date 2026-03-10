@@ -11,6 +11,7 @@
 /lib/network.js
 /lib/timing.js
 /lib/utils.js
+/lib/formulas-helper.js
 /workers/hack.js
 /workers/grow.js
 /workers/weaken.js
