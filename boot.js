@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.9.0 - Boot (RESET-READY)                         ║
+ * ║ NEXUS v0.9.1 - Boot (TOUS LES MANAGERS)                   ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -14,7 +14,7 @@ export async function main(ns) {
     
     ns.tprint("╔═══════════════════════════════════════════════════════════╗");
     ns.tprint("║                                                           ║");
-    ns.tprint("║   🔥 NEXUS v0.9.0-RESET-READY - BOOT SEQUENCE             ║");
+    ns.tprint("║   🔥 NEXUS v0.9.1-DYNAMIC - BOOT SEQUENCE                 ║");
     ns.tprint("║   'Optimisation Phase'                                    ║");
     ns.tprint("║                                                           ║");
     ns.tprint("╚═══════════════════════════════════════════════════════════╝");
@@ -70,6 +70,10 @@ export async function main(ns) {
     
     await ns.sleep(1000);
     
+    // ════════════════════════════════════════════════════
+    // LANCEMENT ORCHESTRATOR (batching)
+    // ════════════════════════════════════════════════════
+    
     ns.tprint("[BOOT] Lancement de l'orchestrator...");
     
     if (!ns.fileExists("/core/orchestrator.js")) {
@@ -78,17 +82,65 @@ export async function main(ns) {
         return;
     }
     
-    const pid = ns.run("/core/orchestrator.js");
+    const orchestratorPID = ns.run("/core/orchestrator.js");
     
-    if (pid === 0) {
+    if (orchestratorPID === 0) {
         ns.tprint("  ❌ ERREUR: Échec lancement orchestrator");
         ns.tprint("  Vérifiez la RAM disponible sur home");
         return;
     }
     
-    ns.tprint(`  ✅ Orchestrator démarré (PID: ${pid})`);
+    ns.tprint(`  ✅ Orchestrator démarré (PID: ${orchestratorPID})`);
     ns.tprint("");
+    
+    await ns.sleep(500);
+    
+    // ════════════════════════════════════════════════════
+    // LANCEMENT SERVER MANAGER (upgrade RAM)
+    // ════════════════════════════════════════════════════
+    
+    ns.tprint("[BOOT] Lancement du server manager...");
+    
+    if (ns.fileExists("/managers/server-manager.js")) {
+        const serverMgrPID = ns.run("/managers/server-manager.js");
+        
+        if (serverMgrPID > 0) {
+            ns.tprint(`  ✅ Server Manager démarré (PID: ${serverMgrPID})`);
+        } else {
+            ns.tprint("  ⚠️  Server Manager non démarré (RAM insuffisante ou déjà MAX)");
+        }
+    } else {
+        ns.tprint("  ⚠️  /managers/server-manager.js introuvable");
+    }
+    ns.tprint("");
+    
+    await ns.sleep(500);
+    
+    // ════════════════════════════════════════════════════
+    // LANCEMENT STOCK MANAGER (bourse)
+    // ════════════════════════════════════════════════════
+    
+    ns.tprint("[BOOT] Lancement du stock manager...");
+    
+    if (ns.fileExists("/managers/stock-manager.js")) {
+        // Vérifier si on a accès bourse
+        if (ns.stock.hasWSEAccount() && ns.stock.hasTIXAPIAccess()) {
+            const stockMgrPID = ns.run("/managers/stock-manager.js");
+            
+            if (stockMgrPID > 0) {
+                ns.tprint(`  ✅ Stock Manager démarré (PID: ${stockMgrPID})`);
+            } else {
+                ns.tprint("  ⚠️  Stock Manager non démarré (RAM insuffisante)");
+            }
+        } else {
+            ns.tprint("  ⚠️  Pas d'accès bourse (acheter WSE + TIX API)");
+        }
+    } else {
+        ns.tprint("  ⚠️  /managers/stock-manager.js introuvable");
+    }
+    ns.tprint("");
+    
     ns.tprint("╔═══════════════════════════════════════════════════════════╗");
-    ns.tprint("║   ✅ NEXUS v0.9.0-RESET-READY - BOOT COMPLETE             ║");
+    ns.tprint("║   ✅ NEXUS v0.9.1-DYNAMIC - BOOT COMPLETE                 ║");
     ns.tprint("╚═══════════════════════════════════════════════════════════╝");
 }
