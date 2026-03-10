@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.8.1 - RAM Manager (JOB SLICING FIX)              ║
+ * ║ NEXUS v0.8.1 - RAM Manager (TRUE JOB SLICING)             ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -36,7 +36,8 @@ export class RamManager {
     }
     
     /**
-     * NOUVEAU : Job Slicing - distribue les threads sur TOUS les serveurs
+     * NOUVEAU : VRAI JOB SLICING
+     * Découpe les jobs sur plusieurs serveurs
      */
     allocateThreads(totalThreads) {
         if (totalThreads <= 0) {
@@ -61,13 +62,13 @@ export class RamManager {
         let remainingThreads = totalThreads;
         
         // ════════════════════════════════════════════════════
-        // JOB SLICING : Distribue sur TOUS les serveurs
+        // SLICING : Remplir serveur par serveur
         // ════════════════════════════════════════════════════
         
         for (const server of servers) {
             if (remainingThreads <= 0) break;
             
-            // Prendre AUTANT de threads que possible sur ce serveur
+            // Prendre TOUT ce qui est disponible sur ce serveur
             const threadsOnServer = Math.min(remainingThreads, server.availableThreads);
             
             if (threadsOnServer > 0) {
@@ -82,11 +83,11 @@ export class RamManager {
         }
         
         // ════════════════════════════════════════════════════
-        // ACCEPTER LES ALLOCATIONS PARTIELLES !
+        // SUCCÈS si on a alloué au moins QUELQUE CHOSE
         // ════════════════════════════════════════════════════
         
         return {
-            success: allocations.length > 0,  // ← Succès si AU MOINS 1 serveur !
+            success: allocations.length > 0,  // ← Changé !
             allocations: allocations,
             allocated: totalThreads - remainingThreads,
             remaining: remainingThreads
@@ -98,10 +99,6 @@ export class RamManager {
         const available = [];
         
         for (const hostname of servers) {
-            // ════════════════════════════════════════════════════
-            // VÉRIFIER ROOT ACCESS
-            // ════════════════════════════════════════════════════
-            
             if (!this.ns.hasRootAccess(hostname)) continue;
             
             const maxRam = this.ns.getServerMaxRam(hostname);
@@ -112,10 +109,6 @@ export class RamManager {
             if (hostname === 'home') {
                 availableRam -= CONFIG.HACKING.RESERVED_HOME_RAM;
             }
-            
-            // ════════════════════════════════════════════════════
-            // ACCEPTER MÊME LES PETITS SERVEURS (1.75GB minimum)
-            // ════════════════════════════════════════════════════
             
             if (availableRam >= 1.75) {
                 available.push({
@@ -128,7 +121,7 @@ export class RamManager {
             }
         }
         
-        // Trier par RAM disponible (plus gros serveurs en premier)
+        // Trier par RAM disponible (plus gros en premier)
         available.sort((a, b) => b.availableRam - a.availableRam);
         
         return available;
