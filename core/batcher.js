@@ -1,12 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.8.0 - Batcher (FORMULAS OPTIMIZED)               ║
+ * ║ NEXUS v0.8.0 - Batcher (FORMULAS INTEGRATED)              ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
 import { CONFIG } from "/lib/constants.js";
 import { Logger } from "/lib/logger.js";
-import { BatchCalculator } from "/lib/batch-calculator.js";
 
 export class Batcher {
     constructor(ns, network, ramManager, portHandler, capabilities) {
@@ -16,7 +15,112 @@ export class Batcher {
         this.portHandler = portHandler;
         this.caps = capabilities;
         this.log = new Logger(ns, "BATCHER");
-        this.calculator = new BatchCalculator(ns);
+        this.hasFormulas = ns.fileExists("Formulas.exe");
+    }
+    
+    /**
+     * Calculer un batch HWGW optimal (INTÉGRÉ)
+     */
+    calculateHWGW(target, hackPercent = 0.10) {
+        if (!this.hasFormulas) {
+            return this.calculateHWGWFallback(target, hackPercent);
+        }
+        
+        const server = this.ns.getServer(target);
+        const player = this.ns.getPlayer();
+        
+        server.hackDifficulty = server.minDifficulty;
+        server.moneyAvailable = server.moneyMax;
+        
+        // THREADS HACK
+        const hackPercentPerThread = this.ns.formulas.hacking.hackPercent(server, player);
+        const hackThreads = Math.max(1, Math.floor(hackPercent / hackPercentPerThread));
+        
+        // THREADS WEAKEN1
+        const hackSecIncrease = this.ns.hackAnalyzeSecurity(hackThreads, target);
+        const weakenThreads1 = Math.ceil(hackSecIncrease / 0.05);
+        
+        // THREADS GROW
+        const moneyAfterHack = server.moneyMax * (1 - hackPercent);
+        const growMultiplier = server.moneyMax / Math.max(1, moneyAfterHack);
+        const growThreads = Math.max(1, Math.ceil(
+            this.ns.growthAnalyze(target, growMultiplier)
+        ));
+        
+        // THREADS WEAKEN2
+        const growSecIncrease = this.ns.growthAnalyzeSecurity(growThreads, target);
+        const weakenThreads2 = Math.ceil(growSecIncrease / 0.05);
+        
+        // TIMINGS PRÉCIS
+        const hackTime = this.ns.formulas.hacking.hackTime(server, player);
+        const growTime = this.ns.formulas.hacking.growTime(server, player);
+        const weakenTime = this.ns.formulas.hacking.weakenTime(server, player);
+        
+        const buffer = CONFIG.HACKING.TIME_BUFFER_MS;
+        const endTime = Date.now() + weakenTime + (buffer * 4);
+        
+        const hackDelay = Math.max(0, endTime - Date.now() - hackTime - (buffer * 3));
+        const weaken1Delay = Math.max(0, endTime - Date.now() - weakenTime - (buffer * 2));
+        const growDelay = Math.max(0, endTime - Date.now() - growTime - buffer);
+        const weaken2Delay = 0;
+        
+        return {
+            hackThreads,
+            weakenThreads1,
+            growThreads,
+            weakenThreads2,
+            hackDelay,
+            weaken1Delay,
+            growDelay,
+            weaken2Delay,
+            hackTime,
+            growTime,
+            weakenTime,
+            totalTime: weakenTime + (buffer * 4),
+            hackChance: this.ns.formulas.hacking.hackChance(server, player)
+        };
+    }
+    
+    /**
+     * Fallback sans Formulas
+     */
+    calculateHWGWFallback(target, hackPercent) {
+        const maxMoney = this.ns.getServerMaxMoney(target);
+        
+        const hackThreads = Math.max(1, Math.floor(
+            this.ns.hackAnalyzeThreads(target, maxMoney * hackPercent)
+        ));
+        
+        const hackSec = this.ns.hackAnalyzeSecurity(hackThreads, target);
+        const weakenThreads1 = Math.ceil(hackSec / 0.05);
+        
+        const moneyAfterHack = maxMoney * (1 - hackPercent);
+        const growThreads = Math.max(1, Math.ceil(
+            this.ns.growthAnalyze(target, maxMoney / Math.max(1, moneyAfterHack))
+        ));
+        
+        const growSec = this.ns.growthAnalyzeSecurity(growThreads, target);
+        const weakenThreads2 = Math.ceil(growSec / 0.05);
+        
+        const hackTime = this.ns.getHackTime(target);
+        const growTime = this.ns.getGrowTime(target);
+        const weakenTime = this.ns.getWeakenTime(target);
+        
+        return {
+            hackThreads,
+            weakenThreads1,
+            growThreads,
+            weakenThreads2,
+            hackDelay: 0,
+            weaken1Delay: 50,
+            growDelay: 100,
+            weaken2Delay: 150,
+            hackTime,
+            growTime,
+            weakenTime,
+            totalTime: weakenTime + 200,
+            hackChance: this.ns.hackAnalyzeChance(target)
+        };
     }
     
     dispatchBatch(target, options = {}) {
@@ -32,17 +136,14 @@ export class Batcher {
             const secReady = secDiff <= 5;
             const moneyReady = moneyPercent >= 0.95;
             
-            // PHASE 1 : WEAKEN
             if (!secReady) {
                 return this.dispatchWeaken(target);
             }
             
-            // PHASE 2 : GROW
             if (!moneyReady) {
                 return this.dispatchGrowPrep(target);
             }
             
-            // PHASE 3 : HWGW (OPTIMISÉ FORMULAS)
             return this.dispatchHWGWFormulas(target);
             
         } catch (error) {
@@ -162,11 +263,8 @@ export class Batcher {
         };
     }
     
-    /**
-     * HWGW OPTIMISÉ AVEC FORMULAS
-     */
     dispatchHWGWFormulas(target) {
-        const batch = this.calculator.calculateHWGW(target, CONFIG.BATCHER.DEFAULT_HACK_PERCENT);
+        const batch = this.calculateHWGW(target, CONFIG.BATCHER.DEFAULT_HACK_PERCENT);
         
         let jobsSent = 0;
         let totalAllocated = 0;
@@ -251,7 +349,10 @@ export class Batcher {
             }
         }
         
-        this.log.info(`💰 HWGW-F(10%): ${totalAllocated} threads | Chance: ${(batch.hackChance * 100).toFixed(1)}%`);
+        const mode = this.hasFormulas ? 'HWGW-F(10%)' : 'HWGW(10%)';
+        const chanceStr = batch.hackChance ? ` | Chance: ${(batch.hackChance * 100).toFixed(1)}%` : '';
+        
+        this.log.info(`💰 ${mode}: ${totalAllocated} threads${chanceStr}`);
         
         return {
             success: true,
