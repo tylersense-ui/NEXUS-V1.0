@@ -103,7 +103,7 @@ export async function main(ns) {
                 ns.clearLog();
                 
                 ns.print(`╔═══════════════════════════════════════════════════╗`);
-                ns.print(`║          CONTROLLER REPORT                         ║`);
+                ns.print(`║          CONTROLLER REPORT                        ║`);
                 ns.print(`╚═══════════════════════════════════════════════════╝`);
                 ns.print(``);
                 ns.print(`📊 STATISTIQUES:`);

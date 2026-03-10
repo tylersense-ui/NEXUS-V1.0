@@ -117,7 +117,7 @@ export async function main(ns) {
         }
         
         ns.print('╔═══════════════════════════════════════════════════════════╗');
-        ns.print(`║   🔥 NEXUS DASHBOARD v0.5   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}   ║`);
+        ns.print(`║   🔥 NEXUS DASHBOARD v0.5   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}     ║`);
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
         

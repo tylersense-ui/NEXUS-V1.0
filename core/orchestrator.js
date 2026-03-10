@@ -137,7 +137,7 @@ export async function main(ns) {
             
             ns.clearLog();
             ns.print("╔═══════════════════════════════════════════════════════════╗");
-            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5.3-PHASE4                    ║");
+            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5.3-PHASE4                     ║");
             ns.print("╚═══════════════════════════════════════════════════════════╝");
             ns.print("");
             ns.print(`━━━━━━━━━━ CYCLE ${cycleCount} ━━━━━━━━━━`);

@@ -1,11 +1,12 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.7.4 - Batcher (PREP MODE FIX)                    ║
+ * ║ NEXUS v0.8.0 - Batcher (FORMULAS OPTIMIZED)               ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
 import { CONFIG } from "/lib/constants.js";
 import { Logger } from "/lib/logger.js";
+import { BatchCalculator } from "/lib/batch-calculator.js";
 
 export class Batcher {
     constructor(ns, network, ramManager, portHandler, capabilities) {
@@ -15,6 +16,7 @@ export class Batcher {
         this.portHandler = portHandler;
         this.caps = capabilities;
         this.log = new Logger(ns, "BATCHER");
+        this.calculator = new BatchCalculator(ns);
     }
     
     dispatchBatch(target, options = {}) {
@@ -27,35 +29,27 @@ export class Batcher {
             const moneyPercent = maxMoney > 0 ? (currentMoney / maxMoney) : 0;
             const secDiff = currentSec - minSec;
             
-            // ════════════════════════════════════════════════════
-            // PREP MODE : Vérifier SEC + MONEY
-            // ════════════════════════════════════════════════════
-            
             const secReady = secDiff <= 5;
             const moneyReady = moneyPercent >= 0.95;
             
-            // PHASE 1 : Sécurité trop haute → WEAKEN seulement
+            // PHASE 1 : WEAKEN
             if (!secReady) {
                 return this.dispatchWeaken(target);
             }
             
-            // PHASE 2 : Argent trop bas → GROW + WEAKEN
+            // PHASE 2 : GROW
             if (!moneyReady) {
                 return this.dispatchGrowPrep(target);
             }
             
-            // PHASE 3 : Serveur prêt → HWGW
-            return this.dispatchHWGW(target);
+            // PHASE 3 : HWGW (OPTIMISÉ FORMULAS)
+            return this.dispatchHWGWFormulas(target);
             
         } catch (error) {
             this.log.error(`Error: ${error.message}`);
             return { success: false, error: error.message };
         }
     }
-    
-    // ════════════════════════════════════════════════════════
-    // PHASE 1 : WEAKEN (Réduire sécurité au minimum)
-    // ════════════════════════════════════════════════════════
     
     dispatchWeaken(target) {
         const totalRam = this.ramMgr.getTotalAvailableRam();
@@ -90,7 +84,7 @@ export class Batcher {
         const currentSec = this.ns.getServerSecurityLevel(target);
         const minSec = this.ns.getServerMinSecurityLevel(target);
         
-        this.log.info(`🔧 WEAKEN: ${allocation.allocated}/${weakenThreads} threads (${jobsSent} jobs) | Sec: ${currentSec.toFixed(1)}/${minSec.toFixed(1)}`);
+        this.log.info(`🔧 WEAKEN: ${allocation.allocated} threads | Sec: ${currentSec.toFixed(1)}/${minSec.toFixed(1)}`);
         
         return {
             success: true,
@@ -100,22 +94,11 @@ export class Batcher {
         };
     }
     
-    // ════════════════════════════════════════════════════════
-    // PHASE 2 : GROW + WEAKEN (Remplir argent)
-    // ════════════════════════════════════════════════════════
-    
     dispatchGrowPrep(target) {
         const totalRam = this.ramMgr.getTotalAvailableRam();
-        
-        // Ratio GROW:WEAKEN = 12:1 environ
-        // grow = +0.004 sec par thread
-        // weaken = -0.05 sec par thread
-        // Donc pour contrer grow, besoin de grow/12.5 weaken threads
-        
         const growRam = this.ns.getScriptRam(CONFIG.WORKERS.GROW);
         const weakenRam = this.ns.getScriptRam(CONFIG.WORKERS.WEAKEN);
         
-        // Allouer 85% RAM pour grow, 15% pour weaken
         const growBudget = totalRam * 0.85;
         const weakenBudget = totalRam * 0.15;
         
@@ -129,7 +112,6 @@ export class Batcher {
         let jobsSent = 0;
         let totalAllocated = 0;
         
-        // Lancer GROW
         const gAlloc = this.ramMgr.allocateThreads(growThreads);
         if (gAlloc.allocations.length > 0) {
             for (const alloc of gAlloc.allocations) {
@@ -147,7 +129,6 @@ export class Batcher {
             }
         }
         
-        // Lancer WEAKEN
         if (weakenThreads > 0) {
             const wAlloc = this.ramMgr.allocateThreads(weakenThreads);
             if (wAlloc.allocations.length > 0) {
@@ -171,7 +152,7 @@ export class Batcher {
         const maxMoney = this.ns.getServerMaxMoney(target);
         const moneyPercent = (currentMoney / maxMoney) * 100;
         
-        this.log.info(`🌱 GROW+WEAKEN: ${totalAllocated} threads (${jobsSent} jobs) | Money: ${moneyPercent.toFixed(1)}%`);
+        this.log.info(`🌱 GROW+WEAKEN: ${totalAllocated} threads | Money: ${moneyPercent.toFixed(1)}%`);
         
         return {
             success: true,
@@ -181,35 +162,18 @@ export class Batcher {
         };
     }
     
-    // ════════════════════════════════════════════════════════
-    // PHASE 3 : HWGW (Farming)
-    // ════════════════════════════════════════════════════════
-    
-    dispatchHWGW(target) {
-        const maxMoney = this.ns.getServerMaxMoney(target);
-        const hackPercent = 0.05;
-        
-        const hackThreads = Math.max(1, Math.floor(
-            this.ns.hackAnalyzeThreads(target, maxMoney * hackPercent)
-        ));
-        
-        const hackSec = this.ns.hackAnalyzeSecurity(hackThreads, target);
-        const w1Threads = Math.max(0, Math.ceil(hackSec / 0.05));
-        
-        const moneyAfterHack = maxMoney * (1 - hackPercent);
-        const growThreads = Math.max(1, Math.ceil(
-            this.ns.growthAnalyze(target, maxMoney / Math.max(1, moneyAfterHack))
-        ));
-        
-        const growSec = this.ns.growthAnalyzeSecurity(growThreads, target);
-        const w2Threads = Math.max(0, Math.ceil(growSec / 0.05));
+    /**
+     * HWGW OPTIMISÉ AVEC FORMULAS
+     */
+    dispatchHWGWFormulas(target) {
+        const batch = this.calculator.calculateHWGW(target, CONFIG.BATCHER.DEFAULT_HACK_PERCENT);
         
         let jobsSent = 0;
         let totalAllocated = 0;
         
         // HACK
-        if (hackThreads > 0) {
-            const hAlloc = this.ramMgr.allocateThreads(hackThreads);
+        if (batch.hackThreads > 0) {
+            const hAlloc = this.ramMgr.allocateThreads(batch.hackThreads);
             if (hAlloc.allocations.length > 0) {
                 for (const alloc of hAlloc.allocations) {
                     this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -217,7 +181,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: 0,
+                        delay: batch.hackDelay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.HACK
                     });
@@ -228,8 +192,8 @@ export class Batcher {
         }
         
         // WEAKEN1
-        if (w1Threads > 0) {
-            const w1Alloc = this.ramMgr.allocateThreads(w1Threads);
+        if (batch.weakenThreads1 > 0) {
+            const w1Alloc = this.ramMgr.allocateThreads(batch.weakenThreads1);
             if (w1Alloc.allocations.length > 0) {
                 for (const alloc of w1Alloc.allocations) {
                     this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -237,7 +201,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: 50,
+                        delay: batch.weaken1Delay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.WEAKEN
                     });
@@ -248,8 +212,8 @@ export class Batcher {
         }
         
         // GROW
-        if (growThreads > 0) {
-            const gAlloc = this.ramMgr.allocateThreads(growThreads);
+        if (batch.growThreads > 0) {
+            const gAlloc = this.ramMgr.allocateThreads(batch.growThreads);
             if (gAlloc.allocations.length > 0) {
                 for (const alloc of gAlloc.allocations) {
                     this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -257,7 +221,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: 100,
+                        delay: batch.growDelay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.GROW
                     });
@@ -268,8 +232,8 @@ export class Batcher {
         }
         
         // WEAKEN2
-        if (w2Threads > 0) {
-            const w2Alloc = this.ramMgr.allocateThreads(w2Threads);
+        if (batch.weakenThreads2 > 0) {
+            const w2Alloc = this.ramMgr.allocateThreads(batch.weakenThreads2);
             if (w2Alloc.allocations.length > 0) {
                 for (const alloc of w2Alloc.allocations) {
                     this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -277,7 +241,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: 150,
+                        delay: batch.weaken2Delay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.WEAKEN
                     });
@@ -287,13 +251,14 @@ export class Batcher {
             }
         }
         
-        this.log.info(`💰 HWGW(5%): ${totalAllocated} threads (${jobsSent} jobs)`);
+        this.log.info(`💰 HWGW-F(10%): ${totalAllocated} threads | Chance: ${(batch.hackChance * 100).toFixed(1)}%`);
         
         return {
             success: true,
-            mode: 'HWGW',
+            mode: 'HWGW_FORMULAS',
             totalThreads: totalAllocated,
-            jobsDispatched: jobsSent
+            jobsDispatched: jobsSent,
+            batch: batch
         };
     }
 }
