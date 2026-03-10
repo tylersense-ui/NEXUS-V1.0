@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.7.2 - Dashboard ULTIMATE (Network Load)          ║
+ * ║ NEXUS v0.8.1 - Dashboard (TRUE NETWORK COUNT)             ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -65,14 +65,29 @@ export async function main(ns) {
         }
         
         // ════════════════════════════════════════════════════
-        // NOUVEAU : CALCUL CHARGE RÉSEAU
+        // NOUVEAU : SCANNER TOUT LE RÉSEAU
         // ════════════════════════════════════════════════════
         
-        let totalNetworkRam = homeRam + totalPurchasedRam;
-        let totalNetworkUsed = homeUsedRam;
+        const allNetworkServers = scanAllServers(ns);
         
-        for (const s of purchasedServers) {
-            totalNetworkUsed += ns.getServerUsedRam(s);
+        let totalNetworkRam = 0;
+        let totalNetworkUsed = 0;
+        let networkServersUsed = 0;
+        
+        for (const s of allNetworkServers) {
+            if (!ns.hasRootAccess(s)) continue;
+            
+            const maxRam = ns.getServerMaxRam(s);
+            const usedRam = ns.getServerUsedRam(s);
+            
+            if (maxRam > 0) {
+                totalNetworkRam += maxRam;
+                totalNetworkUsed += usedRam;
+                
+                if (usedRam > 0) {
+                    networkServersUsed++;
+                }
+            }
         }
         
         const networkLoadPercent = totalNetworkRam > 0 ? (totalNetworkUsed / totalNetworkRam) * 100 : 0;
@@ -117,7 +132,7 @@ export async function main(ns) {
         }
         
         ns.print('╔═══════════════════════════════════════════════════════════╗');
-        ns.print(`║   🔥 NEXUS DASHBOARD v0.5   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}     ║`);
+        ns.print(`║   🔥 NEXUS DASHBOARD v0.8   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}   ║`);
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
         
@@ -183,10 +198,11 @@ export async function main(ns) {
         ns.print('');
         
         // ════════════════════════════════════════════════════
-        // NOUVEAU : BARRE RÉSEAU
+        // NOUVEAU : AFFICHER TOUT LE RÉSEAU (pas juste purchased)
         // ════════════════════════════════════════════════════
         
-        ns.print(`📡 RÉSEAU TOTAL`);
+        ns.print(`📡 RÉSEAU COMPLET`);
+        ns.print(`   Serveurs: ${networkServersUsed}/${allNetworkServers.length} (avec workers actifs)`);
         ns.print(`   RAM: ${ns.formatRam(totalNetworkUsed)} / ${ns.formatRam(totalNetworkRam)}`);
         
         const networkBar = generateProgressBar(networkLoadPercent, 20);
@@ -196,7 +212,7 @@ export async function main(ns) {
         // ════════════════════════════════════════════════════
         
         ns.print(`🖥️  Serveurs achetés: ${purchasedServers.length}/25`);
-        ns.print(`📊 RAM serveurs: ${ns.formatRam(totalPurchasedRam)}`);
+        ns.print(`📊 RAM serveurs achetés: ${ns.formatRam(totalPurchasedRam)}`);
         
         const maxPossibleRam = 1048576 * 25;
         const upgradePercent = (totalPurchasedRam / maxPossibleRam) * 100;
@@ -210,6 +226,33 @@ export async function main(ns) {
         
         await ns.sleep(UPDATE_INTERVAL);
     }
+}
+
+/**
+ * SCANNER TOUT LE RÉSEAU (pas juste purchased servers)
+ */
+function scanAllServers(ns) {
+    const visited = new Set();
+    const queue = ["home"];
+    const servers = [];
+    
+    while (queue.length > 0) {
+        const current = queue.shift();
+        
+        if (visited.has(current)) continue;
+        visited.add(current);
+        
+        const neighbors = ns.scan(current);
+        for (const neighbor of neighbors) {
+            if (!visited.has(neighbor)) {
+                queue.push(neighbor);
+            }
+        }
+        
+        servers.push(current);
+    }
+    
+    return servers;
 }
 
 function generateProgressBar(percent, width) {
