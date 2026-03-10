@@ -17,6 +17,7 @@
 /managers/server-manager.js
 /managers/stock-manager.js
 /tools/aug-planner.js
+/tools/aug-speedrun.js
 /tools/deploy.js
 /tools/global-kill.js
 /tools/network-audit.js
