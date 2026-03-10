@@ -1,11 +1,7 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Orchestrator Phase 4              ║
+ * ║ NEXUS v0.9.1 - Orchestrator (100% DYNAMIQUE)              ║
  * ╚═══════════════════════════════════════════════════════════╝
- * 
- * @file        /core/orchestrator.js
- * @version     0.5.3
- * @description Coordinateur central (Phase 4 batching)
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -22,108 +18,48 @@ export async function main(ns) {
     ns.tail();
     
     ns.print("╔═══════════════════════════════════════════════════════════╗");
-    ns.print("║                                                           ║");
-    ns.print("║   🔥 NEXUS v0.5.3-PROMETHEUS PHASE 4                      ║");
-    ns.print("║   'Synchronized Batching - The Real Deal'                ║");
-    ns.print("║                                                           ║");
+    ns.print("║   🔥 NEXUS v0.9.1-DYNAMIC (100% AUTO-SCALE)               ║");
     ns.print("╚═══════════════════════════════════════════════════════════╝");
     ns.print("");
     
     const log = new Logger(ns, "ORCHESTRATOR");
     
     try {
-        log.info("📋 Initialisation Capabilities...");
+        log.info("📋 Initialisation...");
         const caps = new Capabilities(ns);
-        ns.print("");
-        
-        log.info("🌐 Initialisation Network...");
         const network = new Network(ns, caps);
         const servers = network.refresh();
-        ns.print(`✅ ${servers.length} serveurs détectés`);
-        ns.print("");
-        
-        log.info("📨 Initialisation PortHandler...");
         const portHandler = new PortHandler(ns);
         portHandler.clear(CONFIG.PORTS.COMMANDS);
-        ns.print("✅ PortHandler initialisé");
-        ns.print("");
-        
-        log.info("💾 Initialisation RamManager...");
         const ramMgr = new RamManager(ns);
-        ns.print("✅ RamManager initialisé");
-        ns.print("");
-        
-        log.info("🔥 Initialisation Batcher Phase 4...");
         const batcher = new Batcher(ns, network, ramMgr, portHandler, caps);
-        ns.print("✅ Batcher Phase 4 (synchronized timing)");
+        
+        ns.print(`✅ ${servers.length} serveurs | RAM Manager | Batcher ready`);
         ns.print("");
         
         log.info("🎮 Démarrage Controller...");
-        
-        if (!ns.fileExists("/hack/controller.js")) {
-            log.error("Controller introuvable");
-            return;
-        }
-        
         const controllerPID = ns.run("/hack/controller.js");
-        
         if (controllerPID === 0) {
-            log.error("Échec démarrage controller");
+            log.error("Échec controller");
             return;
         }
-        
-        ns.print(`✅ Controller démarré (PID: ${controllerPID})`);
+        ns.print(`✅ Controller PID: ${controllerPID}`);
         ns.print("");
         
         log.info("📊 Démarrage Dashboard...");
-        
-        if (!ns.fileExists("/core/dashboard.js")) {
-            log.warn("Dashboard introuvable");
-        } else {
-            const dashboardPID = ns.run("/core/dashboard.js");
-            
-            if (dashboardPID === 0) {
-                log.warn("Échec démarrage dashboard");
-            } else {
-                ns.print(`✅ Dashboard démarré (PID: ${dashboardPID})`);
-                await ns.sleep(1000);
-                ns.tail(dashboardPID);
-                ns.print("✅ Dashboard auto-tail activé");
-            }
+        const dashboardPID = ns.run("/core/dashboard.js");
+        if (dashboardPID > 0) {
+            await ns.sleep(500);
+            ns.tail(dashboardPID);
+            ns.print(`✅ Dashboard PID: ${dashboardPID}`);
         }
-        
-        ns.print("");
-        
-        log.info("🖥️  Démarrage Server Manager...");
-        
-        if (!ns.fileExists("/managers/server-manager.js")) {
-            log.warn("Server Manager introuvable");
-        } else {
-            const serverMgrPID = ns.run("/managers/server-manager.js");
-            
-            if (serverMgrPID === 0) {
-                log.warn("Échec démarrage server manager");
-            } else {
-                ns.print(`✅ Server Manager démarré (PID: ${serverMgrPID})`);
-            }
-        }
-        
         ns.print("");
         
         const REFRESH_INTERVAL = CONFIG.ORCHESTRATOR.REFRESH_INTERVAL_MS;
         const MIN_TARGETS = CONFIG.ORCHESTRATOR.MIN_TARGETS;
-        const MAX_TARGETS = CONFIG.ORCHESTRATOR.MAX_TARGETS;
         const CYCLE_DELAY = CONFIG.ORCHESTRATOR.CYCLE_DELAY_MS;
         
-        log.success("✅ NEXUS Phase 4 opérationnel !");
-        log.info(`⏱️  Refresh: ${REFRESH_INTERVAL / 1000}s`);
-        log.info(`🎯 Targets: ${MIN_TARGETS}-${MAX_TARGETS}`);
-        log.info(`🔥 Batching: SYNCHRONIZED (Phase 4)`);
-        log.info(`🔧 Prep: ${CONFIG.BATCHER.ENABLE_PREP ? 'ENABLED' : 'DISABLED'}`);
-        ns.print("");
-        ns.print("═══════════════════════════════════════════════════════════");
-        ns.print("🔥 NEXUS v0.5.3-PROMETHEUS PHASE 4 - OPÉRATIONNEL");
-        ns.print("═══════════════════════════════════════════════════════════");
+        log.success("✅ NEXUS v0.9.1 opérationnel !");
         ns.print("");
         
         await ns.sleep(2000);
@@ -137,18 +73,35 @@ export async function main(ns) {
             
             ns.clearLog();
             ns.print("╔═══════════════════════════════════════════════════════════╗");
-            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.5.3-PHASE4                     ║");
+            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.9.1-DYNAMIC                    ║");
             ns.print("╚═══════════════════════════════════════════════════════════╝");
             ns.print("");
             ns.print(`━━━━━━━━━━ CYCLE ${cycleCount} ━━━━━━━━━━`);
             ns.print("");
+            
+            let maxTargets = MIN_TARGETS;
+            
+            if (CONFIG.ORCHESTRATOR.AUTO_SCALE_TARGETS) {
+                const totalRam = ramMgr.getTotalAvailableRam();
+                const ramPerBatchGB = CONFIG.BATCHER.ESTIMATED_RAM_PER_BATCH_GB;
+                const avgWeakenTime = 120000;
+                const batchesPerTarget = Math.floor(avgWeakenTime / CYCLE_DELAY);
+                
+                const maxBatches = Math.floor(totalRam / ramPerBatchGB);
+                maxTargets = Math.max(MIN_TARGETS, Math.floor(maxBatches / batchesPerTarget));
+                
+                const hackableCount = network.getTopTargets(maxTargets * 2).length;
+                maxTargets = Math.min(maxTargets, hackableCount);
+                
+                ns.print(`🎯 AUTO-SCALE: ${maxTargets} cibles (${hackableCount} hackables, ${ns.formatRam(totalRam)} RAM)`);
+                ns.print("");
+            }
             
             const timeSinceRefresh = Date.now() - lastRefreshTime;
             
             if (timeSinceRefresh > REFRESH_INTERVAL) {
                 try {
                     ns.print("🌐 Refresh réseau...");
-                    
                     caps.scan();
                     network.refresh(true);
                     
@@ -157,13 +110,12 @@ export async function main(ns) {
                         if (!ns.hasRootAccess(server)) {
                             if (network.crack(server)) {
                                 newCracked++;
-                                ns.print(`🔓 Root: ${server}`);
                             }
                         }
                     }
                     
                     if (newCracked > 0) {
-                        ns.print(`✅ ${newCracked} nouveaux serveurs crackés`);
+                        ns.print(`✅ ${newCracked} nouveaux serveurs rootés`);
                     }
                     
                     lastRefreshTime = Date.now();
@@ -177,15 +129,7 @@ export async function main(ns) {
             let targets = [];
             
             try {
-                const targetCount = Math.min(
-                    Math.max(
-                        MIN_TARGETS,
-                        Math.floor(caps.hackingLevel / 50)
-                    ),
-                    MAX_TARGETS
-                );
-                
-                targets = network.getTopTargets(targetCount);
+                targets = network.getTopTargets(maxTargets);
                 
                 if (targets.length === 0) {
                     ns.print("⚠️  Aucune cible disponible");
@@ -208,22 +152,22 @@ export async function main(ns) {
                 for (const target of targets) {
                     try {
                         const result = batcher.dispatchBatch(target, {
-                            hackPercent: 0.05,
-                            maxThreadsPerJob: 5000
+                            hackPercent: 0.10,
+                            maxThreadsPerJob: 50000
                         });
                         
                         if (result.success) {
-                            if (result.prep) {
-                                ns.print(`🔧 ${target}: PREP (${result.totalThreads} threads)`);
+                            if (result.mode.includes('PREP') || result.mode.includes('WEAKEN') || result.mode.includes('GROW')) {
+                                ns.print(`🔧 ${target}: ${result.mode} (${result.totalThreads} threads)`);
                             } else {
-                                ns.print(`✅ ${target}: BATCH (${result.totalThreads} threads)`);
+                                ns.print(`✅ ${target}: ${result.mode} (${result.totalThreads} threads)`);
                             }
                         } else {
                             ns.print(`⏳ ${target}: ${result.error}`);
                         }
                         
                     } catch (error) {
-                        ns.print(`❌ Erreur ${target}: ${error.message}`);
+                        ns.print(`❌ ${target}: ${error.message}`);
                     }
                 }
                 ns.print("");

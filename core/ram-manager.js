@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.8.1 - RAM Manager (TRUE JOB SLICING)             ║
+ * ║ NEXUS v0.9.1 - RAM Manager (RÉSERVE DYNAMIQUE)            ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -24,7 +24,12 @@ export class RamManager {
             let availableRam = maxRam - usedRam;
             
             if (hostname === 'home') {
-                availableRam -= CONFIG.HACKING.RESERVED_HOME_RAM;
+                const homeRam = this.ns.getServerMaxRam('home');
+                const reservePercent = CONFIG.HACKING.RESERVED_HOME_RAM_PERCENT;
+                const minReserve = CONFIG.HACKING.MIN_RESERVED_HOME_RAM;
+                
+                const reserveRam = Math.max(minReserve, homeRam * reservePercent);
+                availableRam -= reserveRam;
             }
             
             if (availableRam > 0) {
@@ -35,10 +40,6 @@ export class RamManager {
         return totalAvailable;
     }
     
-    /**
-     * NOUVEAU : VRAI JOB SLICING
-     * Découpe les jobs sur plusieurs serveurs
-     */
     allocateThreads(totalThreads) {
         if (totalThreads <= 0) {
             return {
@@ -61,14 +62,9 @@ export class RamManager {
         const allocations = [];
         let remainingThreads = totalThreads;
         
-        // ════════════════════════════════════════════════════
-        // SLICING : Remplir serveur par serveur
-        // ════════════════════════════════════════════════════
-        
         for (const server of servers) {
             if (remainingThreads <= 0) break;
             
-            // Prendre TOUT ce qui est disponible sur ce serveur
             const threadsOnServer = Math.min(remainingThreads, server.availableThreads);
             
             if (threadsOnServer > 0) {
@@ -82,12 +78,8 @@ export class RamManager {
             }
         }
         
-        // ════════════════════════════════════════════════════
-        // SUCCÈS si on a alloué au moins QUELQUE CHOSE
-        // ════════════════════════════════════════════════════
-        
         return {
-            success: allocations.length > 0,  // ← Changé !
+            success: remainingThreads === 0,
             allocations: allocations,
             allocated: totalThreads - remainingThreads,
             remaining: remainingThreads
@@ -107,7 +99,12 @@ export class RamManager {
             let availableRam = maxRam - usedRam;
             
             if (hostname === 'home') {
-                availableRam -= CONFIG.HACKING.RESERVED_HOME_RAM;
+                const homeRam = this.ns.getServerMaxRam('home');
+                const reservePercent = CONFIG.HACKING.RESERVED_HOME_RAM_PERCENT;
+                const minReserve = CONFIG.HACKING.MIN_RESERVED_HOME_RAM;
+                
+                const reserveRam = Math.max(minReserve, homeRam * reservePercent);
+                availableRam -= reserveRam;
             }
             
             if (availableRam >= 1.75) {
@@ -121,7 +118,6 @@ export class RamManager {
             }
         }
         
-        // Trier par RAM disponible (plus gros en premier)
         available.sort((a, b) => b.availableRam - a.availableRam);
         
         return available;
