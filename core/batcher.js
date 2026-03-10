@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.8.1 - Batcher (FORMULAS OPTIMIZED)               ║
+ * ║ NEXUS v0.8.2 - Batcher (FORMULAS + DELAYS COURTS)         ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -159,8 +159,15 @@ export class Batcher {
         };
     }
     
+    /**
+     * HWGW v0.8.2 : FORMULAS pour threads, DELAYS COURTS pour throughput
+     */
     dispatchHWGW(target) {
         const hackPercent = CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
+        
+        // ════════════════════════════════════════════════════
+        // CALCULS PRÉCIS AVEC FORMULAS
+        // ════════════════════════════════════════════════════
         
         const hackThreads = this.formulas.calculateHackThreads(target, hackPercent);
         
@@ -176,12 +183,25 @@ export class Batcher {
         const growSec = this.ns.growthAnalyzeSecurity(growThreads, target);
         const w2Threads = Math.max(0, Math.ceil(growSec / 0.05));
         
-        const timings = this.formulas.calculateTimings(target, CONFIG.HACKING.TIME_BUFFER_MS);
         const hackChance = this.formulas.getHackChance(target);
+        
+        // ════════════════════════════════════════════════════
+        // DELAYS COURTS ET FIXES (comme v0.7.4)
+        // ════════════════════════════════════════════════════
+        
+        const hackDelay = 0;
+        const weaken1Delay = 50;
+        const growDelay = 100;
+        const weaken2Delay = 150;
+        
+        // ════════════════════════════════════════════════════
+        // DISPATCH
+        // ════════════════════════════════════════════════════
         
         let jobsSent = 0;
         let totalAllocated = 0;
         
+        // HACK
         if (hackThreads > 0) {
             const hAlloc = this.ramMgr.allocateThreads(hackThreads);
             if (hAlloc.allocations.length > 0) {
@@ -191,7 +211,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: timings.hackDelay,
+                        delay: hackDelay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.HACK
                     });
@@ -201,6 +221,7 @@ export class Batcher {
             }
         }
         
+        // WEAKEN1
         if (w1Threads > 0) {
             const w1Alloc = this.ramMgr.allocateThreads(w1Threads);
             if (w1Alloc.allocations.length > 0) {
@@ -210,7 +231,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: timings.weaken1Delay,
+                        delay: weaken1Delay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.WEAKEN
                     });
@@ -220,6 +241,7 @@ export class Batcher {
             }
         }
         
+        // GROW
         if (growThreads > 0) {
             const gAlloc = this.ramMgr.allocateThreads(growThreads);
             if (gAlloc.allocations.length > 0) {
@@ -229,7 +251,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: timings.growDelay,
+                        delay: growDelay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.GROW
                     });
@@ -239,6 +261,7 @@ export class Batcher {
             }
         }
         
+        // WEAKEN2
         if (w2Threads > 0) {
             const w2Alloc = this.ramMgr.allocateThreads(w2Threads);
             if (w2Alloc.allocations.length > 0) {
@@ -248,7 +271,7 @@ export class Batcher {
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
-                        delay: timings.weaken2Delay,
+                        delay: weaken2Delay,
                         uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         script: CONFIG.WORKERS.WEAKEN
                     });
