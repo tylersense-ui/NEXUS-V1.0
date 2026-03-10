@@ -10,6 +10,7 @@
 /lib/capabilities.js
 /lib/network.js
 /lib/utils.js
+/lib/formulas-helper.js
 /workers/hack.js
 /workers/grow.js
 /workers/weaken.js
@@ -18,4 +19,5 @@
 /tools/deploy.js
 /tools/global-kill.js
 /tools/network-audit.js
+/tools/liquidate.js
 /manifest.txt

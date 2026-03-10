@@ -1,14 +1,7 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Boot                              ║
+ * ║ NEXUS v0.9.0 - Boot (RESET-READY)                         ║
  * ╚═══════════════════════════════════════════════════════════╝
- * 
- * @file        /boot.js
- * @version     0.5.0
- * @description Point d'entrée principal du système NEXUS
- * 
- * @usage
- * run /boot.js
  */
 
 import { Network } from "/lib/network.js";
@@ -19,16 +12,14 @@ import { CONFIG } from "/lib/constants.js";
 export async function main(ns) {
     ns.disableLog("ALL");
     
-    // Banner
     ns.tprint("╔═══════════════════════════════════════════════════════════╗");
     ns.tprint("║                                                           ║");
-    ns.tprint("║   🔥 NEXUS v0.5-PROMETHEUS - BOOT SEQUENCE                ║");
-    ns.tprint("║   'The Rebirth'                                           ║");
+    ns.tprint("║   🔥 NEXUS v0.9.0-RESET-READY - BOOT SEQUENCE             ║");
+    ns.tprint("║   'Optimisation Phase'                                    ║");
     ns.tprint("║                                                           ║");
     ns.tprint("╚═══════════════════════════════════════════════════════════╝");
     ns.tprint("");
     
-    // Nettoyage ports 1-20
     ns.tprint("[CLEAN] Réinitialisation des ports...");
     for (let i = 1; i <= 20; i++) {
         try {
@@ -40,7 +31,6 @@ export async function main(ns) {
     ns.tprint("  ✅ Ports 1-20 nettoyés");
     ns.tprint("");
     
-    // Scan réseau
     ns.tprint("[SCAN] Cartographie du réseau...");
     const caps = new Capabilities(ns);
     const network = new Network(ns, caps);
@@ -48,7 +38,6 @@ export async function main(ns) {
     ns.tprint(`  ✅ ${servers.length} serveurs détectés`);
     ns.tprint("");
     
-    // Auto-crack
     ns.tprint("[CRACK] Rootage automatique...");
     let cracked = 0;
     for (const server of servers) {
@@ -61,7 +50,6 @@ export async function main(ns) {
     ns.tprint(`  ✅ ${cracked} nouveaux serveurs rootés`);
     ns.tprint("");
     
-    // Kill processus
     ns.tprint("[KILL] Arrêt des processus...");
     const currentScript = ns.getScriptName();
     let killed = 0;
@@ -82,13 +70,11 @@ export async function main(ns) {
     
     await ns.sleep(1000);
     
-    // Lancer orchestrator
     ns.tprint("[BOOT] Lancement de l'orchestrator...");
     
     if (!ns.fileExists("/core/orchestrator.js")) {
         ns.tprint("  ❌ ERREUR: /core/orchestrator.js introuvable");
         ns.tprint("");
-        ns.tprint("Déployez d'abord tous les fichiers Phase 1.");
         return;
     }
     
@@ -103,6 +89,6 @@ export async function main(ns) {
     ns.tprint(`  ✅ Orchestrator démarré (PID: ${pid})`);
     ns.tprint("");
     ns.tprint("╔═══════════════════════════════════════════════════════════╗");
-    ns.tprint("║   ✅ NEXUS v0.5-PROMETHEUS - BOOT COMPLETE                ║");
+    ns.tprint("║   ✅ NEXUS v0.9.0-RESET-READY - BOOT COMPLETE             ║");
     ns.tprint("╚═══════════════════════════════════════════════════════════╝");
 }
