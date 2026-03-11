@@ -6,6 +6,11 @@
  * @file        /tools/aug-speedrun.js
  * @version     1.0.0
  * @description 30 augs minimum pour Daedalus (speedrun optimal)
+ * 
+ * USAGE:
+ * run /tools/aug-speedrun.js          → Voir tous les runs
+ * run /tools/aug-speedrun.js 1        → Détails Run 1
+ * run /tools/aug-speedrun.js next     → Prochain run à faire
  */
 
 /** @param {NS} ns */
@@ -97,9 +102,33 @@ export async function main(ns) {
     // MAIN LOGIC
     // ════════════════════════════════════════════════════
     
-    while (true) {
+    const arg = ns.args[0];
+    
+    // Trier par prix (cher → pas cher)
+    const sorted = [...SPEEDRUN_AUGS].sort((a, b) => b.price - a.price);
+    
+    // Calculer découpage optimal
+    const optimalRunSize = findOptimalRunSize();
+    const avgMult = calculateAvgMultiplier(optimalRunSize);
+    const numRuns = Math.ceil(30 / optimalRunSize);
+    
+    // Découper en packs
+    const packs = [];
+    for (let i = 0; i < numRuns; i++) {
+        const start = i * optimalRunSize;
+        const end = Math.min(start + optimalRunSize, 30);
+        packs.push(sorted.slice(start, end));
+    }
+    
+    // INVERSER (moins cher d'abord)
+    packs.reverse();
+    
+    // ════════════════════════════════════════════════════
+    // VUE D'ENSEMBLE
+    // ════════════════════════════════════════════════════
+    
+    if (!arg || arg === "all") {
         ns.clearLog();
-        
         ns.print('╔═══════════════════════════════════════════════════════════╗');
         ns.print('║   🏃 NEXUS SPEEDRUN PLANNER v1.0                          ║');
         ns.print('║   30 augmentations pour Daedalus (optimisé)              ║');
@@ -109,14 +138,6 @@ export async function main(ns) {
         ns.print('🎯 OBJECTIF: 30 augs minimum + $100B + 2500 hacking');
         ns.print('');
         
-        // Trier par prix (cher → pas cher)
-        const sorted = [...SPEEDRUN_AUGS].sort((a, b) => b.price - a.price);
-        
-        // Calculer découpage optimal
-        const optimalRunSize = findOptimalRunSize();
-        const avgMult = calculateAvgMultiplier(optimalRunSize);
-        const numRuns = Math.ceil(30 / optimalRunSize);
-        
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         ns.print('DÉCOUPAGE OPTIMAL');
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -124,80 +145,27 @@ export async function main(ns) {
         ns.print(`Nombre de runs: ${numRuns}`);
         ns.print('');
         
-        // Découper en packs
-        const packs = [];
-        for (let i = 0; i < numRuns; i++) {
-            const start = i * optimalRunSize;
-            const end = Math.min(start + optimalRunSize, 30);
-            packs.push(sorted.slice(start, end));
-        }
+        ns.print('RUN  AUGS  COÛT           TOP 3 AUGS');
+        ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         
-        // INVERSER (moins cher d'abord)
-        packs.reverse();
-        
-        // Afficher chaque run
         for (let runIdx = 0; runIdx < packs.length; runIdx++) {
             const pack = packs[runIdx];
             const physicalRun = runIdx + 1;
             
-            ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            ns.print(`RUN ${physicalRun} (physique) - ${pack.length} augmentations`);
-            ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            ns.print('');
-            ns.print('#   NOM                                        FACTION          PRIX          REP');
-            ns.print('─────────────────────────────────────────────────────────────────────────────────────');
-            
             let totalCost = 0;
-            const factionRep = new Map();
-            
             for (let i = 0; i < pack.length; i++) {
-                const aug = pack[i];
-                const idx = i + 1;
-                const costWithMult = aug.price * Math.pow(MULTIPLIER, i);
-                totalCost += costWithMult;
-                
-                if (!factionRep.has(aug.faction)) {
-                    factionRep.set(aug.faction, 0);
-                }
-                factionRep.set(aug.faction, Math.max(factionRep.get(aug.faction), aug.rep));
-                
-                const name = aug.name.substring(0, 45).padEnd(45);
-                const faction = aug.faction.substring(0, 15).padEnd(15);
-                const price = `$${ns.formatNumber(costWithMult)}`.padStart(13);
-                const rep = ns.formatNumber(aug.rep).padStart(8);
-                
-                ns.print(`${String(idx).padStart(2)}. ${name} ${faction} ${price} ${rep}`);
+                totalCost += pack[i].price * Math.pow(MULTIPLIER, i);
             }
             
-            ns.print('─────────────────────────────────────────────────────────────────────────────────────');
-            ns.print(`Coût total Run ${physicalRun}: $${ns.formatNumber(totalCost)}`);
-            ns.print('');
+            const top3 = pack.slice(0, 3).map(a => a.name.substring(0, 20)).join(', ');
+            const runStr = String(physicalRun).padStart(3);
+            const augsStr = String(pack.length).padStart(4);
+            const costStr = `$${ns.formatNumber(totalCost)}`.padStart(14);
             
-            ns.print('Rep requise par faction:');
-            for (const [faction, rep] of Array.from(factionRep.entries()).sort((a, b) => b[1] - a[1])) {
-                ns.print(`  • ${faction}: ${ns.formatNumber(rep)}`);
-            }
-            ns.print('');
+            ns.print(`${runStr}  ${augsStr}  ${costStr}  ${top3}`);
         }
         
-        // Résumé
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        ns.print('RÉSUMÉ GLOBAL');
-        ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        
-        let grandTotal = 0;
-        for (let runIdx = 0; runIdx < packs.length; runIdx++) {
-            const pack = packs[runIdx];
-            let runCost = 0;
-            for (let i = 0; i < pack.length; i++) {
-                runCost += pack[i].price * Math.pow(MULTIPLIER, i);
-            }
-            grandTotal += runCost;
-            ns.print(`Run ${runIdx + 1}: $${ns.formatNumber(runCost)}`);
-        }
-        
-        ns.print('');
-        ns.print(`💰 COÛT TOTAL: $${ns.formatNumber(grandTotal)}`);
         ns.print('');
         
         ns.print('📋 ROADMAP FACTIONS:');
@@ -211,16 +179,98 @@ export async function main(ns) {
         ns.print('  → TOTAL: 30 augs → Daedalus');
         ns.print('');
         
-        const money = ns.getServerMoneyAvailable('home');
-        const hackLevel = ns.getHackingLevel();
-        
-        ns.print('📊 Progression actuelle:');
-        ns.print(`  💰 Argent: $${ns.formatNumber(money)} / $${ns.formatNumber(grandTotal + 100000000000)}`);
-        ns.print(`  🎯 Hacking: ${hackLevel} / 2500`);
+        ns.print('COMMANDES:');
+        ns.print('  run aug-speedrun.js 1       → Détails Run 1');
+        ns.print('  run aug-speedrun.js next    → Prochain run suggéré');
         ns.print('');
         
-        ns.print('⏱️  Rafraîchissement dans 30s...');
+    } else if (arg === "next") {
+        // Suggérer prochain run
+        const money = ns.getServerMoneyAvailable('home');
+        let nextRun = 1;
         
-        await ns.sleep(30000);
+        for (let runIdx = 0; runIdx < packs.length; runIdx++) {
+            const pack = packs[runIdx];
+            let totalCost = 0;
+            for (let i = 0; i < pack.length; i++) {
+                totalCost += pack[i].price * Math.pow(MULTIPLIER, i);
+            }
+            
+            if (money >= totalCost * 1.5) {
+                nextRun = runIdx + 2; // Passé celui-ci
+            }
+        }
+        
+        if (nextRun > packs.length) nextRun = packs.length;
+        
+        displayRunDetails(ns, packs, nextRun - 1);
+        
+    } else {
+        // Run spécifique
+        const runNum = parseInt(arg);
+        if (runNum >= 1 && runNum <= packs.length) {
+            displayRunDetails(ns, packs, runNum - 1);
+        } else {
+            ns.print(`❌ Run ${runNum} invalide (1-${packs.length})`);
+        }
     }
+}
+
+function displayRunDetails(ns, packs, runIdx) {
+    const pack = packs[runIdx];
+    const physicalRun = runIdx + 1;
+    const MULTIPLIER = 1.9;
+    
+    ns.clearLog();
+    ns.print('╔═══════════════════════════════════════════════════════════╗');
+    ns.print(`║   RUN ${physicalRun} (physique) - ${pack.length} augmentations                     ║`);
+    ns.print('╚═══════════════════════════════════════════════════════════╝');
+    ns.print('');
+    
+    let totalCost = 0;
+    const factionRep = new Map();
+    
+    for (let i = 0; i < pack.length; i++) {
+        totalCost += pack[i].price * Math.pow(MULTIPLIER, i);
+        
+        if (!factionRep.has(pack[i].faction)) {
+            factionRep.set(pack[i].faction, 0);
+        }
+        factionRep.set(pack[i].faction, Math.max(factionRep.get(pack[i].faction), pack[i].rep));
+    }
+    
+    ns.print(`💰 Coût total: $${ns.formatNumber(totalCost)}`);
+    ns.print('');
+    
+    ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    ns.print('ORDRE D\'ACHAT (CHER → PAS CHER)');
+    ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    ns.print('#   NOM                                   FACTION              PRIX         REP');
+    ns.print('─────────────────────────────────────────────────────────────────────────────────');
+    
+    for (let i = 0; i < pack.length; i++) {
+        const aug = pack[i];
+        const idx = String(i + 1).padStart(2);
+        const name = aug.name.substring(0, 40).padEnd(40);
+        const faction = aug.faction.substring(0, 20).padEnd(20);
+        const costWithMult = aug.price * Math.pow(MULTIPLIER, i);
+        const price = `$${ns.formatNumber(costWithMult)}`.padStart(12);
+        const rep = ns.formatNumber(aug.rep).padStart(8);
+        
+        ns.print(`${idx}. ${name} ${faction} ${price} ${rep}`);
+    }
+    
+    ns.print('─────────────────────────────────────────────────────────────────────────────────');
+    ns.print('');
+    
+    ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    ns.print('REP REQUISE PAR FACTION');
+    ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    
+    for (const [faction, rep] of Array.from(factionRep.entries()).sort((a, b) => b[1] - a[1])) {
+        ns.print(`  • ${faction}: ${ns.formatNumber(rep)}`);
+    }
+    
+    ns.print('');
+    ns.print('⚠️  IMPORTANT: Acheter dans l\'ordre exact (multiplicateur 1.9x)');
 }
