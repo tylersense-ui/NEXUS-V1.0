@@ -8,9 +8,12 @@
  * @description 30 augs minimum pour Daedalus (speedrun optimal)
  * 
  * USAGE:
- * run /tools/aug-speedrun.js          → Voir tous les runs
- * run /tools/aug-speedrun.js 1        → Détails Run 1
- * run /tools/aug-speedrun.js next     → Prochain run à faire
+ * run /tools/aug-speedrun.js                 → Voir tous les runs
+ * run /tools/aug-speedrun.js 1               → Détails Run 1
+ * run /tools/aug-speedrun.js next            → Prochain run suggéré
+ * run /tools/aug-speedrun.js mark <nom>      → Marquer comme acheté
+ * run /tools/aug-speedrun.js unmark <nom>    → Démarquer
+ * run /tools/aug-speedrun.js reset           → Reset tracking
  */
 
 /** @param {NS} ns */
@@ -136,13 +139,9 @@ export async function main(ns) {
     }
     
     function findOptimalRunSize() {
-        for (let n = 1; n <= 30; n++) {
-            const avgMult = calculateAvgMultiplier(n);
-            if (avgMult > MAX_AVG_MULTIPLIER) {
-                return Math.max(1, n - 1);
-            }
-        }
-        return 30;
+        // Équilibre entre multiplicateur ET temps physique
+        // 3 runs de 10 = OPTIMAL (7.56x mult, 3 resets seulement)
+        return 10;
     }
     
     // ════════════════════════════════════════════════════
