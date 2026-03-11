@@ -16,6 +16,53 @@
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog('ALL');
+    
+    const TRACKING_FILE = '/state/augs-speedrun.txt';
+    const cmd = ns.args[0];
+    const augName = ns.args.slice(1).join(' ');
+    
+    // Créer fichier tracking si inexistant
+    if (!ns.fileExists(TRACKING_FILE)) {
+        ns.write(TRACKING_FILE, JSON.stringify({ purchased: [] }), 'w');
+    }
+    
+    // Lire tracking
+    let tracking = { purchased: [] };
+    try {
+        const data = ns.read(TRACKING_FILE);
+        tracking = JSON.parse(data);
+    } catch (e) {
+        tracking = { purchased: [] };
+    }
+    
+    // ════════════════════════════════════════════════════
+    // COMMANDES TRACKING
+    // ════════════════════════════════════════════════════
+    
+    if (cmd === 'mark' && augName) {
+        if (!tracking.purchased.includes(augName)) {
+            tracking.purchased.push(augName);
+            ns.write(TRACKING_FILE, JSON.stringify(tracking, null, 2), 'w');
+            ns.tprint(`✅ Marqué: ${augName}`);
+        } else {
+            ns.tprint(`⚠️  Déjà marqué: ${augName}`);
+        }
+        return;
+    }
+    
+    if (cmd === 'unmark' && augName) {
+        tracking.purchased = tracking.purchased.filter(a => a !== augName);
+        ns.write(TRACKING_FILE, JSON.stringify(tracking, null, 2), 'w');
+        ns.tprint(`❌ Démarqué: ${augName}`);
+        return;
+    }
+    
+    if (cmd === 'reset') {
+        ns.write(TRACKING_FILE, JSON.stringify({ purchased: [] }, null, 2), 'w');
+        ns.tprint('🔄 Tracking reset');
+        return;
+    }
+    
     ns.tail();
     
     const MULTIPLIER = 1.9;
@@ -135,6 +182,13 @@ export async function main(ns) {
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
         
+        const purchased = tracking.purchased || [];
+        const remaining = sorted.filter(a => !purchased.includes(a.name));
+        
+        ns.print(`✅ Achetées: ${purchased.length} / 30`);
+        ns.print(`⏳ Restantes: ${remaining.length}`);
+        ns.print('');
+        
         ns.print('🎯 OBJECTIF: 30 augs minimum + $100B + 2500 hacking');
         ns.print('');
         
@@ -180,8 +234,10 @@ export async function main(ns) {
         ns.print('');
         
         ns.print('COMMANDES:');
-        ns.print('  run aug-speedrun.js 1       → Détails Run 1');
-        ns.print('  run aug-speedrun.js next    → Prochain run suggéré');
+        ns.print('  run aug-speedrun.js 1          → Détails Run 1');
+        ns.print('  run aug-speedrun.js next       → Prochain run suggéré');
+        ns.print('  run aug-speedrun.js mark <nom> → Marquer comme acheté');
+        ns.print('  run aug-speedrun.js reset      → Reset tracking');
         ns.print('');
         
     } else if (arg === "next") {
@@ -203,20 +259,20 @@ export async function main(ns) {
         
         if (nextRun > packs.length) nextRun = packs.length;
         
-        displayRunDetails(ns, packs, nextRun - 1);
+        displayRunDetails(ns, packs, nextRun - 1, tracking);
         
     } else {
         // Run spécifique
         const runNum = parseInt(arg);
         if (runNum >= 1 && runNum <= packs.length) {
-            displayRunDetails(ns, packs, runNum - 1);
+            displayRunDetails(ns, packs, runNum - 1, tracking);
         } else {
             ns.print(`❌ Run ${runNum} invalide (1-${packs.length})`);
         }
     }
 }
 
-function displayRunDetails(ns, packs, runIdx) {
+function displayRunDetails(ns, packs, runIdx, tracking) {
     const pack = packs[runIdx];
     const physicalRun = runIdx + 1;
     const MULTIPLIER = 1.9;
@@ -229,6 +285,7 @@ function displayRunDetails(ns, packs, runIdx) {
     
     let totalCost = 0;
     const factionRep = new Map();
+    const purchased = tracking.purchased || [];
     
     for (let i = 0; i < pack.length; i++) {
         totalCost += pack[i].price * Math.pow(MULTIPLIER, i);
@@ -245,19 +302,20 @@ function displayRunDetails(ns, packs, runIdx) {
     ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     ns.print('ORDRE D\'ACHAT (CHER → PAS CHER)');
     ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    ns.print('#   NOM                                   FACTION              PRIX         REP');
+    ns.print('#   ST  NOM                                   FACTION              PRIX         REP');
     ns.print('─────────────────────────────────────────────────────────────────────────────────');
     
     for (let i = 0; i < pack.length; i++) {
         const aug = pack[i];
         const idx = String(i + 1).padStart(2);
+        const status = purchased.includes(aug.name) ? '✅' : '⏳';
         const name = aug.name.substring(0, 40).padEnd(40);
         const faction = aug.faction.substring(0, 20).padEnd(20);
         const costWithMult = aug.price * Math.pow(MULTIPLIER, i);
         const price = `$${ns.formatNumber(costWithMult)}`.padStart(12);
         const rep = ns.formatNumber(aug.rep).padStart(8);
         
-        ns.print(`${idx}. ${name} ${faction} ${price} ${rep}`);
+        ns.print(`${idx}. ${status}  ${name} ${faction} ${price} ${rep}`);
     }
     
     ns.print('─────────────────────────────────────────────────────────────────────────────────');
@@ -271,6 +329,10 @@ function displayRunDetails(ns, packs, runIdx) {
         ns.print(`  • ${faction}: ${ns.formatNumber(rep)}`);
     }
     
+    ns.print('');
+    ns.print('COMMANDES:');
+    ns.print('  run aug-speedrun.js mark <nom>     → Marquer comme acheté');
+    ns.print('  run aug-speedrun.js unmark <nom>   → Démarquer');
     ns.print('');
     ns.print('⚠️  IMPORTANT: Acheter dans l\'ordre exact (multiplicateur 1.9x)');
 }
