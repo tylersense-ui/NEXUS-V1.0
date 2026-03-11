@@ -1,12 +1,7 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.10.0 - Batcher (OPTIMISÉ PROFIT/S)               ║
+ * ║ NEXUS v0.9.0 - Batcher (RESET-READY, NO FORMULAS REQ)     ║
  * ╚═══════════════════════════════════════════════════════════╝
- * 
- * OPTIMISATIONS v0.10.0:
- * 1. hackPercent dynamique selon RAM disponible
- * 2. Spacing intelligent des batches
- * 3. Priorisation cibles par profit/seconde
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -25,89 +20,6 @@ export class Batcher {
         this.hasFormulas = ns.fileExists("Formulas.exe");
     }
     
-    /**
-     * NOUVELLE v0.10.0 : Calculer hackPercent dynamique
-     * Plus de RAM = hack plus agressif
-     */
-    calculateOptimalHackPercent() {
-        const totalRam = this.ramMgr.getTotalAvailableRam();
-        
-        // Échelle dynamique basée sur RAM totale
-        if (totalRam < 1000) {           // < 1TB
-            return 0.05;  // 5% conservateur
-        } else if (totalRam < 5000) {    // 1-5TB
-            return 0.10;  // 10% équilibré
-        } else if (totalRam < 15000) {   // 5-15TB
-            return 0.15;  // 15% agressif
-        } else {                         // > 15TB
-            return 0.20;  // 20% ultra-agressif
-        }
-    }
-    
-    /**
-     * NOUVELLE v0.10.0 : Calculer profit/seconde d'une cible
-     */
-    calculateProfitPerSecond(target) {
-        try {
-            const maxMoney = this.ns.getServerMaxMoney(target);
-            const minSec = this.ns.getServerMinSecurityLevel(target);
-            
-            // Simuler serveur optimal
-            const server = this.ns.getServer(target);
-            server.hackDifficulty = minSec;
-            server.moneyAvailable = maxMoney;
-            
-            const hackPercent = this.calculateOptimalHackPercent();
-            
-            let hackTime, hackChance;
-            
-            if (this.hasFormulas) {
-                const player = this.ns.getPlayer();
-                hackTime = this.ns.formulas.hacking.hackTime(server, player);
-                hackChance = this.ns.formulas.hacking.hackChance(server, player);
-            } else {
-                hackTime = this.ns.getHackTime(target);
-                hackChance = this.ns.hackAnalyzeChance(target);
-            }
-            
-            // Profit/s = (argent volé × chance) / temps
-            const moneyStolen = maxMoney * hackPercent;
-            const expectedProfit = moneyStolen * hackChance;
-            const profitPerSecond = expectedProfit / (hackTime / 1000);
-            
-            return {
-                profitPerSecond,
-                hackTime,
-                hackChance,
-                maxMoney,
-                hackPercent
-            };
-            
-        } catch (error) {
-            return {
-                profitPerSecond: 0,
-                hackTime: Infinity,
-                hackChance: 0,
-                maxMoney: 0,
-                hackPercent: 0
-            };
-        }
-    }
-    
-    /**
-     * NOUVELLE v0.10.0 : Calculer spacing optimal des batches
-     */
-    calculateOptimalSpacing(target) {
-        const weakenTime = this.ns.getWeakenTime(target);
-        
-        // Spacing = weakenTime / nombre max de batches concurrents
-        // On vise ~50 batches max par cible
-        const maxConcurrentBatches = 50;
-        const optimalSpacing = Math.max(200, Math.floor(weakenTime / maxConcurrentBatches));
-        
-        return optimalSpacing;
-    }
-    
     dispatchBatch(target, options = {}) {
         try {
             const currentMoney = this.ns.getServerMoneyAvailable(target);
@@ -121,7 +33,6 @@ export class Batcher {
             const secReady = secDiff <= 5;
             const moneyReady = moneyPercent >= 0.95;
             
-            // Phase préparation
             if (!secReady) {
                 return this.dispatchWeaken(target);
             }
@@ -130,8 +41,7 @@ export class Batcher {
                 return this.dispatchGrowPrep(target);
             }
             
-            // Phase production avec hackPercent DYNAMIQUE
-            return this.dispatchHWGW(target, options);
+            return this.dispatchHWGW(target);
             
         } catch (error) {
             this.log.error(`Error: ${error.message}`);
@@ -251,11 +161,11 @@ export class Batcher {
     }
     
     /**
-     * HWGW v0.10.0 : hackPercent DYNAMIQUE
+     * HWGW SANS FORMULAS REQUIS
+     * Utilise ns.hackAnalyzeThreads() et ns.growthAnalyze()
      */
-    dispatchHWGW(target, options = {}) {
-        // ✅ NOUVEAU : hackPercent dynamique
-        const hackPercent = options.hackPercent || this.calculateOptimalHackPercent();
+    dispatchHWGW(target) {
+        const hackPercent = CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
         const maxMoney = this.ns.getServerMaxMoney(target);
         
         // ════════════════════════════════════════════════════
@@ -278,15 +188,13 @@ export class Batcher {
         const w2Threads = Math.max(0, Math.ceil(growSec / 0.05));
         
         // ════════════════════════════════════════════════════
-        // ✅ NOUVEAU : Spacing optimal
+        // DELAYS FIXES (pas de Formulas requis)
         // ════════════════════════════════════════════════════
         
-        const spacing = this.calculateOptimalSpacing(target);
-        
         const hackDelay = 0;
-        const weaken1Delay = spacing;
-        const growDelay = spacing * 2;
-        const weaken2Delay = spacing * 3;
+        const weaken1Delay = 50;
+        const growDelay = 100;
+        const weaken2Delay = 150;
         
         // ════════════════════════════════════════════════════
         // DISPATCH
@@ -375,16 +283,14 @@ export class Batcher {
             }
         }
         
-        const mode = `HWGW(${(hackPercent * 100).toFixed(0)}%)`;
-        this.log.info(`💰 ${mode}: ${totalAllocated} threads (${jobsSent} jobs) | Spacing: ${spacing}ms`);
+        const mode = this.hasFormulas ? "HWGW(10%)" : "HWGW(10%-NoF)";
+        this.log.info(`💰 ${mode}: ${totalAllocated} threads (${jobsSent} jobs)`);
         
         return {
             success: true,
             mode: mode,
             totalThreads: totalAllocated,
-            jobsDispatched: jobsSent,
-            hackPercent: hackPercent,
-            spacing: spacing
+            jobsDispatched: jobsSent
         };
     }
 }
