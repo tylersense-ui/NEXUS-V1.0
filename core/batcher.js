@@ -24,7 +24,7 @@
 
 import { CONFIG } from "/lib/constants.js";
 
-export class QuantumBatcher {
+export class Batcher {
     constructor(ns, network, ramMgr, portHandler, capabilities) {
         this.ns = ns;
         this.network = network;
