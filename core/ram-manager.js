@@ -1,11 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.10.1 - RAM Manager (HOTFIX RESERVED)             ║
+ * ║ NEXUS v0.10.1 - RAM Manager (FROM REPO)                   ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * HOTFIX v0.10.1 :
- * - RESERVED_HOME_RAM_PERCENT → RESERVED_HOME_RAM (fixe 64GB)
- * - Évite crash après HARD RESET (home = 32GB)
+ * @file        /core/ram-manager.js
+ * @version     0.10.1
+ * @description Allocation RAM dynamique - UTILISE TOUS LES SERVEURS
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -28,7 +28,6 @@ export class RamManager {
             let availableRam = maxRam - usedRam;
             
             if (hostname === 'home') {
-                // ✅ HOTFIX v0.10.1 : Utilise FIXE au lieu de PERCENT
                 const reserveRam = CONFIG.RAM.RESERVED_HOME_RAM;
                 availableRam = Math.max(0, availableRam - reserveRam);
             }
@@ -104,7 +103,6 @@ export class RamManager {
             let availableRam = maxRam - usedRam;
             
             if (hostname === 'home') {
-                // ✅ HOTFIX v0.10.1 : Utilise FIXE au lieu de PERCENT
                 const reserveRam = CONFIG.RAM.RESERVED_HOME_RAM;
                 availableRam = Math.max(0, availableRam - reserveRam);
             }
