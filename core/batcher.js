@@ -347,7 +347,7 @@ export class Batcher {
             
             // Dispatch sur chaque serveur alloué
             for (const alloc of allocation.allocations) {
-                this.portHandler.send(CONFIG.PORTS.COMMANDS, {
+                this.sendCommand({
                     target: target,
                     threads: alloc.threads,
                     host: alloc.hostname,
@@ -380,6 +380,19 @@ export class Batcher {
             padding: padding,
             spacing: spacing
         };
+    }
+    
+    /**
+     * Helper : Envoyer commande au controller
+     * POURQUOI : portHandler peut ne pas avoir de méthode send()
+     * On utilise directement ns.writePort()
+     */
+    sendCommand(command) {
+        try {
+            this.ns.writePort(CONFIG.PORTS.COMMANDS, JSON.stringify(command));
+        } catch (error) {
+            // Silent fail
+        }
     }
     
     /**
@@ -499,7 +512,7 @@ export class Batcher {
             
             if (allocation.success) {
                 for (const alloc of allocation.allocations) {
-                    this.portHandler.send(CONFIG.PORTS.COMMANDS, {
+                    this.sendCommand({
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
@@ -523,7 +536,7 @@ export class Batcher {
             
             if (allocation.success) {
                 for (const alloc of allocation.allocations) {
-                    this.portHandler.send(CONFIG.PORTS.COMMANDS, {
+                    this.sendCommand({
                         target: target,
                         threads: alloc.threads,
                         host: alloc.hostname,
