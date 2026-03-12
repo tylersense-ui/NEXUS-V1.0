@@ -1,0 +1,32 @@
+
+
+1.hackPercent dynamique (ajuster selon RAM disponible)
+2.Meilleur batching (spacer les batches différemment)
+3.Prioriser cibles par profit/seconde
+
+
+
+// ❌ MAUVAIS (hard-code)
+RESERVED_HOME_RAM: 32  // Après reset : 8GB total → CRASH !
+MAX_TARGETS: 15        // Après reset : 0.5PB RAM → GASPILLAGE
+
+// ✅ BON (dynamique)
+RESERVED_HOME_RAM: Math.min(32, homeRam * 0.05)  // 5% de home
+MAX_TARGETS: calculateOptimalTargets(totalRAM)   // Calcul auto
+```
+
+
+NUKE (ns.nuke)  → Requis : PORTS (0-5)
+                → Ignore  : hacking level
+
+HACK (ns.hack)  → Requis : hacking level
+                → Donne   : argent + XP
+
+Serveurs haute sécu (lvl 812-1303) :
+  → NUKE : ✅ Oui (5 ports = OK)
+  → HACK : ❌ Non (niveau trop bas)
+  → USAGE : Hôtes pour workers
+  → EFFET : +4-5PB RAM = +threads = +XP
+  
+  mettre a jour le read me, parceque quand tu lit celui de l'alpha tu vois le chemin parcouru
+  il va pleurer mon petit Neo, les change logs de version y penser lors de l'harmonisation du code 

@@ -27,4 +27,19 @@ NEXUS v0.9.1
 │   ├── target-analyzer.js
 │   ├── aug-speedrun.js
 │   └── aug-planner.js
-└── /state/ 
+├── /state/ 
+│      ├── network-status.json          → Serveurs scannés vs actifs
+│      ├── telemetry-realtime.json      → Métriques ultra détaillées temps réel
+│      ├── performance-metrics.json     → Success rate, threads, revenus
+│      ├── batcher-stats.json           → Stats par cible (EV/s, cycles, échecs)
+│      ├── player-stats.json            → Niveau, BN, augs, uptime
+│      ├── version-tracking.json        → Versions code en cours
+│      ├── operator-actions.json        → Log actions manuelles (achats, etc.)
+│      └── daemon-heartbeat.json        → Timestamp dernier update
+│   
+│   
+  
+  
+  
+  
+  

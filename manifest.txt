@@ -1,26 +1,80 @@
+# ╔═══════════════════════════════════════════════════════════╗
+# ║ NEXUS v0.11.1 - Manifest (TELEMETRY UPDATE)              ║
+# ╚═══════════════════════════════════════════════════════════╝
+#
+# Liste des fichiers à déployer via deploy.js
+# Format: un fichier par ligne, chemins absolus depuis home
+
+# ═════════════════════════════════════════════════════════════
+# CORE SYSTEM
+# ═════════════════════════════════════════════════════════════
 /boot.js
 /core/orchestrator.js
-/core/dashboard.js
+/core/batcher.js
 /core/port-handler.js
 /core/ram-manager.js
-/core/batcher.js
+/core/dashboard.js
+
+# ═════════════════════════════════════════════════════════════
+# HACK SYSTEM
+# ═════════════════════════════════════════════════════════════
 /hack/controller.js
+
+# ═════════════════════════════════════════════════════════════
+# LIBRARIES
+# ═════════════════════════════════════════════════════════════
 /lib/constants.js
 /lib/logger.js
-/lib/capabilities.js
 /lib/network.js
+/lib/capabilities.js
 /lib/utils.js
 /lib/formulas-helper.js
+/lib/state-manager.js
+/lib/telemetry-daemon.js
+
+# ═════════════════════════════════════════════════════════════
+# WORKERS
+# ═════════════════════════════════════════════════════════════
 /workers/hack.js
 /workers/grow.js
 /workers/weaken.js
+
+# ═════════════════════════════════════════════════════════════
+# MANAGERS
+# ═════════════════════════════════════════════════════════════
 /managers/server-manager.js
 /managers/stock-manager.js
-/tools/aug-planner.js
-/tools/aug-speedrun.js
-/tools/version-checker.js
+
+# ═════════════════════════════════════════════════════════════
+# TOOLS
+# ═════════════════════════════════════════════════════════════
 /tools/deploy.js
 /tools/global-kill.js
 /tools/network-audit.js
 /tools/liquidate.js
+/tools/target-analyzer.js
+/tools/aug-speedrun.js
+/tools/aug-planner.js
+/tools/version-checker.js
+/tools/log-action.js
+
+# ═════════════════════════════════════════════════════════════
+# MANIFEST
+# ═════════════════════════════════════════════════════════════
 /manifest.txt
+
+# ═════════════════════════════════════════════════════════════
+# NOTES
+# ═════════════════════════════════════════════════════════════
+# 
+# NOUVEAUX FICHIERS v0.11.1:
+# - /lib/state-manager.js      → API persistance /state/
+# - /lib/telemetry-daemon.js   → Daemon logging permanent
+# - /tools/log-action.js       → Logger actions manuelles
+#
+# À CRÉER MANUELLEMENT IN-GAME:
+# - mkdir /state  (dossier pour JSON telemetry)
+#
+# LANCEMENT APRÈS DÉPLOIEMENT:
+# 1. run /lib/telemetry-daemon.js  (daemon permanent)
+# 2. run /boot.js                   (système principal)

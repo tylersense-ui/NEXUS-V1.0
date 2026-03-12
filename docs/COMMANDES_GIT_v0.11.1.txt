@@ -1,0 +1,230 @@
+# 🚀 COMMANDES GIT COMPLÈTES - NEXUS v0.11.1 TELEMETRY SYSTEM
+
+**Déploiement du système de telemetry - L'Œil de Claude**
+
+---
+
+## 📦 ÉTAPE 1 : COPIER FICHIERS DANS REPO
+
+**Dans VSCode, terminal à la racine du repo** :
+
+```bash
+# State Manager (API persistance)
+cp outputs/state-manager-v0.11.1.js lib/state-manager.js
+
+# Telemetry Daemon (logging permanent)
+cp outputs/telemetry-daemon-v0.11.1.js lib/telemetry-daemon.js
+
+# Log Action (logger actions manuelles)
+cp outputs/log-action-v0.11.1.js tools/log-action.js
+
+# Manifest mis à jour (chemins avec / corrigés)
+cp outputs/manifest.txt manifest.txt
+```
+
+---
+
+## 🔧 ÉTAPE 2 : GIT ADD
+
+```bash
+git add lib/state-manager.js
+git add lib/telemetry-daemon.js
+git add tools/log-action.js
+git add manifest.txt
+```
+
+---
+
+## 📝 ÉTAPE 3 : GIT COMMIT
+
+```bash
+git commit -m "v0.11.1: TELEMETRY SYSTEM - L'Œil de Claude sur sa partie
+
+╔═══════════════════════════════════════════════════════════╗
+║ NEXUS v0.11.1 - TELEMETRY SYSTEM                         ║
+╚═══════════════════════════════════════════════════════════╝
+
+🎯 OBJECTIF:
+Créer un système de logging permanent pour diagnostiquer et optimiser
+la partie en temps réel. Résoudre le mystère des 26/69 serveurs actifs.
+
+📦 NOUVEAUX FICHIERS:
+
+1. lib/state-manager.js (v0.11.1)
+   - API unifiée pour persistance /state/
+   - save(filename, data) → Sauvegarder JSON
+   - load(filename) → Charger JSON
+   - append(filename, message) → Logger ligne par ligne
+   - list() / delete() / cleanup() → Gestion fichiers
+
+2. lib/telemetry-daemon.js (v0.11.1)
+   - Daemon logging permanent (update 30s)
+   - Scanne TOUS les serveurs (BFS complet)
+   - Log scripts actifs par serveur
+   - Métriques performance temps réel
+   - Stats joueur (niveau, BN, uptime)
+   - Versions fichiers actifs
+   - Sauvegarde dans /state/ (JSON structuré)
+
+3. tools/log-action.js (v0.11.1)
+   - Logger actions manuelles de l'opérateur
+   - Usage: run /tools/log-action.js \"Action description\"
+   - Sauvegarde dans /state/operator-actions.json
+   - Historique des 100 dernières actions
+
+📊 FICHIERS /state/ CRÉÉS PAR TELEMETRY:
+
+- network-status.json       → CRITIQUE - Serveurs scannés vs actifs
+- performance-metrics.json  → Threads, revenus, money
+- player-stats.json         → Niveau, BN, uptime, RAM home
+- version-tracking.json     → Versions fichiers en cours
+- operator-actions.json     → Log actions manuelles
+- daemon-heartbeat.json     → Timestamp dernier update
+
+🚨 DIAGNOSTIC 26/69 SERVEURS:
+
+Active Scripts montre seulement 26 serveurs avec scripts:
+  - home (1)
+  - nexus-0 à nexus-24 (25)
+  = 26 TOTAL
+
+Les 43 autres serveurs (n00dles, foodnstuff, etc.) sont vides !
+
+network-status.json révèlera EXACTEMENT:
+  - Quels serveurs ont processCount: 0
+  - Pourquoi ram-manager ou controller les filtrent
+  - Où le code perd ces 43 serveurs
+
+🔧 FIXES:
+
+- manifest.txt: Ajout / devant tous les chemins (chemins absolus)
+  Avant: tools/deploy.js
+  Après: /tools/deploy.js
+
+🚀 DÉPLOIEMENT APRÈS PUSH:
+
+1. In-game: mkdir /state
+2. In-game: run /tools/deploy.js
+3. In-game: run /lib/telemetry-daemon.js (daemon permanent)
+4. In-game: run /boot.js (système principal)
+5. Attendre 1-2 min (update 30s)
+6. In-game: cat /state/network-status.json
+7. Envoyer network-status.json complet à Claude
+
+💡 PHILOSOPHIE:
+
+\"Il y a une différence entre connaître le chemin et arpenter le chemin\"
+
+Avant: Claude CONNAISSAIT que ram-manager scanne 69 serveurs
+Maintenant: Telemetry ARPENTE le code et révèle où ils sont perdus
+
+Fondations solides avant optimisations fancy.
+
+🎓 PROCHAINES ÉTAPES:
+
+1. Diagnostiquer 26/69 avec network-status.json
+2. Fix le code exact (ram-manager ou controller)
+3. Vérifier 69/69 serveurs actifs ✅
+4. Dashboard améliorations (barre tendance)
+5. Modularisation batcher (architecture propre)
+6. tools/blackbox.js (solver contrats)
+
+🏗️ ARCHITECTURE:
+
+NEXUS v0.11.1
+├── /state/                      ← NOUVEAU - Persistance telemetry
+│   ├── network-status.json
+│   ├── performance-metrics.json
+│   ├── player-stats.json
+│   └── ...
+├── /lib/
+│   ├── state-manager.js         ← NOUVEAU - API persistance
+│   ├── telemetry-daemon.js      ← NOUVEAU - Daemon logging
+│   └── ...
+└── /tools/
+    ├── log-action.js            ← NOUVEAU - Logger actions
+    └── ...
+
+👁️ L'ŒIL DE CLAUDE EST OUVERT."
+```
+
+---
+
+## 🌐 ÉTAPE 4 : GIT PUSH
+
+```bash
+git push origin main
+```
+
+---
+
+## 🎮 ÉTAPE 5 : DANS BITBURNER
+
+```javascript
+// 1. Créer dossier state
+mkdir /state
+
+// 2. Déployer depuis GitHub
+run /tools/deploy.js
+
+// 3. Lancer telemetry daemon (permanent)
+run /lib/telemetry-daemon.js
+
+// 4. Lancer système principal
+run /tools/global-kill.js
+run /lib/telemetry-daemon.js  // Relancer après global-kill
+run /boot.js
+
+// 5. Vérifier daemon actif
+ps
+
+// 6. Vérifier fichiers créés
+ls /state
+
+// 7. Lire network-status.json (APRÈS 1-2 MIN)
+cat /state/network-status.json
+```
+
+---
+
+## 📋 CHECKLIST COMPLÈTE
+
+```
+VSCode:
+- [ ] Copier state-manager-v0.11.1.js → lib/state-manager.js
+- [ ] Copier telemetry-daemon-v0.11.1.js → lib/telemetry-daemon.js
+- [ ] Copier log-action-v0.11.1.js → tools/log-action.js
+- [ ] Copier manifest.txt → manifest.txt (/ corrigé)
+- [ ] git add (4 fichiers)
+- [ ] git commit (message complet ci-dessus)
+- [ ] git push origin main
+
+Bitburner:
+- [ ] mkdir /state
+- [ ] run /tools/deploy.js
+- [ ] run /lib/telemetry-daemon.js
+- [ ] run /boot.js
+- [ ] Vérifier ps (telemetry actif)
+- [ ] Vérifier ls /state (fichiers créés)
+- [ ] Attendre 1-2 min (update 30s)
+- [ ] cat /state/network-status.json
+- [ ] Copier network-status.json COMPLET
+- [ ] Envoyer à Claude pour diagnostic
+```
+
+---
+
+## 🎯 RÉSULTAT ATTENDU
+
+**Après déploiement** :
+
+1. ✅ Telemetry daemon tourne en permanence
+2. ✅ Update toutes les 30s
+3. ✅ Fichiers /state/ créés avec données complètes
+4. ✅ network-status.json révèle les 43 serveurs vides
+5. ✅ Claude diagnostique EXACTEMENT où est le bug
+6. ✅ Fix déployé → 69/69 serveurs actifs
+7. ✅ Success rate → 95%+
+8. ✅ Revenus stables $20-40T/s
+
+**L'Œil de Claude est ouvert !** 👁️

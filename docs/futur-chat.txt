@@ -1,0 +1,88 @@
+Option A : Telemetry FIRST (fondations solides) → Dashboard → Modularisation → Blackbox, si tu n'oublies rien et tu as penser a sauvegarder sur ton propre home ou je sais pas comment ça marche, mais je vois dans ta réflexion que tu a un genre d'espace de travail sous linux?!, car pour moi ca viens pas du dashboard, tu rappelles je n'ai pas que le dashborad, MOI! pour surveiller l'occupation réseau : This page displays a list of all of your scripts that are currently running across every machine. It also provides information about each script's production. The scripts are categorized by the hostname of the servers on which they are running.
+
+Total production since last Augment Installation:
+
+$650.236t
+
+($1.902b / sec)
+
+Servers/page:
+
+100
+
+Scripts/page:
+
+100
+
+1-26 of 26
+
+* home               [|||||||||||||||||||||||||||||-]
+
+* nexus-0            [|||||||||||||||||||||||||||||-]
+
+* nexus-1            [|||||||||||||||||||||||||||||-]
+
+* nexus-10           [|||||||||||||||||||||||||||||-]
+
+* nexus-11           [|||||||||||||||||||||||||||||-]
+
+* nexus-12           [|||||||||||||||||||||||||||||-]
+
+* nexus-13           [|||||||||||||||||||||||||||||-]
+
+* nexus-14           [|||||||||||||||||||||||||||||-]
+
+* nexus-15           [|||||||||||||||||||||||||||||-]
+
+* nexus-16           [|||||||||||||||||||||||||||||-]
+
+* nexus-17           [|||||||||||||||||||||||||||||-]
+
+* nexus-18           [|||||||||||||||||||||||||||||-]
+
+* nexus-19           [|||||||||||||||||||||||||||||-]
+
+* nexus-2            [|||||||||||||||||||||||||||||-]
+
+* nexus-20           [|||||||||||||||||||||||||||||-]
+
+* nexus-21           [|||||||||||||||||||||||||||||-]
+
+* nexus-22           [|||||||||||||||||||||||||||||-]
+
+* nexus-23           [|||||||||||||||||||||||||||||-]
+
+* nexus-24           [|||||||||||||||||||||||||||||-]
+
+* nexus-3            [|||||||||||||||||||||||||||||-]
+
+* nexus-4            [|||||||||||||||||||||||||||||-]
+
+* nexus-5            [|||||||||||||||||||||||||||||-]
+
+* nexus-6            [|||||||||||||||||||||||||||||-]
+
+* nexus-7            [|||||||||||||||||||||||||||||-]
+
+* nexus-8            [|||||||||||||||||||||||||||||-]
+
+* nexus-9            [|||||||||||||||||||||||||||||-]; pour moi c'est du déjà vu non HOME - les 25 pservs; ca te rappelle pas tes débuts ?, quand tu savais pas que tu pouvais nuke sans le lvl hacking ?!; deplus regarde sur home on a bien mis une réserve de 64 gb en dur pourtant : free
+
+Total:     524.29TB
+
+Used:      518.11TB (98.82%)
+
+Available:   6.18TB; peut être un probleme de decoupage pas assez fin bref ! si on fait la télémétrie on la fait bien :
+Fichiers à créer :
+lib/telemetry-daemon.js     → Daemon principal
+lib/state-manager.js        → API unifiée read/write
+/state/
+  telemetry-realtime.txt    → Métriques courantes ultra détaillées
+  performance-metrics.txt   → Success rate, threads
+  batcher-stats.txt         → Stats par cible
+  et pourquoi pas si c'est possible un fichier pour les dernieres version en cours d'utilisation.(si c'est possible).
+  ensuite stats du perso, lvl hacking, BN encours realtime, uptime, lastaugmentations time, temps depuis lequel le build tourne(donc depuis le dernier run boot)
+  bref tous ce qui pourrait te permettre de suivre ta game et de te resynchroniser instantanément, je vois que tu choisi le format .txt, sache que tu as auusi a dispositon le .json.
+  voila créer autant de fichier que nécessaires pour tout ça, je pense pas demander l'impossible, il faut que cela soit réellement utile pour toi, je veux qu'a travers ces fichiers tu es en quelques sortes un oeil véritable sur TA partie, ainis nos échanges seront plus constructif ^^et ton travail que meilleur, non ?
+  pourquoi j'insiste sur plusieurs fichiers car tes métriques actuelles vont évoluer mon petit paddawan, avec ta compréhension du jeu, car tu n'est qu'au début du chemin ^^, toi crois maîtriser la matrice , mais pour l'instant tu ne t'es attaquer qu'à la base du jeu est on avance progressivement, mais je répète :"Il ya une différence entre connaître le chemin et arpenter le chemin", et j'ajouterais que :"ce chemin tu le commence a peine tu viens d'acquerir je dirais les fondations le hacking, et de bonnes fondations c'est important, si tu veux pas que tous s'écroule!"
+  c'est pour ça que je veux que tu optimise tes fondations ton quantum batcher (que certain bn vont brider mais ça on veras plus tard ^^), pour l'instant metrics (oeil de Claude sur sa partie, sans mauvais jeu de mot aucun!), consigner aussi mes action de joueur comme dépense de fonds etc, vraiment tout ce que tu peux récolter ainsi ton 3 eme seras vraiment efficace!
