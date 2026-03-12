@@ -1,7 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.9.1 - RAM Manager (RÉSERVE DYNAMIQUE)            ║
+ * ║ NEXUS v0.10.1 - RAM Manager (HOTFIX RESERVED)             ║
  * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * HOTFIX v0.10.1 :
+ * - RESERVED_HOME_RAM_PERCENT → RESERVED_HOME_RAM (fixe 64GB)
+ * - Évite crash après HARD RESET (home = 32GB)
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -24,12 +28,9 @@ export class RamManager {
             let availableRam = maxRam - usedRam;
             
             if (hostname === 'home') {
-                const homeRam = this.ns.getServerMaxRam('home');
-                const reservePercent = CONFIG.HACKING.RESERVED_HOME_RAM_PERCENT;
-                const minReserve = CONFIG.HACKING.MIN_RESERVED_HOME_RAM;
-                
-                const reserveRam = Math.max(minReserve, homeRam * reservePercent);
-                availableRam -= reserveRam;
+                // ✅ HOTFIX v0.10.1 : Utilise FIXE au lieu de PERCENT
+                const reserveRam = CONFIG.RAM.RESERVED_HOME_RAM;
+                availableRam = Math.max(0, availableRam - reserveRam);
             }
             
             if (availableRam > 0) {
@@ -45,6 +46,8 @@ export class RamManager {
             return {
                 success: false,
                 allocations: [],
+                allocated: 0,
+                remaining: totalThreads,
                 error: "Invalid thread count"
             };
         }
@@ -55,6 +58,8 @@ export class RamManager {
             return {
                 success: false,
                 allocations: [],
+                allocated: 0,
+                remaining: totalThreads,
                 error: "No servers available"
             };
         }
@@ -99,12 +104,9 @@ export class RamManager {
             let availableRam = maxRam - usedRam;
             
             if (hostname === 'home') {
-                const homeRam = this.ns.getServerMaxRam('home');
-                const reservePercent = CONFIG.HACKING.RESERVED_HOME_RAM_PERCENT;
-                const minReserve = CONFIG.HACKING.MIN_RESERVED_HOME_RAM;
-                
-                const reserveRam = Math.max(minReserve, homeRam * reservePercent);
-                availableRam -= reserveRam;
+                // ✅ HOTFIX v0.10.1 : Utilise FIXE au lieu de PERCENT
+                const reserveRam = CONFIG.RAM.RESERVED_HOME_RAM;
+                availableRam = Math.max(0, availableRam - reserveRam);
             }
             
             if (availableRam >= 1.75) {
