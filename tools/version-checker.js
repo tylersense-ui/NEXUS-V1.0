@@ -1,11 +1,18 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS - Version Checker                                   ║
+ * ║ NEXUS - Version Checker v1.1 (PATHS CORRIGÉS)             ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/version-checker.js
- * @version     1.0.0
+ * @version     1.1.0
  * @description Vérifier versions de tous les fichiers NEXUS
+ * 
+ * CHANGEMENTS v1.1 :
+ * - ✅ CORRIGÉ : controller.js → /hack/controller.js (pas /core)
+ * - ✅ CORRIGÉ : port-handler.js → /core/ (pas /lib)
+ * - ✅ CORRIGÉ : ram-manager.js → /core/ (pas /lib)
+ * - ✅ CORRIGÉ : dashboard.js → /core/ (pas /tools)
+ * - ✅ AJOUTÉ : Section WORKERS
  * 
  * USAGE:
  * run /tools/version-checker.js
@@ -18,7 +25,7 @@ export async function main(ns) {
     ns.clearLog();
     
     ns.print('╔═══════════════════════════════════════════════════════════╗');
-    ns.print('║   🔍 NEXUS VERSION CHECKER                                ║');
+    ns.print('║   🔍 NEXUS VERSION CHECKER v1.1                           ║');
     ns.print('╚═══════════════════════════════════════════════════════════╝');
     ns.print('');
     
@@ -27,30 +34,39 @@ export async function main(ns) {
         { path: '/boot.js', expectedVersion: '0.9.1' },
         { path: '/core/orchestrator.js', expectedVersion: '0.9.1-DYNAMIC' },
         { path: '/core/batcher.js', expectedVersion: '0.10.0' },
-        { path: '/core/controller.js', expectedVersion: '0.8.0' },
+        { path: '/core/port-handler.js', expectedVersion: '0.8.0' },
+        { path: '/core/ram-manager.js', expectedVersion: '0.10.1' },  // HOTFIX
+        { path: '/core/dashboard.js', expectedVersion: '0.9.0' },
+        
+        // HACK
+        { path: '/hack/controller.js', expectedVersion: '0.8.0' },
         
         // LIB
-        { path: '/lib/constants.js', expectedVersion: '0.9.1' },
+        { path: '/lib/constants.js', expectedVersion: '0.10.1' },  // HOTFIX
         { path: '/lib/logger.js', expectedVersion: '0.8.0' },
-        { path: '/lib/port-handler.js', expectedVersion: '0.8.0' },
         { path: '/lib/network.js', expectedVersion: '0.10.0' },
-        { path: '/lib/ram-manager.js', expectedVersion: '0.9.1' },
         { path: '/lib/capabilities.js', expectedVersion: '0.8.0' },
-        
-        // MANAGERS
-        { path: '/managers/stock-manager.js', expectedVersion: '0.9.1' },
-        { path: '/managers/server-manager.js', expectedVersion: '0.9.0' },
+        { path: '/lib/utils.js', expectedVersion: '0.8.0' },
+        { path: '/lib/formulas-helper.js', expectedVersion: '0.8.0' },
         
         // WORKERS
         { path: '/workers/hack.js', expectedVersion: '0.8.0' },
         { path: '/workers/grow.js', expectedVersion: '0.8.0' },
         { path: '/workers/weaken.js', expectedVersion: '0.8.0' },
         
+        // MANAGERS
+        { path: '/managers/stock-manager.js', expectedVersion: '0.9.1' },
+        { path: '/managers/server-manager.js', expectedVersion: '0.9.0' },
+        
         // TOOLS
-        { path: '/tools/dashboard.js', expectedVersion: '0.9.0' },
+        { path: '/tools/deploy.js', expectedVersion: '0.5' },
+        { path: '/tools/global-kill.js', expectedVersion: '0.8.0' },
+        { path: '/tools/network-audit.js', expectedVersion: '0.8.3' },
+        { path: '/tools/liquidate.js', expectedVersion: '0.8.0' },
         { path: '/tools/target-analyzer.js', expectedVersion: '0.10.0' },
-        { path: '/tools/aug-speedrun.js', expectedVersion: '1.0.0' },
+        { path: '/tools/aug-speedrun.js', expectedVersion: '1.1' },  // HOTFIX
         { path: '/tools/aug-planner.js', expectedVersion: '1.3.0' },
+        { path: '/tools/version-checker.js', expectedVersion: '1.1.0' },  // CETTE VERSION
     ];
     
     ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -64,11 +80,31 @@ export async function main(ns) {
     
     ns.print('');
     ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    ns.print('FICHIERS HACK');
+    ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    
+    let hackFiles = files.filter(f => f.path.startsWith('/hack'));
+    for (const file of hackFiles) {
+        checkFile(ns, file);
+    }
+    
+    ns.print('');
+    ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     ns.print('FICHIERS LIB');
     ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     
     let libFiles = files.filter(f => f.path.startsWith('/lib'));
     for (const file of libFiles) {
+        checkFile(ns, file);
+    }
+    
+    ns.print('');
+    ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    ns.print('FICHIERS WORKERS');
+    ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    
+    let workerFiles = files.filter(f => f.path.startsWith('/workers'));
+    for (const file of workerFiles) {
         checkFile(ns, file);
     }
     
@@ -116,6 +152,10 @@ export async function main(ns) {
     } else {
         ns.print('⚠️  CERTAINS FICHIERS NÉCESSITENT UNE MISE À JOUR');
     }
+    
+    ns.print('');
+    ns.print('💡 TIP: Fichiers manquants = normaux si pas encore déployés');
+    ns.print('    Versions différentes = à mettre à jour via deploy.js');
 }
 
 function checkFile(ns, file) {
