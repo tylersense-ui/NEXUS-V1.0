@@ -444,6 +444,33 @@ export class Batcher {
     
     /**
      * ════════════════════════════════════════════════════
+     * DISPATCH BATCH - Wrapper pour compatibilité orchestrator
+     * ════════════════════════════════════════════════════
+     * L'orchestrator appelle dispatchBatch(), on route vers
+     * dispatchHWGW() ou dispatchPrep() selon l'état de la cible
+     */
+    dispatchBatch(target, options = {}) {
+        // Vérifier si cible est prête pour HWGW
+        const currentSec = this.ns.getServerSecurityLevel(target);
+        const minSec = this.ns.getServerMinSecurityLevel(target);
+        const currentMoney = this.ns.getServerMoneyAvailable(target);
+        const maxMoney = this.ns.getServerMaxMoney(target);
+        
+        const needsPrep = 
+            currentSec > minSec + CONFIG.HACKING.PREP_SECURITY_MARGIN ||
+            currentMoney < maxMoney * CONFIG.HACKING.PREP_MONEY_THRESHOLD;
+        
+        if (needsPrep) {
+            // Cible pas prête → PREP
+            return this.dispatchPrep(target);
+        } else {
+            // Cible prête → HWGW QUANTUM
+            return this.dispatchHWGW(target, options);
+        }
+    }
+    
+    /**
+     * ════════════════════════════════════════════════════
      * PREP MODE (Preparation)
      * ════════════════════════════════════════════════════
      */
