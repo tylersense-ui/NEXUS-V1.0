@@ -4,6 +4,7 @@
 #
 # Liste des fichiers à déployer via deploy.js
 # Format: un fichier par ligne, chemins absolus depuis home
+# Les lignes commençant par # sont ignorées
 
 # ═════════════════════════════════════════════════════════════
 # CORE SYSTEM
@@ -30,7 +31,6 @@
 /lib/utils.js
 /lib/formulas-helper.js
 /lib/state-manager.js
-/lib/telemetry-daemon.js
 
 # ═════════════════════════════════════════════════════════════
 # WORKERS
@@ -57,6 +57,7 @@
 /tools/aug-planner.js
 /tools/version-checker.js
 /tools/log-action.js
+/tools/telemetry-daemon.js
 
 # ═════════════════════════════════════════════════════════════
 # MANIFEST
@@ -64,17 +65,17 @@
 /manifest.txt
 
 # ═════════════════════════════════════════════════════════════
-# NOTES
+# NOTES v0.11.1
 # ═════════════════════════════════════════════════════════════
 # 
 # NOUVEAUX FICHIERS v0.11.1:
 # - /lib/state-manager.js      → API persistance /state/
-# - /lib/telemetry-daemon.js   → Daemon logging permanent
+# - /tools/telemetry-daemon.js → Daemon logging permanent
 # - /tools/log-action.js       → Logger actions manuelles
 #
 # À CRÉER MANUELLEMENT IN-GAME:
 # - mkdir /state  (dossier pour JSON telemetry)
 #
 # LANCEMENT APRÈS DÉPLOIEMENT:
-# 1. run /lib/telemetry-daemon.js  (daemon permanent)
-# 2. run /boot.js                   (système principal)
+# 1. run /tools/telemetry-daemon.js  (daemon permanent)
+# 2. run /boot.js                    (système principal)

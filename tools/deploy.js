@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.5-PROMETHEUS - Deploy Tool                       ║
+ * ║ NEXUS v0.11.1 - Deploy Tool (FIX COMMENTAIRES)           ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -16,7 +16,7 @@ export async function main(ns) {
     const baseUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}`;
     
     ns.print('╔═══════════════════════════════════════════════════════════╗');
-    ns.print('║   🚀 NEXUS DEPLOYMENT SYSTEM v0.5-PROMETHEUS              ║');
+    ns.print('║   🚀 NEXUS DEPLOYMENT SYSTEM v0.11.1                      ║');
     ns.print('╚═══════════════════════════════════════════════════════════╝');
     ns.print(`Source: ${GITHUB_USER}/${GITHUB_REPO}`);
     ns.print('');
@@ -30,7 +30,12 @@ export async function main(ns) {
     if (manifestDownloaded) {
         ns.print('  ✓ Manifest téléchargé');
         const manifestContent = ns.read('/tmp/manifest.txt');
-        files = manifestContent.split('\n').filter(line => line.trim().length > 0);
+        
+        // ✅ FIX v0.11.1 : SKIP lignes vides ET lignes commentaires (#)
+        files = manifestContent.split('\n')
+            .map(line => line.trim())                    // Trim whitespace
+            .filter(line => line.length > 0)             // Skip lignes vides
+            .filter(line => !line.startsWith('#'));      // Skip commentaires
         
         if (files.length === 0) {
             ns.print('  ⚠️  Manifest vide, utilisation du fallback');
@@ -79,12 +84,6 @@ export async function main(ns) {
     if (failed === 0) {
         ns.print('');
         ns.print('🚀 DÉPLOIEMENT RÉUSSI !');
-        ns.print('');
-        ns.print('Commandes disponibles:');
-        ns.print('  run /boot.js                    (démarrage système)');
-        ns.print('  run /core/dashboard.js          (dashboard visuel)');
-        ns.print('  run /managers/server-manager.js (achat + upgrade serveurs)');
-        ns.print('  run /tools/global-kill.js       (arrêt total)');
     } else {
         ns.print('');
         ns.print(`⚠️  ${failed} fichier(s) ont échoué`);
@@ -95,22 +94,32 @@ function getFallbackFiles() {
     return [
         '/boot.js',
         '/core/orchestrator.js',
-        '/core/dashboard.js',
+        '/core/batcher.js',
         '/core/port-handler.js',
         '/core/ram-manager.js',
-        '/core/batcher.js',
+        '/core/dashboard.js',
         '/hack/controller.js',
         '/lib/constants.js',
         '/lib/logger.js',
-        '/lib/capabilities.js',
         '/lib/network.js',
+        '/lib/capabilities.js',
         '/lib/utils.js',
+        '/lib/formulas-helper.js',
+        '/lib/state-manager.js',
         '/workers/hack.js',
         '/workers/grow.js',
         '/workers/weaken.js',
         '/managers/server-manager.js',
-        '/tools/cleanup.js',
+        '/managers/stock-manager.js',
         '/tools/deploy.js',
-        '/tools/global-kill.js'
+        '/tools/global-kill.js',
+        '/tools/network-audit.js',
+        '/tools/liquidate.js',
+        '/tools/target-analyzer.js',
+        '/tools/aug-speedrun.js',
+        '/tools/aug-planner.js',
+        '/tools/version-checker.js',
+        '/tools/log-action.js',
+        '/tools/telemetry-daemon.js'
     ];
 }
