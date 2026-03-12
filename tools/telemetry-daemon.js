@@ -69,9 +69,9 @@ export async function main(ns) {
         const perfMetrics = collectPerformanceMetrics(ns);
         await stateMgr.save("performance-metrics.json", perfMetrics);
         
-        ns.print(`⚡ Threads total: ${ns.formatNumber(perfMetrics.totalThreads)}`);
-        ns.print(`💰 Money: $${ns.formatNumber(perfMetrics.currentMoney)}`);
-        ns.print(`📈 Revenue: $${ns.formatNumber(perfMetrics.revenuePerSecond)}/s`);
+        ns.print(`⚡ Threads total: ${ns.formatNumber(perfMetrics.totalThreads || 0)}`);
+        ns.print(`💰 Money: $${ns.formatNumber(perfMetrics.currentMoney || 0)}`);
+        ns.print(`📈 Revenue: $${ns.formatNumber(perfMetrics.revenuePerSecond || 0)}/s`);
         ns.print("");
         
         // ══════════════════════════════════════════════════════════════
@@ -214,10 +214,22 @@ function collectPerformanceMetrics(ns) {
         }
     }
     
+    // ✅ FIX v0.11.1-HOTFIX : getScriptIncome peut retourner undefined
+    let revenuePerSecond = 0;
+    try {
+        const income = ns.getScriptIncome();
+        if (income && Array.isArray(income) && income.length > 0) {
+            revenuePerSecond = income[0] || 0;
+        }
+    } catch (e) {
+        // getScriptIncome n'existe pas ou erreur
+        revenuePerSecond = 0;
+    }
+    
     return {
         timestamp: new Date().toISOString(),
         currentMoney: ns.getServerMoneyAvailable("home"),
-        revenuePerSecond: ns.getScriptIncome()[0], // $ per second
+        revenuePerSecond: revenuePerSecond,
         totalThreads: totalThreads,
         hackingLevel: ns.getHackingLevel()
     };
