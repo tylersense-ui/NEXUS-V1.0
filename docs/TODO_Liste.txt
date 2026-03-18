@@ -1,20 +1,8 @@
-
+TODO_liste : 
 
 1.hackPercent dynamique (ajuster selon RAM disponible)
 2.Meilleur batching (spacer les batches différemment)
 3.Prioriser cibles par profit/seconde
-
-
-
-// ❌ MAUVAIS (hard-code)
-RESERVED_HOME_RAM: 32  // Après reset : 8GB total → CRASH !
-MAX_TARGETS: 15        // Après reset : 0.5PB RAM → GASPILLAGE
-
-// ✅ BON (dynamique)
-RESERVED_HOME_RAM: Math.min(32, homeRam * 0.05)  // 5% de home
-MAX_TARGETS: calculateOptimalTargets(totalRAM)   // Calcul auto
-```
-
 
 NUKE (ns.nuke)  → Requis : PORTS (0-5)
                 → Ignore  : hacking level
@@ -28,5 +16,32 @@ Serveurs haute sécu (lvl 812-1303) :
   → USAGE : Hôtes pour workers
   → EFFET : +4-5PB RAM = +threads = +XP
   
-  mettre a jour le read me, parceque quand tu lit celui de l'alpha tu vois le chemin parcouru
+*~ mettre a jour le read me, parceque quand tu lit celui de l'alpha tu vois le chemin parcouru
   il va pleurer mon petit Neo, les change logs de version y penser lors de l'harmonisation du code 
+
+  ## ⚠️ PROTECTION GLOBAL-KILL (À FAIRE)
+
+**Actuellement** : global-kill tue TOUT, y compris telemetry.
+
+**Solution à implémenter** : Modifier global-kill.js pour exclure telemetry.
+
+**Code à ajouter dans global-kill.js** :
+
+```javascript
+const PROTECTED_SCRIPTS = [
+    "telemetry-daemon.js",
+    "dashboard.js"  // Optionnel
+];
+
+// Dans la boucle de kill :
+const processes = ns.ps(host);
+for (const proc of processes) {
+    const scriptName = proc.filename.split('/').pop();
+    
+    if (!PROTECTED_SCRIPTS.includes(scriptName)) {
+        ns.kill(proc.pid);
+    }
+}
+```
+
+**Pour l'instant** : Relancer telemetry manuellement après global-kill.
