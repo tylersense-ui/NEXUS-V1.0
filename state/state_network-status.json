@@ -1,0 +1,8548 @@
+{
+  "timestamp": "2026-03-18T01:43:04.982Z",
+  "totalServersScanned": 96,
+  "totalServersRooted": 96,
+  "totalServersWithScripts": 69,
+  "totalServersEmpty": 0,
+  "totalRamNetwork": 28314588,
+  "totalRamUsed": 28314499.45,
+  "ramUsagePercent": 99.99968726368188,
+  "serversDetail": [
+    {
+      "hostname": "home",
+      "hasRoot": true,
+      "maxRam": 2097152,
+      "usedRam": 2097096.7,
+      "availableRam": 55.300000000046566,
+      "processCount": 779,
+      "processes": [
+        {
+          "filename": "core/orchestrator.js",
+          "threads": 1,
+          "args": []
+        },
+        {
+          "filename": "hack/controller.js",
+          "threads": 1,
+          "args": []
+        },
+        {
+          "filename": "core/dashboard.js",
+          "threads": 1,
+          "args": []
+        },
+        {
+          "filename": "managers/stock-manager.js",
+          "threads": 1,
+          "args": []
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798060368-23ymxrylk"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798060369-fmgvdpyc9"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798060369-ktz4g96oa"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798060369-8a2ygspz3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798060369-gsekg1dba"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 1018580,
+          "args": [
+            "rho-construction",
+            0,
+            "1773798060370-klwmu8qq4"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 3,
+          "args": [
+            "rothman-uni",
+            50,
+            "1773798060371-2z7a790z7"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 116,
+          "args": [
+            "rothman-uni",
+            100,
+            "1773798060371-i3dy4cvby"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 261,
+          "args": [
+            "syscore",
+            0,
+            "1773798060371-rh7001xfg"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 11,
+          "args": [
+            "syscore",
+            50,
+            "1773798060371-5erndl5ou"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 127,
+          "args": [
+            "syscore",
+            100,
+            "1773798060372-vig0uribl"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798060588-qqey2z0s8"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798060588-xjdy1d389"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798060589-yflroziyl"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798060589-xxxwxjlt0"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798060589-t41nilniq"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 151320,
+          "args": [
+            "rho-construction",
+            0,
+            "1773798060590-gz1jmtx3y"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 3,
+          "args": [
+            "rothman-uni",
+            50,
+            "1773798060592-vv7cweza6"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 116,
+          "args": [
+            "rothman-uni",
+            100,
+            "1773798060593-z9h6u594a"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 261,
+          "args": [
+            "syscore",
+            0,
+            "1773798060593-k5wneafjp"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 11,
+          "args": [
+            "syscore",
+            50,
+            "1773798060594-mndf0pdut"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 127,
+          "args": [
+            "syscore",
+            100,
+            "1773798060594-fcpc5lf30"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798060807-s1kj5zexf"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798060808-ny9fuwijh"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798060808-1kg36u0ls"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798060809-cst3de5i3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798060809-c04duka5e"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798061011-vk4vwn6ic"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798061012-zjvfgh092"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798061012-xif08rot7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798061012-q4udzq4oq"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798061013-y5qgv96tf"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798061216-69v1v7twx"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798061216-5z10z3ejm"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798061216-j8klgojzr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798061217-af220hbsu"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798061217-k4rev5g5c"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798061428-vcq5xbdoe"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798061428-z03ddy24w"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798061428-ynsbvzedc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798061429-5blahl0zn"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798061429-3egrkjkg5"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798061632-9osuviea3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798061632-hbsw4nmxt"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798061633-yesaq72iy"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798061633-ef9tm8whi"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798061633-xyd5ue03x"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798061836-zxp5y5snr"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798061837-jy9lp8bpe"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798061837-lvpmsxrc7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798061838-p7i21sp0s"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798061838-d7hnbujzg"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798062041-ipiv9k07z"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798062042-vr44f413l"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798062042-v8nl33y5q"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798062043-uyajyzt1c"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798062043-8xtm2cqxr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798062247-fgl20sta1"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798062247-daqa1kn5t"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798062248-6s86soq55"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798062248-yvmiats2m"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798062249-y2b86hjjv"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798062452-chcsgd41u"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798062452-881yppz6w"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798062453-p15kemo82"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798062453-6lcj9obd7"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798062453-7b5bdxug3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798062658-b3qbq9ba5"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798062658-zs5qx8d4g"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798062658-t7ik4nt7u"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798062659-gpyaqw2ud"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798062659-o119279gz"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798062862-lszkiqs69"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798062863-lzbm54mdj"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798062863-w8h4zvkjm"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798062864-kpvquy069"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798062864-m2rpbjbe0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798063066-1e4svxg28"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798063066-k44eoq0n7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798063269-fkn6g41yg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798063269-mavo48kvc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798063472-bnfrp9p5p"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798063473-2a1umjamk"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798063676-khy9qx6um"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798063676-tcmrf69di"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798063880-7ld1kfp1l"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798063880-5w9vwlzj3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798064085-qipkdbcbf"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798064086-iwqdkdsbw"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798064289-0sfeyewjg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798064289-vnlo2fsdk"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798064493-omrhui8ui"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798064494-knndgpony"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798064697-9am70k3f5"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798064697-lj5jravvg"
+          ]
+        },
+        {
+          "filename": "tools/telemetry-daemon.js",
+          "threads": 1,
+          "args": []
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798064900-igadzrpjp"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798064900-z1jlpubl3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798065103-vje9fsmn4"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798065104-9i6vna2vj"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798065306-f3jbqp6gt"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798065306-k82r1q61q"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798065509-ahzv6h0qu"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798065509-ier1f9m4q"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798065713-q83wjamyd"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798065713-glkw6uqrz"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798065916-kftbkhpr7"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798065917-h51ljzvmq"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798066120-zzt7ddo98"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798066120-roe5yhoq1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798066323-qozoczrqm"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798066324-hkde5i5yd"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798066527-ydpbu9qyh"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798066528-qhycbpy0o"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798066731-1a2xlez1s"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798066731-2gl0x7ag1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798066934-20c6e5dlk"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798066934-m4p1hpioq"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798067135-2ec4p2c92"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798067135-j5z0f5ehc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798067338-nnd6ecuj6"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798067338-a722f6lbr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798067541-bn0xnvbzt"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798067541-ivewx6jqh"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798067743-3sh8q29ci"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798067743-8xa7yb0z4"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798067946-yi7b1thzs"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798067947-7weezxibo"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798068150-77mudnkgr"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798068150-tak4tp298"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798068353-rtjb4793g"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798068353-5rx2zdtiy"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798068555-mr2qqxf7n"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798068555-plgypveur"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798068757-6rzcgfv4q"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798068758-foujrmpta"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798068959-sikuznjss"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798068959-xvrc50fh1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798069162-v99uw2p3s"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798069162-xkk9tj55k"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798069365-l36url5zx"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798069366-qhiao10ku"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798069569-mxwlsmrn3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798069569-hhf8xwm70"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798069772-sr0tdh2f2"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798069773-1czn1wvn6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798069976-3t0s6rvs4"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798069977-7ep0vykxh"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798070180-gmy9wxlad"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798070180-h2ebc0np2"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798070400-6l21jpdna"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798070401-g1zg2h63z"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798070603-fulztppqb"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798070603-4ymxi57yg"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798070806-ux9h5t3yv"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798070806-hpqwm71w0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798071011-e9g29zlzk"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798071011-qwjc57lvt"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798071215-lcdmejw39"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798071215-y3ehfak4r"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798071426-glfgzj48a"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798071426-m1xjaivsf"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798071629-2lb7utpqt"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798071629-scxnckndc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798071832-czyrr0a5j"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798071833-ee5c0ngr1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798072036-os1o0ouuo"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798072036-mimx2kw3d"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798072238-spff9p6pq"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798072238-z565kyj4v"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798072442-gejnrd0sk"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798072442-fccymjpw2"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798072645-i70keok2h"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798072645-do65zdm5q"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798072848-yuz2uy23g"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798072849-lwyr9uis7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798073052-nu0xccje6"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798073052-koi3t0cw0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798073255-wrdu95vtl"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798073255-soui3plcr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798073458-9y2ihadz3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798073459-dpjnscbm7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798073661-7z8at5f3m"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798073661-omn8n1v5o"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798073865-srehsvc1c"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798073866-dybkitby1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798074069-9tmh0ut3u"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798074069-rk05ora5w"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798074276-xj7ty7txd"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798074277-7qdd63fpu"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798074480-1w8uk76p5"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798074481-epq86uuh1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798074685-ijqlp8obm"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798074685-ze0llp4en"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798074889-y9ceet04h"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798074889-2y4f6g5k6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798075113-wd5yfpydn"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798075113-kiffvxuab"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798075315-kmxp9lc9s"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798075316-td5lpy52s"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798075520-a3h4utt3e"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798075520-ay3a4ghy6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798075724-wv2h2ifhz"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798075724-rnu3h9lzi"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798075927-a55aedo04"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798075927-wijmhztdt"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798076129-dh7f8b0lf"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798076130-s1in7gn4r"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798076333-buh92u8hm"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798076333-mjucayzb5"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798076538-20m9m2dbk"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798076538-57wwabjga"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798076742-hi9wuaicf"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798076742-ip6j321mq"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798076946-0dbdonhig"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798076946-zizmm0xxa"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798077149-ly98of7h9"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798077149-f78kmg8y7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798077352-vwom0d7gq"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798077352-ewu3nnery"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798077555-se50qy8v3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798077555-gja3ekmbn"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798077758-g4fs6ldhg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798077758-ole6hj5eg"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798077961-askr4z1sp"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798077961-da3hpeo78"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798078165-2bi6e9ns2"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798078165-9g7gmnw33"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798078369-4vlcw6k0o"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798078369-w837ayvhm"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798078572-970eszecy"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798078573-qg8d7vb4y"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798078777-ef6m5l4rp"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798078777-ukjsz4lek"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798078981-rv5ztala3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798078981-o5k2wi1ah"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798079184-70z4244dz"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798079185-ze5wx75me"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798079388-wej4sdr55"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798079389-w4kjfi62x"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798079593-u820915jn"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798079593-d8qbznjg3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798079797-8uetkpncv"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798079797-8r3tkgpux"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798080000-ujhthyetf"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798080000-sad3n4ekn"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798080204-9rzo9ei44"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798080205-l97wx7fh4"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798080408-3ejxxcgjk"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798080409-mx9ao8nkp"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798080611-cucruvse9"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798080612-fhdfp2pkz"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798080815-09ovewmro"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798080816-b6518rsim"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798081019-pbeiqjbrk"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798081019-hrr52mbgo"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798081223-myf1e03pf"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798081223-9vs4yasnc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798081426-tql9biahh"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798081426-0vq8u3w3l"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798081629-p3957fauh"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798081629-epvbqs0mp"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798081833-06ikqwxpi"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798081833-0e2futtso"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798082037-5qcosviqm"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798082037-au9qdwbg6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798082240-vwwu75l1w"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798082241-u3xmvjfsz"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798082444-7shiawvzk"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798082445-c2lsfgq3j"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798082649-iu1pt5frs"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798082649-z3ch8pqk0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798082853-bf1cuc35f"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798082853-c2skan19l"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798083057-u4bnxpj2c"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798083057-16434wgu6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798083261-cx3xx84wg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798083262-yqtq3x2cj"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798083466-3b9a1jxjh"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798083466-vl7kehy6b"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798083668-iakzpmcte"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798083668-4bsgvscbw"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798083872-12ory6e7h"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798083872-9460thaja"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798084075-2a76c1hvs"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798084075-m4hdhe84l"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798084277-8onuvqypn"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798084278-3yo5arzvy"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798084484-prr8ru9yy"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798084485-o1d6o9nnx"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798084687-jnop1zjjr"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798084687-35jiwnleg"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798084890-xb3egoqb2"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798084891-ok46dadj8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798085094-u6cg2cy02"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798085095-jf47ipcfm"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798085296-x9j1vbprg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798085296-1136x0nfl"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798085500-5j9e1ga15"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798085500-lz8auz8lv"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798085704-wdholagx7"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798085704-b1zi6668m"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798085908-ltjuzu76e"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798085908-g6ei144pw"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798086111-7404qyo8d"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798086112-k8651l920"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798086314-hez76hm5h"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798086315-egs4puijb"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798086516-4td3xd87s"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798086517-rh5q15ita"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798086719-wik2xxjm1"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798086720-wsdzqpsjy"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798086923-b3c634p2u"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798086924-ger7zhagi"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798087127-17fxd40uy"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798087127-mgvk3rfvr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798087331-8y451555y"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798087332-n4k04wajs"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798087535-vsx0v9q71"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798087535-gdz89f2ql"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798087739-np15408ij"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798087739-4ugk31he9"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798087942-g9zyqt4cs"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798087943-93npp3ovw"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798088146-7x8yg1okv"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798088146-80yj6si3q"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798088349-du30drq2b"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798088349-5irl1pio9"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798088553-jxxc9oycd"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798088553-i2f2ploem"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798088756-w2q5a7ad1"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798088757-2cj1not7k"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798088961-jl5u5pvko"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798088961-e0k7tpayu"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798089164-bs9ynahfv"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798089165-1in5iefc8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798089369-i9icghvp0"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798089369-odjfbpxl1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798089572-5al0dtuly"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798089573-6mhear2l3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798089776-6lfrhrx6w"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798089777-51puu4mz4"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798089980-2p8jl950e"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798089981-9qlzxa6wd"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798090183-cmwr4krkt"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798090183-n681nmc39"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798090386-9qz28s44a"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798090386-b6frnd0l1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798090590-cxrglp0ts"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798090590-kvw03fmns"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798090792-kz1r2w31o"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798090792-ha6h8pb9x"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798090996-76uo0gk2e"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798090996-j7sw6l89s"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798091199-tmdhyuxlo"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798091199-3kr4b3h32"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798091401-ja2dtlvjg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798091401-k4efgypcf"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798091604-dutotfbdm"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798091605-rr4q2l9ul"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798091808-vte5eep8y"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798091809-o9pxpfi2f"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798092012-6539t04t9"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798092013-ab71c7g88"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798092216-dodyzj0ji"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798092216-g905bj620"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798092426-hhg24zhoa"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798092426-ts9jy0ibo"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798092630-oy0c854y1"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798092630-4nve6w2lc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798092834-r4hhhox4z"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798092834-9wh98ghw2"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798093038-yhxlb0kdd"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798093038-3s18u3koq"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798093241-vq5ii8m6c"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798093242-ju1pf89l7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798093444-dzw7qo29l"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798093445-z6seb3g22"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798093647-4xbprorr3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798093648-g5erjcnnl"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798093850-ny5mgvgio"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798093851-c9zr9xumx"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798094054-5hnanby4g"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798094055-tz26jbc54"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798094262-r815zzu82"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798094262-jp41cd93g"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798094465-y16drclf2"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798094466-ukk9z2xvs"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798094669-opadny9l9"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798094670-vrnq4vuzh"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798094872-krimksdbs"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798094873-vfzfzrq5t"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798095076-cta9fhscs"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798095077-fe3j1b1bt"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798095281-mrclhabtt"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798095282-621y7c17x"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798095485-eks0h1zm6"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798095486-acu5wlh38"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798095689-85i73qiks"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798095689-o4634rto7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798095892-8icumw3w6"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798095892-mp4unu606"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798096096-e7yd448ow"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798096096-py724vkh8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798096298-dpnhcija8"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798096298-06sfm8dti"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798096500-h1ojfl9hd"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798096501-vlwtqor68"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798096704-f810q4g53"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798096704-n60f3xbfp"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798096907-qc5lawuqb"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798096908-eyy3eeeyf"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798097111-9ota53hhs"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798097314-qfc9yx6dx"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            100,
+            "1773798097314-q99xka7bt"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798106889-0u71pd7z8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "the-hub",
+            50,
+            "1773798107093-ow74382jx"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 79,
+          "args": [
+            "the-hub",
+            100,
+            "1773798107093-15grcaa14"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 15,
+          "args": [
+            "the-hub",
+            0,
+            "1773798125851-iqyv1e6zt"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 5,
+          "args": [
+            "the-hub",
+            0,
+            "1773798125851-nenfh199d"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 41,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126055-gx8palsiw"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126055-nym61rw42"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 38,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126262-53gn7c2o3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126262-jbyc8hyfg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 39,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126466-qejsteriv"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126466-aqr0y6l5f"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 38,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126669-umfkevp8p"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126670-o2fgbk5jw"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 39,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126873-w7zkl5bbd"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798126873-wwbdeevr3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 39,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127076-b9rug2g8o"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127076-ebssz84f0"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 38,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127286-q6n00mmme"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127287-l5qlj2094"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 39,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127492-5f6zsffqr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127492-tfj9ys9pc"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 39,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127699-0r6x6hr8b"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127699-0d9pe3xyg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 38,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127903-42oxfv4r3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798127903-adkbiw2wt"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 39,
+          "args": [
+            "the-hub",
+            0,
+            "1773798128106-0ar0lfg5q"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798128107-3f0ov2dlc"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 38,
+          "args": [
+            "the-hub",
+            0,
+            "1773798128309-w6r5lcb7v"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798128309-6r4otga33"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 39,
+          "args": [
+            "the-hub",
+            0,
+            "1773798128511-mmw8437p7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798128512-q7h7k4vyy"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 39,
+          "args": [
+            "the-hub",
+            0,
+            "1773798128715-kc05kmp7t"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 8,
+          "args": [
+            "the-hub",
+            0,
+            "1773798128715-kq2fargqb"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 38,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798128919-30xxm3vo7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798128919-ua2mih74h"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798129122-yswmu6sje"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798129123-b2xle12f9"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798129325-kw5hx3uj2"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798129325-bav76itwm"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798129527-ulmn4kn9z"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798129528-e48w608pk"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 163,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798129934-l47eg2n0d"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798129935-puvrfdvkz"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 117,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798129935-qvoflvgxi"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 153,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798130138-q72x8kk0k"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798130139-2qzqf6ubf"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 44,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798130341-t6o7vfdt9"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798130341-o52quln2p"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798130544-7bi330s2z"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798130544-42hgqs3tg"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798130544-ozmlj4f6r"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 46,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798130949-qw06hkf43"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798130949-w1kmnym8t"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 46,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798130949-jk90e3854"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798131357-m1otct7lr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798131357-bi99da7dx"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798131357-i9ljhnh9h"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 45,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798131763-tm3zal0am"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798131763-emz8bvptf"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 88,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798131973-vw2klqlnb"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798131973-2x3klrzt8"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798132176-9b7mq0wu6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798132177-ds8ax8vqb"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798132380-1bu3v1nf7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798132381-vzmg1w4t6"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798132584-39kg5uved"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798132585-gw7k0sjtv"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798132788-jc890e19t"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798132788-fiv9phkdg"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798132989-wupze4ag0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798132990-j7l1kjkem"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798133192-mb8gpa51e"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798133192-92acvrv6d"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798133396-zr7kz1cyc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798133396-q1bbu0x08"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798133599-k97mulwn5"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798133600-fmczgyd10"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798133803-8wztdxjw1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798133803-xfm99fqyl"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798134211-cwrll3nuc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798134211-bzakohho5"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798134414-yxj69hil9"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798134414-urrjbapv7"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 87,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798134617-934v0g042"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798134618-8g6iwoq44"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798134821-dwm92wjhx"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798134821-lpp9lests"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798135024-vs53da5m2"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798135024-y8u47c4to"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798135228-m7hrhoogr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798135228-x3jyieu30"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798135430-9tddkfvw0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798135431-k0iek26ee"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798135633-rzfg4nfzu"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798135633-qm21y3e11"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798136038-rf1ts0iqi"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798136038-kb3em1gzr"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798136039-cbunztfxi"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 47,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798136443-hip2mrwl1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798136443-wl505fdsp"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 47,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798136443-1ozd9a6sb"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798136848-crfqqgubh"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798136849-skcaokgj0"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798136849-ft38txiyv"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 1,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798137052-ex3pendm1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 1,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798137053-55nhy44iq"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 1,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798137053-95vgzycfa"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 45,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798137256-egqyttheq"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798137256-mab3y3vp4"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 45,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798137257-obsd12o27"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798137662-u0v3jakun"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798137663-owctv3zl6"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798137663-hnkz2h17l"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 46,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798138070-dni45735e"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798138071-x8l9sc53e"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 46,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798138071-eb4wyyxil"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798138481-2tmuqa1hj"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798138481-3yry97e6l"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798138481-2q64pwn3t"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 47,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798138887-5s45g2lgc"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798138887-x6wfmvvuz"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798139090-afzhn8zhx"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798139090-eu25ywa51"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798139293-ht6mmrgu7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798139294-utfawbli6"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798139497-kmkrndneo"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798139497-ew52pi6k7"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798139497-ltdh2uohw"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 47,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798139903-6iq5gtxkm"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798139904-wh67qyowr"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798140107-dw62qpku1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798140107-ze4qyafeu"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798140311-r6p1027me"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798140311-bfg4vm9ml"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798140515-8ubciky4p"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798140515-a3b46g4se"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798140718-7td00daci"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798140719-n0t9pnq6f"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798140923-v480vffl0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798140923-g6dmhs36l"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798141126-uhr9j7fy8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798141126-oxybvpe3q"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798141330-gyqz9vqjy"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798141331-j3m6i7a9r"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798141534-7unlo24y8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798141534-ntorkh5j2"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798141736-q0hegk5db"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798141736-r4xi52oxq"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798141938-62bk3gnu5"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798141939-ypps3skjf"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798142140-pxrqlabc7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798142141-w4i1kstsr"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798142344-g33zyak74"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798142344-qkxxvl9ev"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798142547-c5e6ek70c"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798142548-l258ygpg1"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798142751-kxokie0x7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798142751-g6v5qbwug"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798142955-ib01c6k5n"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798142955-oznxwacry"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798143158-p8mn3qj6r"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798143159-xstbn67g2"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798143362-hh42x8hjr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798143362-diy5fjb92"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798143566-nb905lo76"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798143567-ryqbdm99y"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798143769-qaz3dooja"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798143769-r58dpy68e"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798143973-hpgv4mtca"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798143973-7uwy1ps5q"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798144176-x8aklbetp"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798144177-qe9dirhdj"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798144380-aona3pr48"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798144381-wd97ncm57"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798144584-7hen2i1ns"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798144584-x3n7689i3"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798144787-3b8pw0rxi"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798144788-ejfc9t7wn"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798144991-y7llyftuh"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798144991-l7uhpfo6v"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798145194-mg23vavko"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798145194-0rhp7c1gl"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798145397-71xcsc4fq"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798145398-wja7j35jq"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798145601-lxlxmyws2"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798145601-wa8llc3tw"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798145805-iibnrbies"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798145805-b3i01t7g1"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798146009-9q1os5i1t"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798146010-tabxwtbkw"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798146213-to6xcndsi"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798146214-jre08sdpn"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798146419-ot86xt5id"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798146419-y29coowym"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798146622-ckgx8u172"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798146623-pri0yaz2n"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798146826-uwpd46iup"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798146826-y6acfnq56"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798147030-0xbfbm3ey"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798147030-4tk9982ep"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798147233-e707gb7vb"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798147234-6ufqyktsu"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 43,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798147437-cyikesr5l"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798147438-fa6uqhzuv"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 43,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798147438-thk535j1s"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 45,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798147843-m8j0hcau5"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798147843-1gi22fyqe"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 45,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798147843-bxqu4dmm9"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798148254-n7rv8kbh7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798148254-vv9ffozit"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798148254-754ocg05o"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 46,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798148662-htzk32rbh"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798148662-9wq6vux80"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 46,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798148663-c97ktezw4"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798149068-m0j5jw7q4"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798149069-h0v30s3ae"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798149069-y9imonltx"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 47,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798149475-oc4o4e3kz"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798149476-8klops9x3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 47,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798149476-k7spgrkl0"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798149882-zlkg1la1m"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798149882-k2wmt9hl7"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798149882-qjgn6s6hc"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 1,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798150084-82gywfuvh"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 1,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798150084-49eigxtk3"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 1,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798150085-60rs9t355"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 45,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798150288-e5kbm36fm"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798150288-4jxn00qu2"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798150492-mj5hl9cai"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798150493-7i7v92540"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798150696-jtus202k8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798150696-d6dmgmn8f"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798150898-i58duxfu1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798150899-e3um481u4"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798151102-49lzi6j3q"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798151102-8yj6wfhqb"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798151305-buv5g98n4"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798151306-0d8ptfo2l"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798151509-gqi62imv8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798151510-jqlrnnh0g"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798151713-gc2pnq52a"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798151713-ydzimlfdl"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798151917-homdg88rz"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798151918-g1gr65ze4"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798152120-ao2s9izdh"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798152121-9ucomimh3"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798152323-uhb1a39ru"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798152323-hkrwte6u1"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798152526-kzkf0ml9o"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798152527-va93y4ldz"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798152729-9xv0dp03h"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798152730-ci8mi0jl8"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798152932-801f1bwj7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798152932-gsuvdvxrc"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798153136-372s7ii2p"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798153137-h2zeb3l58"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798153339-hwyn80gip"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798153339-1psd7uzuw"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798153541-adr26skyk"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798153541-6z6fucqlg"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798153744-654lw7bds"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798153745-wa1mdyfu7"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798153948-72ge4rrdx"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798153948-4jxfeak7l"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798154152-g4w0117jq"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798154152-ns18zins2"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798154356-mjrdt5eqx"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798154356-u4pv086bz"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798154559-hhvna6imw"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798154559-xg5kg8h1y"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798154762-tfx77p6e5"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798154762-bm0j15qgb"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798154966-awntt1gk8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798154966-ttir3bdg3"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798155170-88igzv07n"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798155170-4kzr6vrze"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798155374-2pzvmsbn3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798155374-8lpeadhcc"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798155374-22121bbni"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 46,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798155781-1xbfe8hgl"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798155782-i0krzk2vz"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798155985-p6tpzscu1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798155985-ayc24whe6"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798156188-0tptdipm6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798156189-2st7d2ndj"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798156392-vc2lg97d6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798156392-opgcrxey7"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798156596-3tb189kdx"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798156597-qpx8b7ujo"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798156801-x5c3t6nas"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798156801-msf9h2n40"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798157005-4hw5rk4iz"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798157005-uojukic2g"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798157209-vo04nn4pb"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798157209-g8vkzf0g8"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798157413-ftxe9wur0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798157413-d0hh2ov8a"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798157616-l0rfanssg"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798157617-2nj7h1n2l"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798157820-1h298ywe7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798157820-lvg83iknz"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798158023-wp3mhaoj4"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798158023-ms2blpk9t"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798158226-wqce1jg1m"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798158227-9gnao1j6l"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798158430-g37resjot"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798158430-yrl5s3cor"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798158634-wbf8rkfwf"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798158634-1t6zjuu45"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798158838-s4y1jiogw"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798158838-qfnu2jp77"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798159041-uiu2t3mgk"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798159041-vz45gce9i"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798159244-lyu91nzni"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798159245-5566uzohl"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798159448-e37ywei1a"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798159448-43hr1me40"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798159651-f5410u2zb"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798159652-usayobh3s"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798159854-qjzi63759"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798159854-zu8dbrfk0"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798160057-5a9y4krev"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798160057-kbcciw2af"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798160261-odp238sf9"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798160262-ida0ub48e"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798160465-9fmvo2kn6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798160466-9s33gx0sz"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798160669-ojevr956q"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798160669-qjn4dy0ow"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798160872-jctxc899h"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798160872-l51bmqwl7"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798161076-i6ul1tfy0"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798161076-wq8qy8uww"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798161286-prkp2llmm"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798161286-p0ryg35v2"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798161491-luzkvanr6"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798161492-f9dpk7m77"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798161695-89ty2gkag"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798161696-5km51nyn8"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798161899-ks0niu7tk"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798161899-sf0jdiukq"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798162103-vr66vbd07"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798162103-xml3p9n9j"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798162307-yaqnr1ct9"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798162307-dctg8lzpy"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 41,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798162511-eermkxzn7"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798162511-w0xavgb57"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798162714-yizpo9hoy"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798162714-t19poxbsv"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 2,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798162918-x4vvvrtkz"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798162918-8de0g2sqz"
+          ]
+        },
+        {
+          "filename": "workers/grow.js",
+          "threads": 2,
+          "args": [
+            "alpha-ent",
+            100,
+            "1773798162918-7c951n4u3"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 63,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798167586-72hwdoxwr"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798167586-g15e79tst"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 62,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798167991-cxbcy0aa1"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798167991-c90q4cnts"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 42,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798172479-l59xo4uu8"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798172480-0ry8d74ac"
+          ]
+        },
+        {
+          "filename": "workers/hack.js",
+          "threads": 40,
+          "args": [
+            "alpha-ent",
+            0,
+            "1773798172687-vzh0tg5v3"
+          ]
+        },
+        {
+          "filename": "workers/weaken.js",
+          "threads": 7,
+          "args": [
+            "alpha-ent",
+            50,
+            "1773798172688-7lq6m4i6c"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "n00dles",
+      "hasRoot": true,
+      "maxRam": 4,
+      "usedRam": 3.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 2,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-8zsfhlesi"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "foodnstuff",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-bff46rijo"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "sigma-cosmetics",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-54frqpfwe"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "joesguns",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-hhefc3p96"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "hong-fang-tea",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-l7765girv"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "harakiri-sushi",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-w94fnq5xb"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "iron-gym",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-ilngqfzwn"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "darkweb",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "nexus-0",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "omega-net",
+            0,
+            "1773797997043-zngknsn5h"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-1",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "omega-net",
+            0,
+            "1773797997043-kre7c9twi"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-2",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "omega-net",
+            0,
+            "1773797997043-rw4w3stjj"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-3",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "omega-net",
+            0,
+            "1773797997043-b9q0267nk"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-4",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "omega-net",
+            0,
+            "1773797997043-xtmapj7eb"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-5",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "omega-net",
+            0,
+            "1773797997043-5pegy4ze4"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-6",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-efjjk09i1"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-7",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-cggzh0l8n"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-8",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-w2b9gn7m4"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-9",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-87xvw2wsd"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-10",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-rk7szuf3p"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-11",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-2gcc6mlqg"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-12",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-fnrtfietu"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-13",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-lutfaixgj"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-14",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-z85jwp2oy"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-15",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-6up2o0k1s"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-16",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-eytnc7msx"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-17",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "silver-helix",
+            0,
+            "1773797997041-4zt0blclt"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-18",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-xyn1nsrc7"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-19",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-7nj7gbvy0"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-20",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-v5mrqqjvb"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-21",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-c954ksww8"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-22",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-saljytwa9"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-23",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-20kjshu45"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nexus-24",
+      "hasRoot": true,
+      "maxRam": 1048576,
+      "usedRam": 1048575.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 599186,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-xt6yg5u39"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "max-hardware",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-92its49io"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "nectar-net",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-jrt0v73l7"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "CSEC",
+      "hasRoot": true,
+      "maxRam": 8,
+      "usedRam": 7,
+      "availableRam": 1,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 4,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-hb8idqmyx"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "zer0",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-160fkikmv"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "neo-net",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-4vmvtc17q"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "phantasy",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-4ig6gr9ft"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "silver-helix",
+      "hasRoot": true,
+      "maxRam": 64,
+      "usedRam": 63,
+      "availableRam": 1,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 36,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-qhrc5bgeg"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "omega-net",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-sr1zqbv3q"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "the-hub",
+      "hasRoot": true,
+      "maxRam": 64,
+      "usedRam": 63,
+      "availableRam": 1,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 36,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-cjhg2dpyb"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "computek",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "netlink",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-6gjlkis9r"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "johnson-ortho",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "crush-fitness",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "avmnite-02h",
+      "hasRoot": true,
+      "maxRam": 128,
+      "usedRam": 127.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 73,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-cilqf0dkj"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "rothman-uni",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-asi60i2ov"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "syscore",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "I.I.I.I",
+      "hasRoot": true,
+      "maxRam": 128,
+      "usedRam": 127.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 73,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-latengqd2"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "summit-uni",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-5gppukbhw"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "zb-institute",
+      "hasRoot": true,
+      "maxRam": 128,
+      "usedRam": 127.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 73,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-nh8reboh9"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "catalyst",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-tu225jw8e"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "rho-construction",
+      "hasRoot": true,
+      "maxRam": 64,
+      "usedRam": 63,
+      "availableRam": 1,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 36,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-vxuekcuq4"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "alpha-ent",
+      "hasRoot": true,
+      "maxRam": 128,
+      "usedRam": 127.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 73,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-2qoxhlnui"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "aevum-police",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-3auwpuwcy"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "lexo-corp",
+      "hasRoot": true,
+      "maxRam": 64,
+      "usedRam": 63,
+      "availableRam": 1,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 36,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-si56mqygu"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "millenium-fitness",
+      "hasRoot": true,
+      "maxRam": 64,
+      "usedRam": 63,
+      "availableRam": 1,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 36,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-copl2s9ct"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "aerocorp",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "snap-fitness",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "galactic-cyber",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "global-pharm",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-2guezauow"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "unitalife",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-b5x6ij0mq"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "omnia",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-l85kjjqn9"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "deltaone",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "icarus",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "zeus-med",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "defcomm",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "univ-energy",
+      "hasRoot": true,
+      "maxRam": 64,
+      "usedRam": 63,
+      "availableRam": 1,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 36,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-p6a0yl6o5"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "solaris",
+      "hasRoot": true,
+      "maxRam": 128,
+      "usedRam": 127.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 73,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-rk12rr1d9"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "taiyang-digital",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "infocomm",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "nova-med",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "zb-def",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "applied-energetics",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "run4theh111z",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-n2syb3h7m"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "titan-labs",
+      "hasRoot": true,
+      "maxRam": 128,
+      "usedRam": 127.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 73,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-g1kol10vf"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "microdyne",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-2187ssvun"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "fulcrumtech",
+      "hasRoot": true,
+      "maxRam": 512,
+      "usedRam": 511,
+      "availableRam": 1,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 292,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-e5vf0kx2n"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "vitalife",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-4pbr5ixqs"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "stormtech",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "helios",
+      "hasRoot": true,
+      "maxRam": 256,
+      "usedRam": 255.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 146,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-d1zocsqpd"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "4sigma",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": ".",
+      "hasRoot": true,
+      "maxRam": 16,
+      "usedRam": 15.75,
+      "availableRam": 0.25,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 9,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-qzly54w7r"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "omnitek",
+      "hasRoot": true,
+      "maxRam": 256,
+      "usedRam": 255.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 146,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-i7zl809rx"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "kuai-gong",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "powerhouse-fitness",
+      "hasRoot": true,
+      "maxRam": 32,
+      "usedRam": 31.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 18,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-xyzuu9ktq"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "b-and-a",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "blade",
+      "hasRoot": true,
+      "maxRam": 256,
+      "usedRam": 255.5,
+      "availableRam": 0.5,
+      "processCount": 1,
+      "processes": [
+        {
+          "filename": "workers/weaken.js",
+          "threads": 146,
+          "args": [
+            "crush-fitness",
+            0,
+            "1773797996811-294zrgzpq"
+          ]
+        }
+      ]
+    },
+    {
+      "hostname": "clarkinc",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "nwo",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "fulcrumassets",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "The-Cave",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "megacorp",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    },
+    {
+      "hostname": "ecorp",
+      "hasRoot": true,
+      "maxRam": 0,
+      "usedRam": 0,
+      "availableRam": 0,
+      "processCount": 0,
+      "processes": []
+    }
+  ]
+}
