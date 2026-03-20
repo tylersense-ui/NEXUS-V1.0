@@ -1,147 +1,185 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.11.1 - Telemetry Daemon (L'ŒIL DE CLAUDE)       ║
+ * ║ NEXUS v0.12.1 - Telemetry Daemon (SUCCESS FIXED)          ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @file        /lib/telemetry-daemon.js
- * @version     0.11.1
- * @description Daemon permanent qui log TOUT pour diagnostic
- * 
- * FEATURES:
- * - Survie au global-kill (exception PID)
- * - Log ultra détaillé network, performance, player, versions
- * - Update toutes les 30s
- * - Sauvegarde JSON structuré dans /state/
+ * @version     0.12.1
+ * @changes     Fix calcul success rate (lifetime only)
  */
 
 import { StateManager } from "/lib/state-manager.js";
 
-const UPDATE_INTERVAL = 30000; // 30s
-const TELEMETRY_PID_FLAG = "TELEMETRY_DAEMON_PROTECTED";
-
 /** @param {NS} ns */
 export async function main(ns) {
-    ns.disableLog("ALL");
+    ns.disableLog('ALL');
     ns.tail();
     
-    const stateMgr = new StateManager(ns);
+    const state = new StateManager(ns);
+    const COLLECT_INTERVAL_MS = 10000;
+    const MAX_WORKER_LIFETIME_MS = 600000;  // ✅ Sync avec worker-manager
     
-    ns.print("╔═══════════════════════════════════════════════════════════╗");
-    ns.print("║   👁️  NEXUS TELEMETRY DAEMON v0.11.1                      ║");
-    ns.print("║   'L'Œil de Claude sur sa partie'                         ║");
-    ns.print("╚═══════════════════════════════════════════════════════════╝");
-    ns.print("");
-    ns.print("🔒 Protection: Exception global-kill activée");
-    ns.print(`⏱️  Update interval: ${UPDATE_INTERVAL/1000}s`);
-    ns.print("");
+    ns.print('📊 Telemetry Daemon v0.12.1 démarré');
+    ns.print(`⏱️  Collection interval: ${COLLECT_INTERVAL_MS/1000}s`);
+    ns.print('');
     
-    let cycle = 0;
+    let lastMoney = ns.getServerMoneyAvailable('home');
+    let lastTime = Date.now();
+    
+    const history = {
+        moneyPerSec: [],
+        ramUtilization: [],
+        successRate: [],
+        timestamps: []
+    };
     
     while (true) {
-        cycle++;
-        const timestamp = new Date().toISOString();
-        
-        ns.clearLog();
-        ns.print("╔═══════════════════════════════════════════════════════════╗");
-        ns.print("║   👁️  TELEMETRY DAEMON                                    ║");
-        ns.print("╚═══════════════════════════════════════════════════════════╝");
-        ns.print(`📊 Cycle: ${cycle}`);
-        ns.print(`⏰ Time: ${timestamp}`);
-        ns.print("");
-        
-        // ══════════════════════════════════════════════════════════════
-        // 1️⃣ NETWORK STATUS (LE PLUS CRITIQUE - DIAGNOSTIQUER 26/69)
-        // ══════════════════════════════════════════════════════════════
-        
-        const networkStatus = collectNetworkStatus(ns);
-        await stateMgr.save("network-status.json", networkStatus);
-        
-        ns.print(`🌐 Network: ${networkStatus.totalServersScanned} scanned`);
-        ns.print(`   Rooted: ${networkStatus.totalServersRooted}`);
-        ns.print(`   ⚠️  With scripts: ${networkStatus.totalServersWithScripts}`);
-        ns.print(`   ⚠️  Empty: ${networkStatus.totalServersEmpty}`);
-        ns.print("");
-        
-        // ══════════════════════════════════════════════════════════════
-        // 2️⃣ PERFORMANCE METRICS
-        // ══════════════════════════════════════════════════════════════
-        
-        const perfMetrics = collectPerformanceMetrics(ns);
-        await stateMgr.save("performance-metrics.json", perfMetrics);
-        
-        ns.print(`⚡ Threads total: ${ns.formatNumber(perfMetrics.totalThreads || 0)}`);
-        ns.print(`💰 Money: $${ns.formatNumber(perfMetrics.currentMoney || 0)}`);
-        ns.print(`📈 Revenue: $${ns.formatNumber(perfMetrics.revenuePerSecond || 0)}/s`);
-        ns.print("");
-        
-        // ══════════════════════════════════════════════════════════════
-        // 3️⃣ PLAYER STATS
-        // ══════════════════════════════════════════════════════════════
-        
-        const playerStats = collectPlayerStats(ns);
-        await stateMgr.save("player-stats.json", playerStats);
-        
-        ns.print(`🎯 Hacking: ${playerStats.hackingLevel}`);
-        ns.print(`📡 BitNode: ${playerStats.currentBitNode}`);
-        ns.print("");
-        
-        // ══════════════════════════════════════════════════════════════
-        // 4️⃣ VERSION TRACKING
-        // ══════════════════════════════════════════════════════════════
-        
-        const versionInfo = collectVersionInfo(ns);
-        await stateMgr.save("version-tracking.json", versionInfo);
-        
-        ns.print(`📦 Versions actives:`);
-        for (const [file, version] of Object.entries(versionInfo.versions)) {
-            ns.print(`   ${file}: ${version}`);
+        try {
+            const now = Date.now();
+            const currentMoney = ns.getServerMoneyAvailable('home');
+            
+            // ════════════════════════════════════════════════════
+            // CALCUL REVENUS
+            // ════════════════════════════════════════════════════
+            
+            const deltaTime = (now - lastTime) / 1000;
+            const deltaMoney = currentMoney - lastMoney;
+            const moneyPerSec = deltaTime > 0 ? deltaMoney / deltaTime : 0;
+            
+            // ════════════════════════════════════════════════════
+            // RAM UTILIZATION
+            // ════════════════════════════════════════════════════
+            
+            const servers = getAllServers(ns);
+            let totalRam = 0;
+            let usedRam = 0;
+            
+            for (const server of servers) {
+                if (!ns.hasRootAccess(server)) continue;
+                totalRam += ns.getServerMaxRam(server);
+                usedRam += ns.getServerUsedRam(server);
+            }
+            
+            const ramUtilization = totalRam > 0 ? (usedRam / totalRam) : 0;
+            
+            // ════════════════════════════════════════════════════
+            // WORKER SUCCESS RATE (FIX: lifetime only)
+            // ════════════════════════════════════════════════════
+            
+            let totalWorkers = 0;
+            let zombieWorkers = 0;
+            
+            for (const server of servers) {
+                const procs = ns.ps(server);
+                for (const proc of procs) {
+                    if (proc.filename.startsWith('workers/')) {
+                        totalWorkers++;
+                        
+                        // ✅ FIX : Zombie = lifetime trop long SEULEMENT
+                        const lifetime = now - proc.onlineRunningTime;
+                        if (lifetime > MAX_WORKER_LIFETIME_MS) {
+                            zombieWorkers++;
+                        }
+                    }
+                }
+            }
+            
+            const successRate = totalWorkers > 0 ? 1 - (zombieWorkers / totalWorkers) : 1;
+            
+            // ════════════════════════════════════════════════════
+            // SAVE METRICS
+            // ════════════════════════════════════════════════════
+            
+            if (isFinite(moneyPerSec)) {
+                history.moneyPerSec.push(moneyPerSec);
+            }
+            if (isFinite(ramUtilization)) {
+                history.ramUtilization.push(ramUtilization);
+            }
+            if (isFinite(successRate)) {
+                history.successRate.push(successRate);
+            }
+            history.timestamps.push(now);
+            
+            if (history.moneyPerSec.length > 100) {
+                history.moneyPerSec.shift();
+                history.ramUtilization.shift();
+                history.successRate.shift();
+                history.timestamps.shift();
+            }
+            
+            const metrics = {
+                timestamp: new Date().toISOString(),
+                current: {
+                    moneyPerSec: isFinite(moneyPerSec) ? moneyPerSec : 0,
+                    ramUtilization: isFinite(ramUtilization) ? ramUtilization : 0,
+                    successRate: isFinite(successRate) ? successRate : 1,
+                    totalMoney: currentMoney,
+                    hackingLevel: ns.getHackingLevel()
+                },
+                averages: {
+                    moneyPerSec: safeAvg(history.moneyPerSec),
+                    ramUtilization: safeAvg(history.ramUtilization),
+                    successRate: safeAvg(history.successRate)
+                },
+                max: {
+                    moneyPerSec: safeMax(history.moneyPerSec),
+                    ramUtilization: safeMax(history.ramUtilization)
+                },
+                history: history
+            };
+            
+            await state.save('performance-metrics.json', metrics);
+            
+            // ════════════════════════════════════════════════════
+            // DISPLAY
+            // ════════════════════════════════════════════════════
+            
+            ns.clearLog();
+            
+            ns.print(`╔═══════════════════════════════════════════════════╗`);
+            ns.print(`║          TELEMETRY DAEMON v0.12.1                ║`);
+            ns.print(`╚═══════════════════════════════════════════════════╝`);
+            ns.print(``);
+            ns.print(`💰 REVENUS:`);
+            ns.print(`   Current : $${ns.formatNumber(metrics.current.moneyPerSec)}/s`);
+            ns.print(`   Average : $${ns.formatNumber(metrics.averages.moneyPerSec)}/s`);
+            ns.print(`   Max     : $${ns.formatNumber(metrics.max.moneyPerSec)}/s`);
+            ns.print(``);
+            ns.print(`💾 RAM:`);
+            ns.print(`   Utilization: ${(ramUtilization * 100).toFixed(1)}%`);
+            ns.print(`   Total      : ${ns.formatRam(totalRam)}`);
+            ns.print(`   Used       : ${ns.formatRam(usedRam)}`);
+            ns.print(``);
+            ns.print(`🎯 WORKERS:`);
+            ns.print(`   Total   : ${totalWorkers}`);
+            ns.print(`   Zombies : ${zombieWorkers} (lifetime >10min)`);
+            ns.print(`   Success : ${(successRate * 100).toFixed(1)}%`);
+            ns.print(``);
+            ns.print(`📊 SAMPLES: ${history.moneyPerSec.length}/100`);
+            ns.print(``);
+            
+            lastMoney = currentMoney;
+            lastTime = now;
+            
+        } catch (error) {
+            ns.print(`❌ ERROR: ${error.message}`);
         }
-        ns.print("");
         
-        // ══════════════════════════════════════════════════════════════
-        // 5️⃣ BATCHER STATS (si disponible via port)
-        // ══════════════════════════════════════════════════════════════
-        
-        const batcherStats = collectBatcherStats(ns);
-        if (batcherStats) {
-            await stateMgr.save("batcher-stats.json", batcherStats);
-            ns.print(`🎯 Targets: ${batcherStats.totalTargets}`);
-            ns.print(`✅ Success rate: ${(batcherStats.successRate * 100).toFixed(1)}%`);
-        }
-        ns.print("");
-        
-        // ══════════════════════════════════════════════════════════════
-        // 6️⃣ HEARTBEAT
-        // ══════════════════════════════════════════════════════════════
-        
-        await stateMgr.save("daemon-heartbeat.json", {
-            timestamp: timestamp,
-            cycle: cycle,
-            pid: ns.pid,
-            uptime: ns.getTimeSinceLastAug()
-        });
-        
-        ns.print(`💓 Heartbeat saved (cycle ${cycle})`);
-        ns.print(`⏳ Next update in ${UPDATE_INTERVAL/1000}s...`);
-        
-        await ns.sleep(UPDATE_INTERVAL);
+        await ns.sleep(COLLECT_INTERVAL_MS);
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// COLLECTION FUNCTIONS
-// ══════════════════════════════════════════════════════════════════════
-
-function collectNetworkStatus(ns) {
-    // Scan complet BFS
+function getAllServers(ns) {
     const visited = new Set();
-    const queue = ["home"];
-    const allServers = [];
+    const queue = ['home'];
+    const servers = [];
     
     while (queue.length > 0) {
         const current = queue.shift();
         if (visited.has(current)) continue;
+        
         visited.add(current);
+        servers.push(current);
         
         const neighbors = ns.scan(current);
         for (const neighbor of neighbors) {
@@ -149,172 +187,18 @@ function collectNetworkStatus(ns) {
                 queue.push(neighbor);
             }
         }
-        
-        allServers.push(current);
-    }
-    
-    // Analyser chaque serveur
-    const serversDetail = [];
-    let totalRooted = 0;
-    let totalWithScripts = 0;
-    let totalEmpty = 0;
-    let totalRamNetwork = 0;
-    let totalRamUsed = 0;
-    
-    for (const hostname of allServers) {
-        const hasRoot = ns.hasRootAccess(hostname);
-        const maxRam = ns.getServerMaxRam(hostname);
-        const usedRam = ns.getServerUsedRam(hostname);
-        const processes = ns.ps(hostname);
-        
-        if (hasRoot) totalRooted++;
-        if (processes.length > 0) totalWithScripts++;
-        if (processes.length === 0 && maxRam > 0) totalEmpty++;
-        
-        totalRamNetwork += maxRam;
-        totalRamUsed += usedRam;
-        
-        serversDetail.push({
-            hostname: hostname,
-            hasRoot: hasRoot,
-            maxRam: maxRam,
-            usedRam: usedRam,
-            availableRam: maxRam - usedRam,
-            processCount: processes.length,
-            processes: processes.map(p => ({
-                filename: p.filename,
-                threads: p.threads,
-                args: p.args
-            }))
-        });
-    }
-    
-    return {
-        timestamp: new Date().toISOString(),
-        totalServersScanned: allServers.length,
-        totalServersRooted: totalRooted,
-        totalServersWithScripts: totalWithScripts,
-        totalServersEmpty: totalEmpty,
-        totalRamNetwork: totalRamNetwork,
-        totalRamUsed: totalRamUsed,
-        ramUsagePercent: totalRamNetwork > 0 ? (totalRamUsed / totalRamNetwork) * 100 : 0,
-        serversDetail: serversDetail
-    };
-}
-
-function collectPerformanceMetrics(ns) {
-    // Compter threads actifs
-    const allServers = scanAll(ns);
-    let totalThreads = 0;
-    
-    for (const server of allServers) {
-        const processes = ns.ps(server);
-        for (const proc of processes) {
-            totalThreads += proc.threads;
-        }
-    }
-    
-    // ✅ FIX v0.11.1-HOTFIX : getScriptIncome peut retourner undefined
-    let revenuePerSecond = 0;
-    try {
-        const income = ns.getScriptIncome();
-        if (income && Array.isArray(income) && income.length > 0) {
-            revenuePerSecond = income[0] || 0;
-        }
-    } catch (e) {
-        // getScriptIncome n'existe pas ou erreur
-        revenuePerSecond = 0;
-    }
-    
-    return {
-        timestamp: new Date().toISOString(),
-        currentMoney: ns.getServerMoneyAvailable("home"),
-        revenuePerSecond: revenuePerSecond,
-        totalThreads: totalThreads,
-        hackingLevel: ns.getHackingLevel()
-    };
-}
-
-function collectPlayerStats(ns) {
-    return {
-        timestamp: new Date().toISOString(),
-        hackingLevel: ns.getHackingLevel(),
-        currentBitNode: getCurrentBitNode(ns),
-        timeSinceLastAug: ns.getTimeSinceLastAug(),
-        homeRamMax: ns.getServerMaxRam("home"),
-        homeRamUsed: ns.getServerUsedRam("home"),
-        purchasedServers: ns.getPurchasedServers().length
-    };
-}
-
-function collectVersionInfo(ns) {
-    // Lire versions depuis les fichiers (commentaires header)
-    const files = [
-        "/boot.js",
-        "/core/orchestrator.js",
-        "/core/batcher.js",
-        "/core/ram-manager.js",
-        "/core/dashboard.js",
-        "/hack/controller.js",
-        "/lib/constants.js"
-    ];
-    
-    const versions = {};
-    
-    for (const file of files) {
-        if (ns.fileExists(file)) {
-            // Lire première ligne pour version
-            const content = ns.read(file);
-            const match = content.match(/v([\d.]+)/);
-            versions[file] = match ? match[1] : "unknown";
-        }
-    }
-    
-    return {
-        timestamp: new Date().toISOString(),
-        versions: versions
-    };
-}
-
-function collectBatcherStats(ns) {
-    // Lire depuis port si batcher envoie stats
-    // Pour l'instant, retourner null (à implémenter plus tard)
-    return null;
-}
-
-function getCurrentBitNode(ns) {
-    // BitNode actuel (BN-1 par défaut)
-    try {
-        // Si Singularity API disponible
-        if (ns.getOwnedSourceFiles) {
-            const sf = ns.getOwnedSourceFiles();
-            // Détecter BN actuel (basique)
-            return "BN-1"; // Placeholder
-        }
-    } catch (e) {
-        // Pas Singularity
-    }
-    
-    return "BN-1"; // Default
-}
-
-function scanAll(ns) {
-    const visited = new Set();
-    const queue = ["home"];
-    const servers = [];
-    
-    while (queue.length > 0) {
-        const current = queue.shift();
-        if (visited.has(current)) continue;
-        visited.add(current);
-        
-        const neighbors = ns.scan(current);
-        for (const n of neighbors) {
-            if (!visited.has(n)) queue.push(n);
-        }
-        
-        servers.push(current);
     }
     
     return servers;
+}
+
+function safeAvg(arr) {
+    if (!arr || arr.length === 0) return 0;
+    const sum = arr.reduce((a, b) => a + b, 0);
+    return sum / arr.length;
+}
+
+function safeMax(arr) {
+    if (!arr || arr.length === 0) return 0;
+    return Math.max(...arr);
 }
