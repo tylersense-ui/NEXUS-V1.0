@@ -725,3 +725,12 @@
 [2026-03-20T20:21:42.962Z] [INFO] [WORKER-MGR] 🧹 Worker Manager v0.12.1 démarré
 [2026-03-20T20:21:42.962Z] [INFO] [WORKER-MGR] ⏱️  Check interval: 30s
 [2026-03-20T20:21:42.962Z] [INFO] [WORKER-MGR] ⚰️  Max lifetime: 600s
+[2026-03-20T20:57:43.853Z] [INFO] [WORKER-MGR] 🧹 Worker Manager v0.12.1 démarré
+[2026-03-20T20:57:43.853Z] [INFO] [WORKER-MGR] ⏱️  Check interval: 30s
+[2026-03-20T20:57:43.853Z] [INFO] [WORKER-MGR] ⚰️  Max lifetime: 600s
+[2026-03-20T21:45:47.446Z] [INFO] [WORKER-MGR] 🧹 Worker Manager v0.12.1 démarré
+[2026-03-20T21:45:47.446Z] [INFO] [WORKER-MGR] ⏱️  Check interval: 30s
+[2026-03-20T21:45:47.447Z] [INFO] [WORKER-MGR] ⚰️  Max lifetime: 600s
+[2026-03-20T21:55:02.182Z] [INFO] [WORKER-MGR] 🧹 Worker Manager v0.12.1 démarré
+[2026-03-20T21:55:02.182Z] [INFO] [WORKER-MGR] ⏱️  Check interval: 30s
+[2026-03-20T21:55:02.182Z] [INFO] [WORKER-MGR] ⚰️  Max lifetime: 600s

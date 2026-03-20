@@ -1,12 +1,14 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.10.2 - Dashboard (CORRECTIONS)                   ║
+ * ║ NEXUS v0.12.1 - Dashboard (COMPLETE)                      ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.10.2-HOTFIX
- * @changes     - RAM display bug fixed
+ * @version     0.12.1-COMPLETE
+ * @changes     - RAM display bug fixed (v0.10.2)
  *              - Target states display (PREP/BATCH/RECOVERY)
  *              - Cleaner emoji spacing
+ *              - Scan réseau optimisé (cache 5s)
+ *              - Deprecated API fix (getTimeSinceLastAug)
  */
 
 /** @param {NS} ns */
@@ -16,6 +18,7 @@ export async function main(ns) {
     
     const UPDATE_INTERVAL = 1000;
     const HISTORY_SIZE = 20;
+    const SCAN_CACHE_MS = 5000;  // ✅ NOUVEAU : Cache scan 5s
     
     const moneyHistory = [];
     const incomeHistory = [];
@@ -25,6 +28,10 @@ export async function main(ns) {
     
     let maxIncome = 0;
     let maxMoney = 0;
+    
+    // ✅ NOUVEAU : Cache scan réseau
+    let cachedServers = [];
+    let lastScan = 0;
     
     while (true) {
         ns.clearLog();
@@ -55,7 +62,10 @@ export async function main(ns) {
         const bitnode = resetInfo.currentNode || 1;
         
         const player = ns.getPlayer();
-        const playtime = player.totalPlaytime || 0;
+        
+        // ✅ FIX v0.12.1 : Use getResetInfo instead of deprecated getTimeSinceLastAug
+        const lastAugReset = resetInfo.lastAugReset || 0;
+        const playtime = now - lastAugReset;
         
         const realTime = new Date();
         const hours = String(realTime.getHours()).padStart(2, '0');
@@ -70,7 +80,12 @@ export async function main(ns) {
         let usedNetworkRam = 0;
         let serversWithWorkers = 0;
         
-        const allServers = scanAll(ns);
+        // ✅ NOUVEAU v0.12.1 : Scan avec cache (évite scan chaque seconde)
+        if (now - lastScan > SCAN_CACHE_MS) {
+            cachedServers = scanAll(ns);
+            lastScan = now;
+        }
+        const allServers = cachedServers;
         
         for (const s of allServers) {
             if (!ns.hasRootAccess(s)) continue;
@@ -128,7 +143,7 @@ export async function main(ns) {
         }
         
         ns.print('╔═══════════════════════════════════════════════════════════╗');
-        ns.print(`║   🔥 NEXUS DASHBOARD v0.10.2 BN${bitnode} | Lvl ${hackLevel} | ${timeStr}  ║`);
+        ns.print(`║   🔥 NEXUS DASHBOARD v0.12.1 BN${bitnode} | Lvl ${hackLevel} | ${timeStr}  ║`);
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
         
@@ -197,7 +212,7 @@ export async function main(ns) {
             const secDiff = currentSec - minSec;
             
             // ════════════════════════════════════════════════════
-            // ✅ NOUVEAU : Détection état (sync avec batcher)
+            // ✅ v0.10.2 : Détection état (sync avec batcher)
             // ════════════════════════════════════════════════════
             
             let state = 'UNKNOWN';
@@ -224,10 +239,7 @@ export async function main(ns) {
             else if (actions.grow > 0) actionIcon = '🌱';
             else if (actions.weaken > 0) actionIcon = '🔧';
             
-            // ════════════════════════════════════════════════════
-            // ✅ FIXED : Spacing propre entre emojis
-            // ════════════════════════════════════════════════════
-            
+            // ✅ v0.10.2 : Spacing propre entre emojis
             ns.print(`  ${statusIcon} ${target.padEnd(20)} ${actionIcon} ${bar} ${percentStr}%`);
         }
         ns.print('');
@@ -242,11 +254,8 @@ export async function main(ns) {
         ns.print(`   ${homeBar} ${homeRamPercent.toFixed(1)}%`);
         ns.print('');
         
-        // ════════════════════════════════════════════════════
-        // ✅ FIXED : usedNetworkRam / totalNetworkRam
+        // ✅ v0.10.2 FIXED : usedNetworkRam / totalNetworkRam
         // (AVANT : totalNetworkRam / totalNetworkRam)
-        // ════════════════════════════════════════════════════
-        
         const networkRamPercent = totalNetworkRam > 0 ? (usedNetworkRam / totalNetworkRam) * 100 : 0;
         const networkBar = generateProgressBar(networkRamPercent, 20);
         
