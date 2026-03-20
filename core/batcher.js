@@ -1,11 +1,16 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.9.0 - Batcher (RESET-READY, NO FORMULAS REQ)     ║
+ * ║ NEXUS v0.9.1 - Batcher (MATH FIX)                         ║
  * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @version     0.9.1-MATH-FIX
+ * @changes     FIX growMultiplier avec pipelineDepth
+ *              Compense TOUS les hacks en vol dans le pipeline
+ *              growMultiplier = 1/(1-h)^d au lieu de 1/(1-h)
  */
 
 import { CONFIG } from "/lib/constants.js";
-import { Logger } from "/lib/logger.js";
+import { FileLogger } from "/lib/file-logger.js";
 
 export class Batcher {
     constructor(ns, network, ramManager, portHandler, capabilities) {
@@ -14,10 +19,12 @@ export class Batcher {
         this.ramMgr = ramManager;
         this.portHandler = portHandler;
         this.caps = capabilities;
-        this.log = new Logger(ns, "BATCHER");
+        this.log = new FileLogger(ns, "BATCHER", CONFIG.SYSTEM.LOG_LEVEL);
         
         // Détection Formulas (optionnel)
         this.hasFormulas = ns.fileExists("Formulas.exe");
+        
+        this.log.info("Batcher initialisé (hasFormulas: " + this.hasFormulas + ")");
     }
     
     dispatchBatch(target, options = {}) {
@@ -161,15 +168,19 @@ export class Batcher {
     }
     
     /**
-     * HWGW SANS FORMULAS REQUIS
-     * Utilise ns.hackAnalyzeThreads() et ns.growthAnalyze()
+     * HWGW avec FIX MATHÉMATIQUE du growMultiplier
+     * Compense TOUS les hacks en vol dans le pipeline
      */
     dispatchHWGW(target) {
         const hackPercent = CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
         const maxMoney = this.ns.getServerMaxMoney(target);
         
+        this.log.debug(`━━━ dispatchHWGW(${target}) ━━━`);
+        this.log.debug(`  maxMoney: $${this.ns.formatNumber(maxMoney)}`);
+        this.log.debug(`  hackPercent: ${(hackPercent*100).toFixed(1)}%`);
+        
         // ════════════════════════════════════════════════════
-        // CALCUL THREADS (fonctionne avec ou sans Formulas)
+        // CALCUL THREADS avec FIX PIPELINE
         // ════════════════════════════════════════════════════
         
         const hackThreads = Math.max(1, Math.floor(
@@ -179,13 +190,33 @@ export class Batcher {
         const hackSec = this.ns.hackAnalyzeSecurity(hackThreads, target);
         const w1Threads = Math.max(0, Math.ceil(hackSec / 0.05));
         
-        const moneyAfterHack = maxMoney * (1 - hackPercent);
+        // ✅ FIX MATHÉMATIQUE : Calculer le pipelineDepth
+        const weakenTime = this.ns.getWeakenTime(target);
+        const spacing = 200; // ms entre batches
+        const pipelineDepth = Math.floor(weakenTime / spacing);
+        
+        this.log.debug(`  weakenTime: ${(weakenTime/1000).toFixed(1)}s`);
+        this.log.debug(`  spacing: ${spacing}ms`);
+        this.log.debug(`  pipelineDepth: ${pipelineDepth} batches`);
+        
+        // ✅ growMultiplier corrigé : compense TOUS les hacks en vol
+        const growMultiplier = 1 / Math.pow(1 - hackPercent, pipelineDepth);
+        
+        this.log.debug(`  growMultiplier: ${growMultiplier.toExponential(2)}`);
+        
         const growThreads = Math.max(1, Math.ceil(
-            this.ns.growthAnalyze(target, maxMoney / Math.max(1, moneyAfterHack))
+            this.ns.growthAnalyze(target, growMultiplier)
         ));
         
         const growSec = this.ns.growthAnalyzeSecurity(growThreads, target);
         const w2Threads = Math.max(0, Math.ceil(growSec / 0.05));
+        
+        this.log.debug(`  ━━━ THREADS CALCULÉS ━━━`);
+        this.log.debug(`  H:  ${hackThreads}`);
+        this.log.debug(`  W1: ${w1Threads}`);
+        this.log.debug(`  G:  ${growThreads}`);
+        this.log.debug(`  W2: ${w2Threads}`);
+        this.log.debug(`  TOTAL: ${hackThreads + w1Threads + growThreads + w2Threads}`);
         
         // ════════════════════════════════════════════════════
         // DELAYS FIXES (pas de Formulas requis)
@@ -283,14 +314,15 @@ export class Batcher {
             }
         }
         
-        const mode = this.hasFormulas ? "HWGW(10%)" : "HWGW(10%-NoF)";
-        this.log.info(`💰 ${mode}: ${totalAllocated} threads (${jobsSent} jobs)`);
+        const mode = `HWGW(${(hackPercent*100).toFixed(1)}%, d=${pipelineDepth})`;
+        this.log.info(`💰 ${mode}: H:${hackThreads} W1:${w1Threads} G:${growThreads} W2:${w2Threads} = ${totalAllocated} threads`);
         
         return {
             success: true,
             mode: mode,
             totalThreads: totalAllocated,
-            jobsDispatched: jobsSent
+            jobsDispatched: jobsSent,
+            pipelineDepth: pipelineDepth
         };
     }
 }

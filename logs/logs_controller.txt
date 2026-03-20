@@ -1,0 +1,2 @@
+[2026-03-20T07:39:53.290Z] [INFO] [CONTROLLER] 🎮 Controller démarré (SILENT MODE)
+[2026-03-20T07:39:53.290Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms

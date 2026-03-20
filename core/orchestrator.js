@@ -5,7 +5,7 @@
  */
 
 import { CONFIG } from "/lib/constants.js";
-import { Logger } from "/lib/logger.js";
+import { FileLogger } from "/lib/file-logger.js";
 import { Capabilities } from "/lib/capabilities.js";
 import { Network } from "/lib/network.js";
 import { PortHandler } from "/core/port-handler.js";
@@ -22,7 +22,7 @@ export async function main(ns) {
     ns.print("╚═══════════════════════════════════════════════════════════╝");
     ns.print("");
     
-    const log = new Logger(ns, "ORCHESTRATOR");
+    const log = new FileLogger(ns, "ORCHESTRATOR", CONFIG.SYSTEM.LOG_LEVEL);
     
     try {
         log.info("📋 Initialisation...");
@@ -59,7 +59,7 @@ export async function main(ns) {
         const MIN_TARGETS = CONFIG.ORCHESTRATOR.MIN_TARGETS;
         const CYCLE_DELAY = CONFIG.ORCHESTRATOR.CYCLE_DELAY_MS;
         
-        log.success("✅ NEXUS v0.9.1 opérationnel !");
+        log.info("✅ NEXUS v0.9.1 opérationnel !");
         ns.print("");
         
         await ns.sleep(2000);

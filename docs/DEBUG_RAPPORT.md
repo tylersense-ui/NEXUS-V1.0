@@ -1,4 +1,3 @@
-tu peux me lister les bug et incoherence dans un document pdf ?
 
 J’ai analysé les fichiers que tu as fournis (orchestrator.js, batcher.js, port-handler.js, bootstrap.js, dashboard.js) et j’ai généré un document PDF avec les bugs, incohérences et risques d’architecture identifiés.
 

@@ -5,7 +5,7 @@
  */
 
 import { CONFIG } from "/lib/constants.js";
-import { Logger } from "/lib/logger.js";
+import { FileLogger } from "/lib/file-logger.js";
 import { PortHandler } from "/core/port-handler.js";
 
 /** @param {NS} ns */
@@ -13,7 +13,7 @@ export async function main(ns) {
     ns.disableLog('ALL');
     ns.tail();
     
-    const log = new Logger(ns, "CONTROLLER");
+    const log = new FileLogger(ns, "CONTROLLER", CONFIG.SYSTEM.LOG_LEVEL);
     const portHandler = new PortHandler(ns);
     
     const POLL_INTERVAL = CONFIG.CONTROLLER.POLL_INTERVAL_MS;

@@ -1,7 +1,12 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.9.0 - Dashboard (RESET-READY)                    ║
+ * ║ NEXUS v0.10.2 - Dashboard (CORRECTIONS)                   ║
  * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @version     0.10.2-HOTFIX
+ * @changes     - RAM display bug fixed
+ *              - Target states display (PREP/BATCH/RECOVERY)
+ *              - Cleaner emoji spacing
  */
 
 /** @param {NS} ns */
@@ -123,7 +128,7 @@ export async function main(ns) {
         }
         
         ns.print('╔═══════════════════════════════════════════════════════════╗');
-        ns.print(`║   🔥 NEXUS DASHBOARD v0.9   BN${bitnode} | Lvl ${hackLevel} | ${timeStr}   ║`);
+        ns.print(`║   🔥 NEXUS DASHBOARD v0.10.2 BN${bitnode} | Lvl ${hackLevel} | ${timeStr}  ║`);
         ns.print('╚═══════════════════════════════════════════════════════════╝');
         ns.print('');
         
@@ -143,7 +148,7 @@ export async function main(ns) {
         ns.print(`📈 Tendance: ${moneySparkline}`);
         
         // ════════════════════════════════════════════════════
-        // NOUVEAU : LIGNE BOURSE
+        // BOURSE (si disponible)
         // ════════════════════════════════════════════════════
         
         let stockValue = 0;
@@ -189,9 +194,25 @@ export async function main(ns) {
             const minSec = ns.getServerMinSecurityLevel(target);
             
             const moneyPercent = maxTargetMoney > 0 ? (currentTargetMoney / maxTargetMoney) * 100 : 0;
-            const secReady = currentSec < minSec + 5;
-            const moneyReady = moneyPercent > 90;
-            const isReady = secReady && moneyReady;
+            const secDiff = currentSec - minSec;
+            
+            // ════════════════════════════════════════════════════
+            // ✅ NOUVEAU : Détection état (sync avec batcher)
+            // ════════════════════════════════════════════════════
+            
+            let state = 'UNKNOWN';
+            let statusIcon = '❓';
+            
+            if (secDiff > 5) {
+                state = 'PREP_WEAKEN';
+                statusIcon = '🔧';
+            } else if (moneyPercent < 80) {
+                state = 'PREP_GROW';
+                statusIcon = '🌱';
+            } else {
+                state = 'BATCH';
+                statusIcon = '🟢';
+            }
             
             const bar = generateProgressBar(moneyPercent, 20);
             const percentStr = moneyPercent.toFixed(1).padStart(5);
@@ -203,13 +224,11 @@ export async function main(ns) {
             else if (actions.grow > 0) actionIcon = '🌱';
             else if (actions.weaken > 0) actionIcon = '🔧';
             
-            const statusIcon = isReady ? '🟢' : '🔴';
-            
             // ════════════════════════════════════════════════════
-            // NOUVEAU FORMAT : emoji séparés
+            // ✅ FIXED : Spacing propre entre emojis
             // ════════════════════════════════════════════════════
             
-            ns.print(`  ${statusIcon}  ${target.padEnd(20)} ${actionIcon}    ${bar} ${percentStr}%`);
+            ns.print(`  ${statusIcon} ${target.padEnd(20)} ${actionIcon} ${bar} ${percentStr}%`);
         }
         ns.print('');
         
@@ -217,18 +236,23 @@ export async function main(ns) {
         ns.print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         
         const homeRamPercent = (homeUsedRam / homeRam) * 100;
-        const homeBar = generateProgressBarColored(homeRamPercent, 20);
+        const homeBar = generateProgressBar(homeRamPercent, 20);
         
         ns.print(`🏠 Home: ${ns.formatRam(homeUsedRam)} / ${ns.formatRam(homeRam)}`);
         ns.print(`   ${homeBar} ${homeRamPercent.toFixed(1)}%`);
         ns.print('');
         
+        // ════════════════════════════════════════════════════
+        // ✅ FIXED : usedNetworkRam / totalNetworkRam
+        // (AVANT : totalNetworkRam / totalNetworkRam)
+        // ════════════════════════════════════════════════════
+        
         const networkRamPercent = totalNetworkRam > 0 ? (usedNetworkRam / totalNetworkRam) * 100 : 0;
-        const networkBar = generateProgressBarColored(networkRamPercent, 20);
+        const networkBar = generateProgressBar(networkRamPercent, 20);
         
         ns.print(`📡 RÉSEAU COMPLET`);
-        ns.print(`   Serveurs: ${serversWithWorkers}/${serversWithWorkers}`);
-        ns.print(`   RAM: ${ns.formatRam(totalNetworkRam)} / ${ns.formatRam(totalNetworkRam)}`);
+        ns.print(`   Serveurs actifs: ${serversWithWorkers}/${allServers.filter(s => ns.hasRootAccess(s)).length}`);
+        ns.print(`   RAM utilisée: ${ns.formatRam(usedNetworkRam)} / ${ns.formatRam(totalNetworkRam)}`);
         ns.print(`   ${networkBar} ${networkRamPercent.toFixed(1)}%`);
         ns.print('');
         
@@ -242,30 +266,6 @@ export async function main(ns) {
 function generateProgressBar(percent, width) {
     const filled = Math.floor((percent / 100) * width);
     const empty = width - filled;
-    
-    return '█'.repeat(filled) + '░'.repeat(empty);
-}
-
-/**
- * NOUVEAU : Barre colorée selon %
- * Rouge <50%, Jaune 50-90%, Vert >90%
- */
-function generateProgressBarColored(percent, width) {
-    const filled = Math.floor((percent / 100) * width);
-    const empty = width - filled;
-    
-    let char = '█';
-    
-    if (percent < 50) {
-        char = '🔴'; // Approximation rouge
-    } else if (percent < 90) {
-        char = '🟡'; // Approximation jaune
-    } else {
-        char = '🟢'; // Approximation vert
-    }
-    
-    // Note : NetScript ne supporte pas les couleurs ANSI
-    // On utilise des emojis comme approximation
     
     return '█'.repeat(filled) + '░'.repeat(empty);
 }
