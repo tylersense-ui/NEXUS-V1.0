@@ -1,7 +1,10 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.9.1 - Orchestrator (100% DYNAMIQUE)              ║
+ * ║ NEXUS v0.11.1 - Orchestrator (THROTTLED)                  ║
  * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @version     0.11.1
+ * @changes     Génère 1 batch à la fois pour éviter RAM exhausted
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -18,7 +21,7 @@ export async function main(ns) {
     ns.tail();
     
     ns.print("╔═══════════════════════════════════════════════════════════╗");
-    ns.print("║   🔥 NEXUS v0.9.1-DYNAMIC (100% AUTO-SCALE)               ║");
+    ns.print("║   🔥 NEXUS v0.11.1 - ORCHESTRATOR (THROTTLED)             ║");
     ns.print("╚═══════════════════════════════════════════════════════════╝");
     ns.print("");
     
@@ -37,35 +40,17 @@ export async function main(ns) {
         ns.print(`✅ ${servers.length} serveurs | RAM Manager | Batcher ready`);
         ns.print("");
         
-        log.info("🎮 Démarrage Controller...");
-        const controllerPID = ns.run("/hack/controller.js");
-        if (controllerPID === 0) {
-            log.error("Échec controller");
-            return;
-        }
-        ns.print(`✅ Controller PID: ${controllerPID}`);
-        ns.print("");
-        
-        log.info("📊 Démarrage Dashboard...");
-        const dashboardPID = ns.run("/core/dashboard.js");
-        if (dashboardPID > 0) {
-            await ns.sleep(500);
-            ns.tail(dashboardPID);
-            ns.print(`✅ Dashboard PID: ${dashboardPID}`);
-        }
-        ns.print("");
-        
         const REFRESH_INTERVAL = CONFIG.ORCHESTRATOR.REFRESH_INTERVAL_MS;
-        const MIN_TARGETS = CONFIG.ORCHESTRATOR.MIN_TARGETS;
         const CYCLE_DELAY = CONFIG.ORCHESTRATOR.CYCLE_DELAY_MS;
         
-        log.info("✅ NEXUS v0.9.1 opérationnel !");
+        log.info("✅ NEXUS v0.11.1 opérationnel !");
         ns.print("");
         
         await ns.sleep(2000);
         
         let lastRefreshTime = Date.now();
         let cycleCount = 0;
+        let currentTargetIndex = 0; // ← NOUVEAU : Round-robin entre cibles
         
         while (true) {
             cycleCount++;
@@ -73,29 +58,15 @@ export async function main(ns) {
             
             ns.clearLog();
             ns.print("╔═══════════════════════════════════════════════════════════╗");
-            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.9.1-DYNAMIC                    ║");
+            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.11.1                           ║");
             ns.print("╚═══════════════════════════════════════════════════════════╝");
             ns.print("");
             ns.print(`━━━━━━━━━━ CYCLE ${cycleCount} ━━━━━━━━━━`);
             ns.print("");
             
-            let maxTargets = MIN_TARGETS;
-            
-            if (CONFIG.ORCHESTRATOR.AUTO_SCALE_TARGETS) {
-                const totalRam = ramMgr.getTotalAvailableRam();
-                const ramPerBatchGB = CONFIG.BATCHER.ESTIMATED_RAM_PER_BATCH_GB;
-                const avgWeakenTime = 120000;
-                const batchesPerTarget = Math.floor(avgWeakenTime / CYCLE_DELAY);
-                
-                const maxBatches = Math.floor(totalRam / ramPerBatchGB);
-                maxTargets = Math.max(MIN_TARGETS, Math.floor(maxBatches / batchesPerTarget));
-                
-                const hackableCount = network.getTopTargets(maxTargets * 2).length;
-                maxTargets = Math.min(maxTargets, hackableCount);
-                
-                ns.print(`🎯 AUTO-SCALE: ${maxTargets} cibles (${hackableCount} hackables, ${ns.formatRam(totalRam)} RAM)`);
-                ns.print("");
-            }
+            // ════════════════════════════════════════════════════
+            // REFRESH RÉSEAU
+            // ════════════════════════════════════════════════════
             
             const timeSinceRefresh = Date.now() - lastRefreshTime;
             
@@ -126,19 +97,27 @@ export async function main(ns) {
                 }
             }
             
-            let targets = [];
+            // ════════════════════════════════════════════════════
+            // SÉLECTION CIBLES (tous les targets disponibles)
+            // ════════════════════════════════════════════════════
+            
+            let allTargets = [];
             
             try {
-                targets = network.getTopTargets(maxTargets);
+                allTargets = network.getTopTargets(20); // Get top 20
                 
-                if (targets.length === 0) {
+                if (allTargets.length === 0) {
                     ns.print("⚠️  Aucune cible disponible");
+                    ns.print("");
                 } else {
-                    ns.print(`🎯 Cibles (${targets.length}):`);
-                    for (const t of targets) {
+                    ns.print(`🎯 Cibles disponibles (${allTargets.length}):`);
+                    for (const t of allTargets.slice(0, 5)) { // Show top 5
                         const money = ns.getServerMaxMoney(t);
                         const level = ns.getServerRequiredHackingLevel(t);
                         ns.print(`  • ${t} ($${ns.formatNumber(money)}, lvl ${level})`);
+                    }
+                    if (allTargets.length > 5) {
+                        ns.print(`  ... et ${allTargets.length - 5} autres`);
                     }
                 }
                 ns.print("");
@@ -148,30 +127,40 @@ export async function main(ns) {
                 ns.print("");
             }
             
-            if (targets.length > 0) {
-                for (const target of targets) {
-                    try {
-                        const result = batcher.dispatchBatch(target, {
-                            hackPercent: 0.10,
-                            maxThreadsPerJob: 50000
-                        });
-                        
-                        if (result.success) {
-                            if (result.mode.includes('PREP') || result.mode.includes('WEAKEN') || result.mode.includes('GROW')) {
-                                ns.print(`🔧 ${target}: ${result.mode} (${result.totalThreads} threads)`);
-                            } else {
-                                ns.print(`✅ ${target}: ${result.mode} (${result.totalThreads} threads)`);
-                            }
+            // ════════════════════════════════════════════════════
+            // DISPATCH UN SEUL BATCH (ROUND-ROBIN)
+            // ════════════════════════════════════════════════════
+            
+            if (allTargets.length > 0) {
+                // ✅ NOUVEAU v0.11.1 : Round-robin entre cibles
+                const target = allTargets[currentTargetIndex % allTargets.length];
+                currentTargetIndex++;
+                
+                try {
+                    const result = batcher.dispatchBatch(target, {
+                        hackPercent: 0.05, // ← RÉDUIT de 10% à 5% pour économiser RAM
+                        maxThreadsPerJob: 50000
+                    });
+                    
+                    if (result.success) {
+                        if (result.mode.includes('PREP') || result.mode.includes('WEAKEN') || result.mode.includes('GROW')) {
+                            ns.print(`🔧 ${target}: ${result.mode} (${result.totalThreads} threads)`);
                         } else {
-                            ns.print(`⏳ ${target}: ${result.error}`);
+                            ns.print(`✅ ${target}: ${result.mode} (${result.totalThreads} threads)`);
                         }
-                        
-                    } catch (error) {
-                        ns.print(`❌ ${target}: ${error.message}`);
+                    } else {
+                        ns.print(`⏳ ${target}: ${result.error}`);
                     }
+                    
+                } catch (error) {
+                    ns.print(`❌ ${target}: ${error.message}`);
                 }
                 ns.print("");
             }
+            
+            // ════════════════════════════════════════════════════
+            // STATS
+            // ════════════════════════════════════════════════════
             
             const cycleDuration = Date.now() - cycleStart;
             const money = ns.getServerMoneyAvailable("home");
@@ -179,6 +168,7 @@ export async function main(ns) {
             ns.print(`💰 Money: $${ns.formatNumber(money)}`);
             ns.print(`🎯 Level: ${caps.hackingLevel}`);
             ns.print(`⏱️  Cycle: ${cycleDuration}ms`);
+            ns.print(`🔄 Target rotation: ${currentTargetIndex}/${allTargets.length}`);
             ns.print("");
             
             await ns.sleep(CYCLE_DELAY);

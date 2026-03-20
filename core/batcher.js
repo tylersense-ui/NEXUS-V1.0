@@ -1,12 +1,12 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.9.1 - Batcher (MATH FIX)                         ║
+ * ║ NEXUS v0.11.0 - Batcher (BATCH MESSAGES)                  ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.9.1-MATH-FIX
- * @changes     FIX growMultiplier avec pipelineDepth
- *              Compense TOUS les hacks en vol dans le pipeline
- *              growMultiplier = 1/(1-h)^d au lieu de 1/(1-h)
+ * @version     0.11.0
+ * @changes     BASE: v0.9.1 (math fix, pipelineDepth)
+ *              NEW: Envoie BATCH MESSAGES au lieu de jobs individuels
+ *              FIX: PORT OVERFLOW (division trafic par 4)
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -24,7 +24,7 @@ export class Batcher {
         // Détection Formulas (optionnel)
         this.hasFormulas = ns.fileExists("Formulas.exe");
         
-        this.log.info("Batcher initialisé (hasFormulas: " + this.hasFormulas + ")");
+        this.log.info("Batcher v0.11.0 initialisé (hasFormulas: " + this.hasFormulas + ")");
     }
     
     dispatchBatch(target, options = {}) {
@@ -71,20 +71,14 @@ export class Batcher {
             return { success: false, error: "No allocations" };
         }
         
-        let jobsSent = 0;
-        
-        for (const alloc of allocation.allocations) {
-            this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
-                type: 'weaken',
-                target: target,
-                threads: alloc.threads,
-                host: alloc.hostname,
-                delay: 0,
-                uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                script: CONFIG.WORKERS.WEAKEN
-            });
-            jobsSent++;
-        }
+        // ✅ NOUVEAU v0.11.0 : Envoyer UN batch complet au lieu de jobs individuels
+        this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+            type: 'WEAKEN_BATCH',
+            target: target,
+            allocations: allocation.allocations,
+            script: CONFIG.WORKERS.WEAKEN,
+            uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+        });
         
         const currentSec = this.ns.getServerSecurityLevel(target);
         const minSec = this.ns.getServerMinSecurityLevel(target);
@@ -95,7 +89,7 @@ export class Batcher {
             success: true,
             mode: 'WEAKEN',
             totalThreads: allocation.allocated,
-            jobsDispatched: jobsSent
+            jobsDispatched: 1  // ← v0.11.0: 1 batch au lieu de N jobs
         };
     }
     
@@ -114,44 +108,24 @@ export class Batcher {
             return { success: false, error: "No RAM for grow" };
         }
         
-        let jobsSent = 0;
         let totalAllocated = 0;
         
         const gAlloc = this.ramMgr.allocateThreads(growThreads);
-        if (gAlloc.allocations.length > 0) {
-            for (const alloc of gAlloc.allocations) {
-                this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
-                    type: 'grow',
-                    target: target,
-                    threads: alloc.threads,
-                    host: alloc.hostname,
-                    delay: 0,
-                    uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                    script: CONFIG.WORKERS.GROW
-                });
-                jobsSent++;
-                totalAllocated += alloc.threads;
-            }
-        }
+        totalAllocated += gAlloc.allocated;
         
-        if (weakenThreads > 0) {
-            const wAlloc = this.ramMgr.allocateThreads(weakenThreads);
-            if (wAlloc.allocations.length > 0) {
-                for (const alloc of wAlloc.allocations) {
-                    this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
-                        type: 'weaken',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: 0,
-                        uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                        script: CONFIG.WORKERS.WEAKEN
-                    });
-                    jobsSent++;
-                    totalAllocated += alloc.threads;
-                }
-            }
-        }
+        const wAlloc = weakenThreads > 0 ? this.ramMgr.allocateThreads(weakenThreads) : { allocated: 0, allocations: [] };
+        totalAllocated += wAlloc.allocated;
+        
+        // ✅ NOUVEAU v0.11.0 : Envoyer UN batch complet
+        this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+            type: 'GROW_PREP_BATCH',
+            target: target,
+            growAllocations: gAlloc.allocations,
+            weakenAllocations: wAlloc.allocations,
+            growScript: CONFIG.WORKERS.GROW,
+            weakenScript: CONFIG.WORKERS.WEAKEN,
+            uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+        });
         
         const currentMoney = this.ns.getServerMoneyAvailable(target);
         const maxMoney = this.ns.getServerMaxMoney(target);
@@ -163,13 +137,13 @@ export class Batcher {
             success: true,
             mode: 'GROW_PREP',
             totalThreads: totalAllocated,
-            jobsDispatched: jobsSent
+            jobsDispatched: 1  // ← v0.11.0: 1 batch au lieu de N jobs
         };
     }
     
     /**
-     * HWGW avec FIX MATHÉMATIQUE du growMultiplier
-     * Compense TOUS les hacks en vol dans le pipeline
+     * HWGW avec FIX MATHÉMATIQUE du growMultiplier (v0.9.1)
+     * + BATCH MESSAGES (v0.11.0)
      */
     dispatchHWGW(target) {
         const hackPercent = CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
@@ -180,7 +154,7 @@ export class Batcher {
         this.log.debug(`  hackPercent: ${(hackPercent*100).toFixed(1)}%`);
         
         // ════════════════════════════════════════════════════
-        // CALCUL THREADS avec FIX PIPELINE
+        // CALCUL THREADS avec FIX PIPELINE (v0.9.1)
         // ════════════════════════════════════════════════════
         
         const hackThreads = Math.max(1, Math.floor(
@@ -190,7 +164,7 @@ export class Batcher {
         const hackSec = this.ns.hackAnalyzeSecurity(hackThreads, target);
         const w1Threads = Math.max(0, Math.ceil(hackSec / 0.05));
         
-        // ✅ FIX MATHÉMATIQUE : Calculer le pipelineDepth
+        // ✅ FIX MATHÉMATIQUE v0.9.1 : Calculer le pipelineDepth
         const weakenTime = this.ns.getWeakenTime(target);
         const spacing = 200; // ms entre batches
         const pipelineDepth = Math.floor(weakenTime / spacing);
@@ -228,91 +202,41 @@ export class Batcher {
         const weaken2Delay = 150;
         
         // ════════════════════════════════════════════════════
-        // DISPATCH
+        // ALLOCATIONS (v0.9.1)
         // ════════════════════════════════════════════════════
         
-        let jobsSent = 0;
-        let totalAllocated = 0;
+        const hAlloc = this.ramMgr.allocateThreads(hackThreads);
+        const w1Alloc = w1Threads > 0 ? this.ramMgr.allocateThreads(w1Threads) : { allocated: 0, allocations: [] };
+        const gAlloc = this.ramMgr.allocateThreads(growThreads);
+        const w2Alloc = w2Threads > 0 ? this.ramMgr.allocateThreads(w2Threads) : { allocated: 0, allocations: [] };
         
-        // HACK
-        if (hackThreads > 0) {
-            const hAlloc = this.ramMgr.allocateThreads(hackThreads);
-            if (hAlloc.allocations.length > 0) {
-                for (const alloc of hAlloc.allocations) {
-                    this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
-                        type: 'hack',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: hackDelay,
-                        uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                        script: CONFIG.WORKERS.HACK
-                    });
-                    jobsSent++;
-                    totalAllocated += alloc.threads;
-                }
-            }
-        }
+        const totalAllocated = hAlloc.allocated + w1Alloc.allocated + gAlloc.allocated + w2Alloc.allocated;
         
-        // WEAKEN1
-        if (w1Threads > 0) {
-            const w1Alloc = this.ramMgr.allocateThreads(w1Threads);
-            if (w1Alloc.allocations.length > 0) {
-                for (const alloc of w1Alloc.allocations) {
-                    this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
-                        type: 'weaken',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: weaken1Delay,
-                        uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                        script: CONFIG.WORKERS.WEAKEN
-                    });
-                    jobsSent++;
-                    totalAllocated += alloc.threads;
-                }
-            }
-        }
+        // ════════════════════════════════════════════════════
+        // DISPATCH (v0.11.0: BATCH MESSAGE au lieu de jobs individuels)
+        // ════════════════════════════════════════════════════
         
-        // GROW
-        if (growThreads > 0) {
-            const gAlloc = this.ramMgr.allocateThreads(growThreads);
-            if (gAlloc.allocations.length > 0) {
-                for (const alloc of gAlloc.allocations) {
-                    this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
-                        type: 'grow',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: growDelay,
-                        uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                        script: CONFIG.WORKERS.GROW
-                    });
-                    jobsSent++;
-                    totalAllocated += alloc.threads;
-                }
-            }
-        }
-        
-        // WEAKEN2
-        if (w2Threads > 0) {
-            const w2Alloc = this.ramMgr.allocateThreads(w2Threads);
-            if (w2Alloc.allocations.length > 0) {
-                for (const alloc of w2Alloc.allocations) {
-                    this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
-                        type: 'weaken',
-                        target: target,
-                        threads: alloc.threads,
-                        host: alloc.hostname,
-                        delay: weaken2Delay,
-                        uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                        script: CONFIG.WORKERS.WEAKEN
-                    });
-                    jobsSent++;
-                    totalAllocated += alloc.threads;
-                }
-            }
-        }
+        // ✅ NOUVEAU v0.11.0 : UN SEUL message avec toutes les allocations
+        this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+            type: 'HWGW_BATCH',
+            target: target,
+            hackAllocations: hAlloc.allocations,
+            weaken1Allocations: w1Alloc.allocations,
+            growAllocations: gAlloc.allocations,
+            weaken2Allocations: w2Alloc.allocations,
+            delays: {
+                hack: hackDelay,
+                weaken1: weaken1Delay,
+                grow: growDelay,
+                weaken2: weaken2Delay
+            },
+            scripts: {
+                hack: CONFIG.WORKERS.HACK,
+                weaken: CONFIG.WORKERS.WEAKEN,
+                grow: CONFIG.WORKERS.GROW
+            },
+            uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+        });
         
         const mode = `HWGW(${(hackPercent*100).toFixed(1)}%, d=${pipelineDepth})`;
         this.log.info(`💰 ${mode}: H:${hackThreads} W1:${w1Threads} G:${growThreads} W2:${w2Threads} = ${totalAllocated} threads`);
@@ -321,7 +245,7 @@ export class Batcher {
             success: true,
             mode: mode,
             totalThreads: totalAllocated,
-            jobsDispatched: jobsSent,
+            jobsDispatched: 1,  // ← v0.11.0: 1 batch au lieu de 4 jobs
             pipelineDepth: pipelineDepth
         };
     }
