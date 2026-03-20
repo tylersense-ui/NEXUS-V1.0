@@ -1,0 +1,28 @@
+{
+  "purchased": [
+    "Cranial Signal Processors - Gen I",
+    "Cranial Signal Processors - Gen II",
+    "Cranial Signal Processors - Gen III",
+    "Neuralstimulator",
+    "Enhanced Myelin Sheathing",
+    "Cranial Signal Processors - Gen IV",
+    "The Black Hand",
+    "DataJack",
+    "Embedded Netburner Module",
+    "Neural-Retention Enhancement",
+    "CRTX42-AA Gene Modification",
+    "Artificial Synaptic Potentiation",
+    "Hacknet Node Core Direct-Neural Interface",
+    "Hacknet Node Kernel Direct-Neural Interface",
+    "Social Negotiation Assistant (S.N.A)",
+    "Speech Enhancement",
+    "Hacknet Node CPU Architecture Neural-Upload",
+    "BitWire",
+    "Synaptic Enhancement Implant",
+    "Hacknet Node Cache Architecture Neural-Upload",
+    "Hacknet Nuoptimal Nootropic Injector Implant",
+    "Nuoptimal Nootropic Injector Implant",
+    "Hacknet Node NIC Architecture Neural-Upload",
+    "Wired Reflexes"
+  ]
+}

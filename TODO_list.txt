@@ -1,0 +1,1 @@
+wget https://raw.githubusercontent.com/tylersense-ui/NEXUS-V1.0/main/tools/deploy.js tools/deploy.js

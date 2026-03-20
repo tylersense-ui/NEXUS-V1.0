@@ -1,0 +1,12 @@
+{
+  "metrics": {
+    "successRate": 1,
+    "misfireRate": 0,
+    "avgWeakenTime": 84804.71179839803,
+    "totalBatches": 18942,
+    "successBatches": 0,
+    "failedBatches": 0,
+    "lastUpdate": 1773797125612
+  },
+  "timestamp": 1774020181584
+}
