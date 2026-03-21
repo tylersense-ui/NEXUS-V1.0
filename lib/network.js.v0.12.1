@@ -1,10 +1,7 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.2 - Network (EV/S TARGETING)                  ║
+ * ║ NEXUS v0.12.1 - Network (FORTRESS)                ║
  * ╚═══════════════════════════════════════════════════════════╝
- * 
- * @version     0.12.2
- * @changes     EV/s avec weakenTime (plus précis que hackTime)
  */
 
 import { CONFIG } from '/lib/constants.js';
@@ -60,6 +57,7 @@ export class Network {
         
         const reqPorts = this.ns.getServerNumPortsRequired(hostname);
         
+        // ✅ CORRECTIF v0.12.1 : PAS de check niveau pour NUKE
         if (reqPorts > this.caps.portCount) {
             return false;
         }
@@ -80,37 +78,7 @@ export class Network {
     }
     
     /**
-     * ✅ NOUVEAU v0.12.2 : EV/s avec WEAKEN TIME (batch throughput réel)
-     * 
-     * La vraie formule de throughput d'un batch HWGW est basée sur weakenTime,
-     * pas hackTime, car c'est weakenTime qui détermine la durée totale du batch.
-     * 
-     * Formula: EV/s = (maxMoney × hackPercent × hackChance) / weakenTime
-     */
-    calculateEVperSecond(target, hackPercent = 0.05) {
-        try {
-            const maxMoney = this.ns.getServerMaxMoney(target);
-            const weakenTime = this.ns.getWeakenTime(target);
-            const hackChance = this.ns.hackAnalyzeChance(target);
-            
-            if (maxMoney === 0 || weakenTime === 0) {
-                return 0;
-            }
-            
-            // EV/s = (argent volé × chance) / weaken time
-            const moneyStolen = maxMoney * hackPercent;
-            const expectedValue = moneyStolen * hackChance;
-            const evPerSecond = expectedValue / (weakenTime / 1000);
-            
-            return evPerSecond;
-            
-        } catch (e) {
-            return 0;
-        }
-    }
-    
-    /**
-     * ✅ LEGACY v0.10.0 : Profit/s avec hackTime (conservé pour compatibilité)
+     * ✅ NOUVEAU v0.10.0 : Calculer profit/seconde pour tri
      */
     calculateProfitPerSecond(target, hackPercent = 0.10) {
         try {
@@ -122,6 +90,7 @@ export class Network {
                 return 0;
             }
             
+            // Profit/s = (argent volé × chance) / temps
             const moneyStolen = maxMoney * hackPercent;
             const expectedProfit = moneyStolen * hackChance;
             const profitPerSecond = expectedProfit / (hackTime / 1000);
@@ -134,7 +103,7 @@ export class Network {
     }
     
     /**
-     * ✅ MODIFIÉ v0.12.2 : Tri par EV/s (WEAKEN TIME) au lieu de profit/s (HACK TIME)
+     * ✅ NOUVEAU v0.10.0 : Tri par PROFIT/SECONDE
      */
     getTopTargets(count = 3) {
         const viable = this.servers.filter(s => {
@@ -144,39 +113,29 @@ export class Network {
             const reqLevel = this.ns.getServerRequiredHackingLevel(s);
             const maxMoney = this.ns.getServerMaxMoney(s);
             
+            // Check niveau SEULEMENT pour hack
             if (reqLevel > this.caps.hackingLevel) return false;
             if (maxMoney < CONFIG.HACKING.MIN_TARGET_MONEY) return false;
             
             return true;
         });
         
-        // ✅ v0.12.2 : TRI PAR EV/s (weaken time)
-        const targetsWithEV = viable.map(target => ({
+        // ✅ TRI PAR PROFIT/SECONDE au lieu de maxMoney
+        const targetsWithProfit = viable.map(target => ({
             name: target,
-            evPerSecond: this.calculateEVperSecond(target),
+            profitPerSecond: this.calculateProfitPerSecond(target),
             maxMoney: this.ns.getServerMaxMoney(target),
-            weakenTime: this.ns.getWeakenTime(target),
             hackTime: this.ns.getHackTime(target),
             hackChance: this.ns.hackAnalyzeChance(target)
         }));
         
-        targetsWithEV.sort((a, b) => b.evPerSecond - a.evPerSecond);
+        targetsWithProfit.sort((a, b) => b.profitPerSecond - a.profitPerSecond);
         
-        // Log top 5 pour debug
-        if (targetsWithEV.length > 0) {
-            const top5 = targetsWithEV.slice(0, 5);
-            this.log.info(`Top 5 EV/s:`);
-            for (const t of top5) {
-                const evPerSecFormatted = this.ns.formatNumber(t.evPerSecond);
-                this.log.info(`  ${t.name.padEnd(20)} $${evPerSecFormatted}/s`);
-            }
-        }
-        
-        return targetsWithEV.slice(0, count).map(t => t.name);
+        return targetsWithProfit.slice(0, count).map(t => t.name);
     }
     
     /**
-     * ✅ MODIFIÉ v0.12.2 : Ajout EV/s dans métriques
+     * ✅ NOUVEAU v0.10.0 : Obtenir métriques détaillées pour une cible
      */
     getTargetMetrics(target) {
         try {
@@ -185,11 +144,9 @@ export class Network {
             const minSec = this.ns.getServerMinSecurityLevel(target);
             const currentSec = this.ns.getServerSecurityLevel(target);
             const hackTime = this.ns.getHackTime(target);
-            const weakenTime = this.ns.getWeakenTime(target);
             const hackChance = this.ns.hackAnalyzeChance(target);
             const reqLevel = this.ns.getServerRequiredHackingLevel(target);
             
-            const evPerSecond = this.calculateEVperSecond(target);
             const profitPerSecond = this.calculateProfitPerSecond(target);
             
             return {
@@ -201,11 +158,9 @@ export class Network {
                 currentSec,
                 secDiff: currentSec - minSec,
                 hackTime,
-                weakenTime,
                 hackChance,
                 reqLevel,
-                evPerSecond,        // ✅ NOUVEAU v0.12.2
-                profitPerSecond,    // Legacy v0.10.0
+                profitPerSecond,
                 isReady: (currentMoney / maxMoney >= 0.95) && (currentSec - minSec <= 5)
             };
         } catch (e) {
