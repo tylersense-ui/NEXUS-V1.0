@@ -16,6 +16,7 @@
 /core/ram-manager.js
 /core/dashboard.js
 /core/worker-manager.js
+/core/bootstrap.js
 
 # ═════════════════════════════════════════════════════════════
 # HACK SYSTEM
@@ -25,15 +26,16 @@
 # ═════════════════════════════════════════════════════════════
 # LIBRARIES
 # ═════════════════════════════════════════════════════════════
+/lib/batch-calculator.js
 /lib/constants.js
-/lib/logger.js
+/lib/file-logger.js
 /lib/network.js
 /lib/capabilities.js
 /lib/utils.js
 /lib/formulas-helper.js
 /lib/state-manager.js
-/lib/file-logger.js
 /lib/timing.js
+/lib/logger.js
 
 # ═════════════════════════════════════════════════════════════
 # WORKERS
@@ -61,10 +63,10 @@
 /tools/version-checker.js
 /tools/log-action.js
 /tools/telemetry-daemon.js
+/tools/blackbox.js
 /tools/log-analyzer.js
 /tools/log-viewer.js
-/tools/cleanup.js
-/tools/blackbox.js
+/tools/mega-kill.js
 
 # ═════════════════════════════════════════════════════════════
 # MANIFEST
@@ -101,47 +103,8 @@
 # - Tous les autres: v0.12.1 (FORTRESS)
 #
 # À CRÉER MANUELLEMENT IN-GAME:
-# 1. mkdir /state         (dossier pour JSON telemetry)
-# 2. mkdir /logs          (dossier pour logs texte)
+# - mkdir /state  (dossier pour JSON telemetry)
 #
-# BOOT SEQUENCE (ordre important):
-# 1. run boot.js
-#    └─> Lance automatiquement dans l'ordre:
-#        1. controller.js       (exécuteur batches)
-#        2. worker-manager.js   (zombie cleanup)
-#        3. telemetry-daemon.js (métriques système)
-#        4. orchestrator.js     (générateur batches)
-#        5. dashboard.js        (monitoring visuel)
-#        6. server-manager.js   (optionnel)
-#        7. stock-manager.js    (optionnel)
-#
-# MONITORING:
-# - tail /core/dashboard.js         → Dashboard visuel (1s)
-# - tail /tools/telemetry-daemon.js → Métriques détaillées (30s)
-# - tail /hack/controller.js        → Stats controller
-# - tail /core/orchestrator.js      → Stats orchestrator
-#
-# MAINTENANCE:
-# - Aucune intervention manuelle nécessaire
-# - Worker-manager tue zombies auto (30s)
-# - Telemetry enregistre métriques auto (30s)
-# - Système autonome 24/7
-#
-# PERFORMANCE ATTENDUE:
-# - Success rate: 96-100%
-# - Zombies: 0
-# - RAM utilization: 97-100%
-# - Revenus: $8m-$35t/s (selon progression)
-#
-# TROUBLESHOOTING:
-# - run /tools/log-analyzer.js      → Analyse état système
-# - run /tools/cleanup.js           → Emergency zombie cleanup
-# - killall && run boot.js          → Redémarrage complet
-#
-# VERSION HISTORY:
-# - v0.12.1 (2026-03-20) : FORTRESS - Version stable production
-# - v0.12.0 (2026-03-20) : Boot sequence optimisé
-# - v0.11.1 (2026-03-20) : Telemetry daemon + throttling
-# - v0.11.0 (2026-03-20) : Batch messages refactoring
-# - v0.10.1 (2026-03-19) : RAM manager hotfix
-# - v0.10.0 (2026-03-19) : Initial stable release
+# LANCEMENT APRÈS DÉPLOIEMENT:
+# 1. run /tools/telemetry-daemon.js  (daemon permanent)
+# 2. run /boot.js                    (système principal)
