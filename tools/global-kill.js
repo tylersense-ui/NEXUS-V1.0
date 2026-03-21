@@ -5,7 +5,7 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/global-kill.js
- * @version     0.2.0
+ * @version     0.12.1
  * @author      NEXUS AI Architect
  * @created     2026-03-08
  * @modified    2026-03-08

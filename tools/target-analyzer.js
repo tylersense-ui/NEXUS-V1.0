@@ -1,10 +1,10 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.10.0 - Target Analyzer (PROFIT/S DEBUG)          ║
+ * ║ NEXUS v0.12.1 - Target Analyzer (FORTRESS)          ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/target-analyzer.js
- * @version     0.10.0
+ * @version     0.12.1
  * @description Analyser profit/seconde de toutes les cibles
  * 
  * USAGE:

@@ -1,10 +1,10 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v1.3 - Aug Planner (91 AUGS + TRACKING)             ║
+ * ║ NEXUS v0.12.1 - Aug Planner (FORTRESS)             ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/aug-planner.js
- * @version     1.3.0
+ * @version     0.12.1
  * @description Planificateur complet avec tracking manuel
  * 
  * USAGE:

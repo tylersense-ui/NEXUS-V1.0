@@ -1,10 +1,10 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v1.1 - Aug Speedrun Planner (30 AUGS DAEDALUS)      ║
+ * ║ NEXUS v0.12.1 - Aug Speedrun Planner (FORTRESS)      ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/aug-speedrun.js
- * @version     1.1.0
+ * @version     0.12.1
  * @description 30 augs minimum pour Daedalus (speedrun optimal)
  * 
  * CHANGEMENTS v1.1 :

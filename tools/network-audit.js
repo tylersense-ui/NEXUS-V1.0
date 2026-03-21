@@ -4,7 +4,7 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/network-audit.js
- * @version     0.8.3
+ * @version     0.12.1
  * @description Analyser l'utilisation du réseau complet
  */
 

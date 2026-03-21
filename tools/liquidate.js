@@ -1,10 +1,10 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.9.0 - Stock Liquidation (URGENCE)                ║
+ * ║ NEXUS v0.12.1 - Stock Liquidation (FORTRESS)                ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/liquidate.js
- * @version     0.9.0
+ * @version     0.12.1
  * @description Vendre TOUTES les positions en bourse IMMÉDIATEMENT
  * 
  * @usage

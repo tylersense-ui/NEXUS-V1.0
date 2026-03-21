@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.11.1 - Deploy Tool (FIX COMMENTAIRES)           ║
+ * ║ NEXUS v0.12.1 - Deploy Tool (FORTRESS)           ║
  * ╚═══════════════════════════════════════════════════════════╝
  */
 
@@ -31,7 +31,7 @@ export async function main(ns) {
         ns.print('  ✓ Manifest téléchargé');
         const manifestContent = ns.read('/tmp/manifest.txt');
         
-        // ✅ FIX v0.11.1 : SKIP lignes vides ET lignes commentaires (#)
+        // ✅ FIX v0.12.1 : SKIP lignes vides ET lignes commentaires (#)
         files = manifestContent.split('\n')
             .map(line => line.trim())                    // Trim whitespace
             .filter(line => line.length > 0)             // Skip lignes vides

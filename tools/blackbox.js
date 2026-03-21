@@ -31,7 +31,7 @@ export async function main(ns) {
                         ns.toast(`Contrat résolu sur ${host} !`, "success", 5000);
                         
                         ns.print(`✅ [${host}] ${type} RÉSOLU !`);
-                        ns.tprint(`✅ [${host}] ${type} sur ${host} : ${reward}`);
+                        ns.print(`💰 Récompense: ${reward}`);
                     } else {
                         ns.print(`❌ [${host}] ${type} ÉCHEC.`);
                         ns.toast(`Échec contrat sur ${host}`, "error", 5000);

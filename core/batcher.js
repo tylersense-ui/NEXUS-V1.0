@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.11.0 - Batcher (BATCH MESSAGES)                  ║
+ * ║ NEXUS v0.11.0 - Batcher (FIXED)                  ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @version     0.11.0
@@ -154,7 +154,7 @@ export class Batcher {
         this.log.debug(`  hackPercent: ${(hackPercent*100).toFixed(1)}%`);
         
         // ════════════════════════════════════════════════════
-        // CALCUL THREADS avec FIX PIPELINE (v0.9.1)
+        // CALCUL THREADS avec FIX PIPELINE (v0.11.0)
         // ════════════════════════════════════════════════════
         
         const hackThreads = Math.max(1, Math.floor(
@@ -164,7 +164,7 @@ export class Batcher {
         const hackSec = this.ns.hackAnalyzeSecurity(hackThreads, target);
         const w1Threads = Math.max(0, Math.ceil(hackSec / 0.05));
         
-        // ✅ FIX MATHÉMATIQUE v0.9.1 : Calculer le pipelineDepth
+        // ✅ FIX MATHÉMATIQUE v0.11.0 : Calculer le pipelineDepth
         const weakenTime = this.ns.getWeakenTime(target);
         const spacing = 200; // ms entre batches
         const pipelineDepth = Math.floor(weakenTime / spacing);
@@ -202,7 +202,7 @@ export class Batcher {
         const weaken2Delay = 150;
         
         // ════════════════════════════════════════════════════
-        // ALLOCATIONS (v0.9.1)
+        // ALLOCATIONS (v0.11.0)
         // ════════════════════════════════════════════════════
         
         const hAlloc = this.ramMgr.allocateThreads(hackThreads);

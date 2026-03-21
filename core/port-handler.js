@@ -4,7 +4,7 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/port-handler.js
- * @version     0.5.0
+ * @version     0.12.1
  * @description Abstraction des ports NetScript
  */
 

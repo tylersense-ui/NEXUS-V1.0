@@ -4,7 +4,7 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/version-checker.js
- * @version     1.1.0
+ * @version     0.12.1
  * @description Vérifier versions de tous les fichiers NEXUS
  * 
  * CHANGEMENTS v1.1 :

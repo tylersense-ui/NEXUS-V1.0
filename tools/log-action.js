@@ -4,7 +4,7 @@
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /tools/log-action.js
- * @version     0.11.1
+ * @version     0.12.1
  * @description Logger actions manuelles de l'opérateur
  * 
  * USAGE:
