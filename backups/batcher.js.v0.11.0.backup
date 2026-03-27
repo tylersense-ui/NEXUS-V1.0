@@ -1,17 +1,16 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.3 - Batcher (DYNAMIC HACKPERCENT)             ║
+ * ║ NEXUS v0.11.0 - Batcher (FIXED)                  ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.3
- * @changes     BASE: v0.11.0 (batch messages, math fix)
- *              NEW: Dynamic hackPercent (5-15% adaptatif)
- *              NEW: Integration math-ns.js
+ * @version     0.11.0
+ * @changes     BASE: v0.9.1 (math fix, pipelineDepth)
+ *              NEW: Envoie BATCH MESSAGES au lieu de jobs individuels
+ *              FIX: PORT OVERFLOW (division trafic par 4)
  */
 
 import { CONFIG } from "/lib/constants.js";
 import { FileLogger } from "/lib/file-logger.js";
-import * as mathNS from "/lib/math-ns.js";
 
 export class Batcher {
     constructor(ns, network, ramManager, portHandler, capabilities) {
@@ -25,46 +24,7 @@ export class Batcher {
         // Détection Formulas (optionnel)
         this.hasFormulas = ns.fileExists("Formulas.exe");
         
-        this.log.info("Batcher v0.12.3 initialisé (hasFormulas: " + this.hasFormulas + ")");
-    }
-    
-    /**
-     * ✅ NOUVEAU v0.12.3 : Calculate optimal hack percent dynamically
-     * 
-     * Adapts hackPercent between 5% and 15% based on:
-     * - Total RAM available (more RAM = can be more aggressive)
-     * - Success rate from telemetry (if available, future)
-     * 
-     * @returns {number} Optimal hack percent (0.05 to 0.15)
-     */
-    calculateOptimalHackPercent() {
-        const totalRamGB = this.ramMgr.getTotalRam();
-        
-        // Base conservative
-        let hackPercent = 0.05;
-        
-        // Scale up based on available RAM
-        if (totalRamGB > 20000) {
-            hackPercent = 0.08;
-        }
-        if (totalRamGB > 50000) {
-            hackPercent = 0.10;
-        }
-        if (totalRamGB > 100000) {
-            hackPercent = 0.12;
-        }
-        if (totalRamGB > 200000) {
-            hackPercent = 0.15;
-        }
-        
-        // TODO v0.12.4+: Read success rate from telemetry and adjust
-        // If success rate < 85%, reduce hackPercent by 20%
-        // If success rate > 95%, increase hackPercent by 10%
-        
-        // Cap between min and max
-        hackPercent = Math.max(0.05, Math.min(0.15, hackPercent));
-        
-        return hackPercent;
+        this.log.info("Batcher v0.11.0 initialisé (hasFormulas: " + this.hasFormulas + ")");
     }
     
     dispatchBatch(target, options = {}) {
@@ -111,6 +71,7 @@ export class Batcher {
             return { success: false, error: "No allocations" };
         }
         
+        // ✅ NOUVEAU v0.11.0 : Envoyer UN batch complet au lieu de jobs individuels
         this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
             type: 'WEAKEN_BATCH',
             target: target,
@@ -128,7 +89,7 @@ export class Batcher {
             success: true,
             mode: 'WEAKEN',
             totalThreads: allocation.allocated,
-            jobsDispatched: 1
+            jobsDispatched: 1  // ← v0.11.0: 1 batch au lieu de N jobs
         };
     }
     
@@ -155,6 +116,7 @@ export class Batcher {
         const wAlloc = weakenThreads > 0 ? this.ramMgr.allocateThreads(weakenThreads) : { allocated: 0, allocations: [] };
         totalAllocated += wAlloc.allocated;
         
+        // ✅ NOUVEAU v0.11.0 : Envoyer UN batch complet
         this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
             type: 'GROW_PREP_BATCH',
             target: target,
@@ -175,57 +137,53 @@ export class Batcher {
             success: true,
             mode: 'GROW_PREP',
             totalThreads: totalAllocated,
-            jobsDispatched: 1
+            jobsDispatched: 1  // ← v0.11.0: 1 batch au lieu de N jobs
         };
     }
     
     /**
-     * ✅ MODIFIÉ v0.12.3 : HWGW avec hackPercent DYNAMIQUE
-     * + Utilisation math-ns.js pour code propre
+     * HWGW avec FIX MATHÉMATIQUE du growMultiplier (v0.9.1)
+     * + BATCH MESSAGES (v0.11.0)
      */
     dispatchHWGW(target) {
-        // ✅ NOUVEAU v0.12.3 : Dynamic hackPercent au lieu de fixe
-        const hackPercent = this.calculateOptimalHackPercent();
+        const hackPercent = CONFIG.BATCHER.DEFAULT_HACK_PERCENT;
         const maxMoney = this.ns.getServerMaxMoney(target);
         
         this.log.debug(`━━━ dispatchHWGW(${target}) ━━━`);
         this.log.debug(`  maxMoney: $${this.ns.formatNumber(maxMoney)}`);
-        this.log.debug(`  hackPercent: ${(hackPercent*100).toFixed(1)}% (DYNAMIC)`);
-        this.log.debug(`  totalRAM: ${this.ns.formatNumber(this.ramMgr.getTotalRam())}GB`);
+        this.log.debug(`  hackPercent: ${(hackPercent*100).toFixed(1)}%`);
         
         // ════════════════════════════════════════════════════
-        // CALCUL THREADS avec math-ns.js (v0.12.3)
+        // CALCUL THREADS avec FIX PIPELINE (v0.11.0)
         // ════════════════════════════════════════════════════
         
-        // ✅ NOUVEAU v0.12.3 : Utilisation math-ns pour plus de clarté
-        const moneyToSteal = maxMoney * hackPercent;
         const hackThreads = Math.max(1, Math.floor(
-            mathNS.hackThreads(this.ns, target, moneyToSteal)
+            this.ns.hackAnalyzeThreads(target, maxMoney * hackPercent)
         ));
         
-        const hackSec = mathNS.hackSecurity(this.ns, hackThreads, target);
-        const w1Threads = Math.max(0, mathNS.weakenThreads(hackSec));
+        const hackSec = this.ns.hackAnalyzeSecurity(hackThreads, target);
+        const w1Threads = Math.max(0, Math.ceil(hackSec / 0.05));
         
-        // Calculate pipelineDepth
-        const weakenTime = mathNS.weakenTime(this.ns, target);
-        const spacing = 200;
+        // ✅ FIX MATHÉMATIQUE v0.11.0 : Calculer le pipelineDepth
+        const weakenTime = this.ns.getWeakenTime(target);
+        const spacing = 200; // ms entre batches
         const pipelineDepth = Math.floor(weakenTime / spacing);
         
         this.log.debug(`  weakenTime: ${(weakenTime/1000).toFixed(1)}s`);
         this.log.debug(`  spacing: ${spacing}ms`);
         this.log.debug(`  pipelineDepth: ${pipelineDepth} batches`);
         
-        // growMultiplier corrigé : compense TOUS les hacks en vol
+        // ✅ growMultiplier corrigé : compense TOUS les hacks en vol
         const growMultiplier = 1 / Math.pow(1 - hackPercent, pipelineDepth);
         
         this.log.debug(`  growMultiplier: ${growMultiplier.toExponential(2)}`);
         
-        const growThreads = Math.max(1, 
-            mathNS.growThreads(this.ns, target, growMultiplier)
-        );
+        const growThreads = Math.max(1, Math.ceil(
+            this.ns.growthAnalyze(target, growMultiplier)
+        ));
         
-        const growSec = mathNS.growSecurity(this.ns, growThreads, target);
-        const w2Threads = Math.max(0, mathNS.weakenThreads(growSec));
+        const growSec = this.ns.growthAnalyzeSecurity(growThreads, target);
+        const w2Threads = Math.max(0, Math.ceil(growSec / 0.05));
         
         this.log.debug(`  ━━━ THREADS CALCULÉS ━━━`);
         this.log.debug(`  H:  ${hackThreads}`);
@@ -244,7 +202,7 @@ export class Batcher {
         const weaken2Delay = 150;
         
         // ════════════════════════════════════════════════════
-        // ALLOCATIONS
+        // ALLOCATIONS (v0.11.0)
         // ════════════════════════════════════════════════════
         
         const hAlloc = this.ramMgr.allocateThreads(hackThreads);
@@ -255,9 +213,10 @@ export class Batcher {
         const totalAllocated = hAlloc.allocated + w1Alloc.allocated + gAlloc.allocated + w2Alloc.allocated;
         
         // ════════════════════════════════════════════════════
-        // DISPATCH (BATCH MESSAGE)
+        // DISPATCH (v0.11.0: BATCH MESSAGE au lieu de jobs individuels)
         // ════════════════════════════════════════════════════
         
+        // ✅ NOUVEAU v0.11.0 : UN SEUL message avec toutes les allocations
         this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
             type: 'HWGW_BATCH',
             target: target,
@@ -279,17 +238,15 @@ export class Batcher {
             uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
         });
         
-        // ✅ MODIFIÉ v0.12.3 : Log avec hackPercent dynamique
-        const mode = `HWGW(${(hackPercent*100).toFixed(1)}%↑, d=${pipelineDepth})`;
+        const mode = `HWGW(${(hackPercent*100).toFixed(1)}%, d=${pipelineDepth})`;
         this.log.info(`💰 ${mode}: H:${hackThreads} W1:${w1Threads} G:${growThreads} W2:${w2Threads} = ${totalAllocated} threads`);
         
         return {
             success: true,
             mode: mode,
             totalThreads: totalAllocated,
-            jobsDispatched: 1,
-            pipelineDepth: pipelineDepth,
-            hackPercent: hackPercent  // ✅ NOUVEAU v0.12.3 : retourner pour telemetry
+            jobsDispatched: 1,  // ← v0.11.0: 1 batch au lieu de 4 jobs
+            pipelineDepth: pipelineDepth
         };
     }
 }
