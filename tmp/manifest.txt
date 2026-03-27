@@ -34,6 +34,7 @@
 /lib/state-manager.js
 /lib/file-logger.js
 /lib/timing.js
+/lib/math-ns.js
 
 # ═════════════════════════════════════════════════════════════
 # WORKERS
