@@ -45,3 +45,5 @@ for (const proc of processes) {
 ```
 
 **Pour l'instant** : Relancer telemetry manuellement après global-kill.
+
+

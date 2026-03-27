@@ -40,3 +40,9 @@
 [2026-03-20T21:45:44.643Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
 [2026-03-20T21:54:59.341Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
 [2026-03-20T21:54:59.341Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-21T00:59:41.739Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-03-21T00:59:41.739Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-21T01:39:33.752Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-03-21T01:39:33.753Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-21T02:14:48.313Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-03-21T02:14:48.314Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
