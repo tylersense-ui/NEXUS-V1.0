@@ -1,11 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.3.3 - Batcher (INFINITY GUARD)                ║
+ * ║ NEXUS v0.12.3.2 - Batcher (LOGGING AMÉLIORÉ)              ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.3.3
- * @changes     BASE: v0.12.3.2 (meilleur logging)
- *              FIX: Guard contre growMultiplier = Infinity (syscore)
+ * @version     0.12.3.2
+ * @changes     BASE: v0.12.3.1 (dynamic hackPercent, getTotalRam fix)
+ *              NEW: Meilleur logging d'erreurs pour diagnostic
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -24,11 +24,12 @@ export class Batcher {
         // Détection Formulas (optionnel)
         this.hasFormulas = ns.fileExists("Formulas.exe");
         
-        this.log.info("Batcher v0.12.3.3 initialisé (hasFormulas: " + this.hasFormulas + ")");
+        this.log.info("Batcher v0.12.3.2 initialisé (hasFormulas: " + this.hasFormulas + ")");
     }
     
     /**
      * ✅ v0.12.3.1 : Calculate total RAM across all servers
+     * (ram-manager doesn't have getTotalRam(), so we calculate it here)
      */
     calculateTotalNetworkRam() {
         const servers = this.getAllServers();
@@ -43,7 +44,7 @@ export class Batcher {
     }
     
     /**
-     * ✅ v0.12.3.1 : Get all servers
+     * ✅ v0.12.3.1 : Get all servers (copy from ram-manager logic)
      */
     getAllServers() {
         const visited = new Set();
@@ -71,12 +72,21 @@ export class Batcher {
     
     /**
      * ✅ v0.12.3 : Calculate optimal hack percent dynamically
+     * ✅ v0.12.3.1 : Use calculateTotalNetworkRam() instead of getTotalRam()
+     * 
+     * Adapts hackPercent between 5% and 15% based on:
+     * - Total RAM available (more RAM = can be more aggressive)
+     * - Success rate from telemetry (if available, future)
+     * 
+     * @returns {number} Optimal hack percent (0.05 to 0.15)
      */
     calculateOptimalHackPercent() {
         const totalRamGB = this.calculateTotalNetworkRam();
         
+        // Base conservative
         let hackPercent = 0.05;
         
+        // Scale up based on available RAM
         if (totalRamGB > 20000) {
             hackPercent = 0.08;
         }
@@ -90,13 +100,18 @@ export class Batcher {
             hackPercent = 0.15;
         }
         
+        // TODO v0.12.4+: Read success rate from telemetry and adjust
+        // If success rate < 85%, reduce hackPercent by 20%
+        // If success rate > 95%, increase hackPercent by 10%
+        
+        // Cap between min and max
         hackPercent = Math.max(0.05, Math.min(0.15, hackPercent));
         
         return hackPercent;
     }
     
     /**
-     * ✅ v0.12.3.2 : Meilleur logging d'erreurs
+     * ✅ MODIFIÉ v0.12.3.2 : MEILLEUR LOGGING D'ERREURS
      */
     dispatchBatch(target, options = {}) {
         try {
@@ -122,6 +137,7 @@ export class Batcher {
             return this.dispatchHWGW(target);
             
         } catch (error) {
+            // ✅ NOUVEAU v0.12.3.2 : Logging détaillé pour diagnostic
             const errorMsg = error.message || error.toString() || 'Unknown error';
             const errorStack = error.stack || 'No stack trace available';
             
@@ -217,9 +233,10 @@ export class Batcher {
     
     /**
      * ✅ v0.12.3 : HWGW avec hackPercent DYNAMIQUE
-     * ✅ MODIFIÉ v0.12.3.3 : Guard contre growMultiplier Infinity
+     * + Utilisation math-ns.js pour code propre
      */
     dispatchHWGW(target) {
+        // ✅ v0.12.3 : Dynamic hackPercent au lieu de fixe
         const hackPercent = this.calculateOptimalHackPercent();
         const maxMoney = this.ns.getServerMaxMoney(target);
         
@@ -228,9 +245,10 @@ export class Batcher {
         this.log.debug(`  hackPercent: ${(hackPercent*100).toFixed(1)}% (DYNAMIC)`);
         
         // ════════════════════════════════════════════════════
-        // CALCUL THREADS avec math-ns.js
+        // CALCUL THREADS avec math-ns.js (v0.12.3)
         // ════════════════════════════════════════════════════
         
+        // ✅ v0.12.3 : Utilisation math-ns pour plus de clarté
         const moneyToSteal = maxMoney * hackPercent;
         const hackThreads = Math.max(1, Math.floor(
             mathNS.hackThreads(this.ns, target, moneyToSteal)
@@ -248,21 +266,11 @@ export class Batcher {
         this.log.debug(`  spacing: ${spacing}ms`);
         this.log.debug(`  pipelineDepth: ${pipelineDepth} batches`);
         
-        // ✅ NOUVEAU v0.12.3.3 : Guard contre Infinity
-        // Si pipelineDepth est trop élevé, Math.pow(1-hackPercent, pipelineDepth) → 0
-        // Et 1/0 = Infinity → growthAnalyze crash
-        let growMultiplier = 1 / Math.pow(1 - hackPercent, pipelineDepth);
-        
-        // ✅ GUARD : Si growMultiplier est Infinity, NaN ou trop grand
-        if (!isFinite(growMultiplier) || growMultiplier < 1 || growMultiplier > 1e308) {
-            // Fallback : cap à une valeur maximale raisonnable
-            growMultiplier = 1e100; // Très grand mais pas Infinity
-            this.log.warn(`⚠️  ${target}: growMultiplier was ${growMultiplier}, capped to 1e100 (pipelineDepth=${pipelineDepth})`);
-        }
+        // growMultiplier corrigé : compense TOUS les hacks en vol
+        const growMultiplier = 1 / Math.pow(1 - hackPercent, pipelineDepth);
         
         this.log.debug(`  growMultiplier: ${growMultiplier.toExponential(2)}`);
         
-        // ✅ Maintenant growThreads ne crashera plus
         const growThreads = Math.max(1, 
             mathNS.growThreads(this.ns, target, growMultiplier)
         );
@@ -278,7 +286,7 @@ export class Batcher {
         this.log.debug(`  TOTAL: ${hackThreads + w1Threads + growThreads + w2Threads}`);
         
         // ════════════════════════════════════════════════════
-        // DELAYS FIXES
+        // DELAYS FIXES (pas de Formulas requis)
         // ════════════════════════════════════════════════════
         
         const hackDelay = 0;
@@ -298,7 +306,7 @@ export class Batcher {
         const totalAllocated = hAlloc.allocated + w1Alloc.allocated + gAlloc.allocated + w2Alloc.allocated;
         
         // ════════════════════════════════════════════════════
-        // DISPATCH
+        // DISPATCH (BATCH MESSAGE)
         // ════════════════════════════════════════════════════
         
         this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -322,6 +330,7 @@ export class Batcher {
             uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
         });
         
+        // ✅ v0.12.3 : Log avec hackPercent dynamique
         const mode = `HWGW(${(hackPercent*100).toFixed(1)}%↑, d=${pipelineDepth})`;
         this.log.info(`💰 ${mode}: H:${hackThreads} W1:${w1Threads} G:${growThreads} W2:${w2Threads} = ${totalAllocated} threads`);
         
@@ -331,7 +340,7 @@ export class Batcher {
             totalThreads: totalAllocated,
             jobsDispatched: 1,
             pipelineDepth: pipelineDepth,
-            hackPercent: hackPercent
+            hackPercent: hackPercent  // ✅ v0.12.3 : retourner pour telemetry
         };
     }
 }
