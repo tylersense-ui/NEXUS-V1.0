@@ -1,11 +1,11 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.3.2 - Batcher (LOGGING AMÉLIORÉ)              ║
+ * ║ NEXUS v0.12.3.1 - Batcher (HOTFIX)                        ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.3.2
- * @changes     BASE: v0.12.3.1 (dynamic hackPercent, getTotalRam fix)
- *              NEW: Meilleur logging d'erreurs pour diagnostic
+ * @version     0.12.3.1-HOTFIX
+ * @changes     BASE: v0.12.3 (dynamic hackPercent, math-ns)
+ *              FIX: getTotalRam() error - calculate RAM directly
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -24,11 +24,11 @@ export class Batcher {
         // Détection Formulas (optionnel)
         this.hasFormulas = ns.fileExists("Formulas.exe");
         
-        this.log.info("Batcher v0.12.3.2 initialisé (hasFormulas: " + this.hasFormulas + ")");
+        this.log.info("Batcher v0.12.3.1-HOTFIX initialisé (hasFormulas: " + this.hasFormulas + ")");
     }
     
     /**
-     * ✅ v0.12.3.1 : Calculate total RAM across all servers
+     * ✅ HOTFIX v0.12.3.1 : Calculate total RAM across all servers
      * (ram-manager doesn't have getTotalRam(), so we calculate it here)
      */
     calculateTotalNetworkRam() {
@@ -44,7 +44,7 @@ export class Batcher {
     }
     
     /**
-     * ✅ v0.12.3.1 : Get all servers (copy from ram-manager logic)
+     * ✅ HOTFIX v0.12.3.1 : Get all servers (copy from ram-manager logic)
      */
     getAllServers() {
         const visited = new Set();
@@ -72,7 +72,7 @@ export class Batcher {
     
     /**
      * ✅ v0.12.3 : Calculate optimal hack percent dynamically
-     * ✅ v0.12.3.1 : Use calculateTotalNetworkRam() instead of getTotalRam()
+     * ✅ HOTFIX v0.12.3.1 : Use calculateTotalNetworkRam() instead of getTotalRam()
      * 
      * Adapts hackPercent between 5% and 15% based on:
      * - Total RAM available (more RAM = can be more aggressive)
@@ -110,9 +110,6 @@ export class Batcher {
         return hackPercent;
     }
     
-    /**
-     * ✅ MODIFIÉ v0.12.3.2 : MEILLEUR LOGGING D'ERREURS
-     */
     dispatchBatch(target, options = {}) {
         try {
             const currentMoney = this.ns.getServerMoneyAvailable(target);
@@ -137,14 +134,8 @@ export class Batcher {
             return this.dispatchHWGW(target);
             
         } catch (error) {
-            // ✅ NOUVEAU v0.12.3.2 : Logging détaillé pour diagnostic
-            const errorMsg = error.message || error.toString() || 'Unknown error';
-            const errorStack = error.stack || 'No stack trace available';
-            
-            this.log.error(`Error in dispatchBatch(${target}): ${errorMsg}`);
-            this.log.error(`Stack: ${errorStack}`);
-            
-            return { success: false, error: errorMsg };
+            this.log.error(`Error: ${error.message}`);
+            return { success: false, error: error.message };
         }
     }
     

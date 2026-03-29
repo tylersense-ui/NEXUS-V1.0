@@ -106,6 +106,7 @@ function getFallbackFiles() {
         '/lib/utils.js',
         '/lib/formulas-helper.js',
         '/lib/state-manager.js',
+        '/lib/math-ns.js',
         '/workers/hack.js',
         '/workers/grow.js',
         '/workers/weaken.js',
@@ -120,6 +121,8 @@ function getFallbackFiles() {
         '/tools/aug-planner.js',
         '/tools/version-checker.js',
         '/tools/log-action.js',
+        '/tools/blackbox.js',
+        '/tools/mega-kill.js',
         '/tools/telemetry-daemon.js'
     ];
 }
