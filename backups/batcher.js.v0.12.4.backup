@@ -340,7 +340,7 @@ export class Batcher {
         // ✅ NOUVEAU v0.12.4 : JOB SPLITTING
         // ════════════════════════════════════════════════════
         
-        const MAX_BATCH_SIZE = 2000; // 2k threads max par batch (réduit pour éviter RAM exhausted)
+        const MAX_BATCH_SIZE = 5000; // 5k threads max par batch
         
         const hackBatches = this.splitJob(hackThreads, MAX_BATCH_SIZE);
         const w1Batches = this.splitJob(w1Threads, MAX_BATCH_SIZE);
