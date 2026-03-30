@@ -16,11 +16,7 @@
 /core/ram-manager.js
 /core/dashboard.js
 /core/worker-manager.js
-
-# ═════════════════════════════════════════════════════════════
-# HACK SYSTEM
-# ═════════════════════════════════════════════════════════════
-/hack/controller.js
+/core/controller.js
 
 # ═════════════════════════════════════════════════════════════
 # LIBRARIES
