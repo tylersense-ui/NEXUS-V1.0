@@ -98,7 +98,7 @@ function getFallbackFiles() {
         '/core/port-handler.js',
         '/core/ram-manager.js',
         '/core/dashboard.js',
-        '/hack/controller.js',
+        '/core/controller.js',
         '/lib/constants.js',
         '/lib/logger.js',
         '/lib/network.js',
