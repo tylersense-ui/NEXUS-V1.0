@@ -1,11 +1,10 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.4 - Controller (JOB SPLITTING SUPPORT)       ║
+ * ║ NEXUS v0.11.1 - Controller (RAM-AWARE)          ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.4
- * @changes     BASE: v0.11.1 (RAM-AWARE)
- *              NEW: Support HACK_JOB, GROW_JOB, WEAKEN_JOB types
+ * @version     0.11.1
+ * @changes     Vérifie RAM AVANT exec + Adaptive threading
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -23,7 +22,7 @@ export async function main(ns) {
     const POLL_INTERVAL = CONFIG.CONTROLLER.POLL_INTERVAL_MS;
     const COMMAND_PORT = CONFIG.PORTS.COMMANDS;
     
-    log.info(`🎮 Controller v0.12.4 démarré (Job Splitting Support)`);
+    log.info(`🎮 Controller v0.11.1 démarré (RAM-AWARE)`);
     log.info(`📨 Écoute port ${COMMAND_PORT} | Polling: ${POLL_INTERVAL}ms`);
     
     let totalBatchesReceived = 0;
@@ -50,7 +49,6 @@ export async function main(ns) {
                 
                 // Dispatch selon type
                 try {
-                    // ✅ Types originaux (rétrocompatibilité)
                     if (batch.type === 'HWGW_BATCH') {
                         const jobs = await processHWGWBatch(ns, batch, failureReasons);
                         totalJobsDispatched += jobs.dispatched;
@@ -67,35 +65,6 @@ export async function main(ns) {
                         
                     } else if (batch.type === 'GROW_PREP_BATCH') {
                         const jobs = await processGrowPrepBatch(ns, batch, failureReasons);
-                        totalJobsDispatched += jobs.dispatched;
-                        totalJobsSuccess += jobs.success;
-                        totalJobsFailed += jobs.failed;
-                        totalJobsSkipped += jobs.skipped;
-                    } else if (batch.type === 'GROW_BATCH') {
-                        const jobs = await processGrowBatch(ns, batch, failureReasons);
-                        totalJobsDispatched += jobs.dispatched;
-                        totalJobsSuccess += jobs.success;
-                        totalJobsFailed += jobs.failed;
-                        totalJobsSkipped += jobs.skipped;
-                    }
-                    
-                    // ✅ NOUVEAU v0.12.4 : Types job splitting
-                    else if (batch.type === 'HACK_JOB') {
-                        const jobs = await processSimpleJob(ns, batch, failureReasons);
-                        totalJobsDispatched += jobs.dispatched;
-                        totalJobsSuccess += jobs.success;
-                        totalJobsFailed += jobs.failed;
-                        totalJobsSkipped += jobs.skipped;
-                        
-                    } else if (batch.type === 'GROW_JOB') {
-                        const jobs = await processSimpleJob(ns, batch, failureReasons);
-                        totalJobsDispatched += jobs.dispatched;
-                        totalJobsSuccess += jobs.success;
-                        totalJobsFailed += jobs.failed;
-                        totalJobsSkipped += jobs.skipped;
-                        
-                    } else if (batch.type === 'WEAKEN_JOB') {
-                        const jobs = await processSimpleJob(ns, batch, failureReasons);
                         totalJobsDispatched += jobs.dispatched;
                         totalJobsSuccess += jobs.success;
                         totalJobsFailed += jobs.failed;
@@ -118,7 +87,7 @@ export async function main(ns) {
                 ns.clearLog();
                 
                 ns.print(`╔═══════════════════════════════════════════════════╗`);
-                ns.print(`║          CONTROLLER REPORT v0.12.4                ║`);
+                ns.print(`║          CONTROLLER REPORT v0.11.1                ║`);
                 ns.print(`╚═══════════════════════════════════════════════════╝`);
                 ns.print(``);
                 ns.print(`📊 STATISTIQUES:`);
@@ -162,29 +131,7 @@ function trackFailure(reasons, reason) {
 }
 
 /**
- * ✅ NOUVEAU v0.12.4 : Process simple job (HACK_JOB, GROW_JOB, WEAKEN_JOB)
- */
-async function processSimpleJob(ns, batch, failureReasons) {
-    const { target, allocations, script, delay } = batch;
-    
-    let dispatched = 0;
-    let success = 0;
-    let failed = 0;
-    let skipped = 0;
-    
-    for (const alloc of allocations || []) {
-        const result = await execWorkerSafe(ns, script, alloc.hostname, alloc.threads, target, delay || 0, failureReasons);
-        dispatched++;
-        if (result === true) success++;
-        else if (result === false) failed++;
-        else skipped++;
-    }
-    
-    return { dispatched, success, failed, skipped };
-}
-
-/**
- * Process HWGW batch (original)
+ * Process HWGW batch
  */
 async function processHWGWBatch(ns, batch, failureReasons) {
     const { target, hackAllocations, weaken1Allocations, growAllocations, weaken2Allocations, delays, scripts } = batch;
@@ -234,7 +181,7 @@ async function processHWGWBatch(ns, batch, failureReasons) {
 }
 
 /**
- * Process WEAKEN batch (original)
+ * Process WEAKEN batch
  */
 async function processWeakenBatch(ns, batch, failureReasons) {
     const { target, allocations, script } = batch;
@@ -245,7 +192,7 @@ async function processWeakenBatch(ns, batch, failureReasons) {
     let skipped = 0;
     
     for (const alloc of allocations || []) {
-        const result = await execWorkerSafe(ns, script, alloc.hostname, alloc.threads, target, batch.delay || 0, failureReasons);
+        const result = await execWorkerSafe(ns, script, alloc.hostname, alloc.threads, target, 0, failureReasons);
         dispatched++;
         if (result === true) success++;
         else if (result === false) failed++;
@@ -256,29 +203,7 @@ async function processWeakenBatch(ns, batch, failureReasons) {
 }
 
 /**
- * Process GROW batch (original)
- */
-async function processGrowBatch(ns, batch, failureReasons) {
-    const { target, allocations, script } = batch;
-    
-    let dispatched = 0;
-    let success = 0;
-    let failed = 0;
-    let skipped = 0;
-    
-    for (const alloc of allocations || []) {
-        const result = await execWorkerSafe(ns, script, alloc.hostname, alloc.threads, target, batch.delay || 0, failureReasons);
-        dispatched++;
-        if (result === true) success++;
-        else if (result === false) failed++;
-        else skipped++;
-    }
-    
-    return { dispatched, success, failed, skipped };
-}
-
-/**
- * Process GROW_PREP batch (original)
+ * Process GROW_PREP batch
  */
 async function processGrowPrepBatch(ns, batch, failureReasons) {
     const { target, growAllocations, weakenAllocations, growScript, weakenScript } = batch;

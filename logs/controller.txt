@@ -46,3 +46,27 @@
 [2026-03-21T01:39:33.753Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
 [2026-03-21T02:14:48.313Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
 [2026-03-21T02:14:48.314Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-27T14:20:12.185Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-03-27T14:20:12.185Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-27T18:59:01.285Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-03-27T18:59:01.285Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-29T06:39:31.002Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-03-29T06:39:31.003Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-29T09:10:59.222Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-03-29T09:10:59.222Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-29T14:15:33.332Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-03-29T14:15:33.332Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-30T18:52:51.087Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4 démarré (Job Splitting Support)
+[2026-03-30T18:52:51.087Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-30T20:07:11.679Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4 démarré (Job Splitting Support)
+[2026-03-30T20:07:11.679Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-30T20:21:22.553Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4 démarré (Job Splitting Support)
+[2026-03-30T20:21:22.553Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-03-31T11:40:48.735Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4 démarré (Job Splitting Support)
+[2026-03-31T11:40:48.735Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-04T03:09:32.278Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4 démarré (Job Splitting Support)
+[2026-04-04T03:09:32.278Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-04T03:44:39.564Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4 démarré (Job Splitting Support)
+[2026-04-04T03:44:39.564Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-04T12:11:51.972Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4 démarré (Job Splitting Support)
+[2026-04-04T12:11:51.972Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms

@@ -1,0 +1,472 @@
+/**
+ * ╔═══════════════════════════════════════════════════════════╗
+ * ║ NEXUS v0.12.4.2 - Batcher (JOB SPLITTING + GROW CAP)     ║
+ * ╚═══════════════════════════════════════════════════════════╝
+ * 
+ * @version     0.12.4.2
+ * @changes     BASE: v0.12.4 (Job Splitting)
+ *              FIX: MAX_BATCH_SIZE 5000 → 2000
+ *              NEW: CAP GROW threads à 500k pour éviter batches massifs
+ *              GAIN: Stabilité système, fin des cycles GROW infinis
+ */
+
+import { CONFIG } from "/lib/constants.js";
+import { FileLogger } from "/lib/file-logger.js";
+import * as mathNS from "/lib/math-ns.js";
+
+export class Batcher {
+    constructor(ns, network, ramManager, portHandler, capabilities) {
+        this.ns = ns;
+        this.network = network;
+        this.ramMgr = ramManager;
+        this.portHandler = portHandler;
+        this.caps = capabilities;
+        this.log = new FileLogger(ns, "BATCHER", CONFIG.SYSTEM.LOG_LEVEL);
+        
+        // Détection Formulas (optionnel)
+        this.hasFormulas = ns.fileExists("Formulas.exe");
+        
+        this.log.info("Batcher v0.12.4.2 initialisé (Job Splitting + GROW CAP, hasFormulas: " + this.hasFormulas + ")");
+    }
+    
+    /**
+     * ✅ v0.12.3.1 : Calculate total RAM across all servers
+     */
+    calculateTotalNetworkRam() {
+        const servers = this.getAllServers();
+        let totalRam = 0;
+        
+        for (const hostname of servers) {
+            if (!this.ns.hasRootAccess(hostname)) continue;
+            totalRam += this.ns.getServerMaxRam(hostname);
+        }
+        
+        return totalRam;
+    }
+    
+    /**
+     * ✅ v0.12.3.1 : Get all servers
+     */
+    getAllServers() {
+        const visited = new Set();
+        const queue = ["home"];
+        const servers = [];
+        
+        while (queue.length > 0) {
+            const current = queue.shift();
+            
+            if (visited.has(current)) continue;
+            visited.add(current);
+            
+            const neighbors = this.ns.scan(current);
+            for (const neighbor of neighbors) {
+                if (!visited.has(neighbor)) {
+                    queue.push(neighbor);
+                }
+            }
+            
+            servers.push(current);
+        }
+        
+        return servers;
+    }
+    
+    /**
+     * ✅ v0.12.3 : Calculate optimal hack percent dynamically
+     */
+    calculateOptimalHackPercent() {
+        const totalRamGB = this.calculateTotalNetworkRam();
+        
+        let hackPercent = 0.05;
+        
+        if (totalRamGB > 20000) {
+            hackPercent = 0.08;
+        }
+        if (totalRamGB > 50000) {
+            hackPercent = 0.10;
+        }
+        if (totalRamGB > 100000) {
+            hackPercent = 0.12;
+        }
+        if (totalRamGB > 200000) {
+            hackPercent = 0.15;
+        }
+        
+        hackPercent = Math.max(0.05, Math.min(0.15, hackPercent));
+        
+        return hackPercent;
+    }
+    
+    /**
+     * ✅ NOUVEAU v0.12.4 : Split job into smaller batches
+     * 
+     * @param {number} totalThreads - Total threads à splitter
+     * @param {number} maxBatchSize - Taille max par batch (default 5000)
+     * @returns {number[]} Array of batch sizes
+     */
+    splitJob(totalThreads, maxBatchSize = 5000) {
+        if (totalThreads <= maxBatchSize) {
+            return [totalThreads]; // Pas besoin de split
+        }
+        
+        const batches = [];
+        let remaining = totalThreads;
+        
+        while (remaining > 0) {
+            const size = Math.min(remaining, maxBatchSize);
+            batches.push(size);
+            remaining -= size;
+        }
+        
+        return batches;
+    }
+    
+    /**
+     * ✅ v0.12.3.2 : Meilleur logging d'erreurs
+     */
+    dispatchBatch(target, options = {}) {
+        try {
+            const currentMoney = this.ns.getServerMoneyAvailable(target);
+            const maxMoney = this.ns.getServerMaxMoney(target);
+            const currentSec = this.ns.getServerSecurityLevel(target);
+            const minSec = this.ns.getServerMinSecurityLevel(target);
+            
+            const moneyPercent = maxMoney > 0 ? (currentMoney / maxMoney) : 0;
+            const secDiff = currentSec - minSec;
+            
+            const secReady = secDiff <= 5;
+            const moneyReady = moneyPercent >= 0.95;
+            
+            if (!secReady) {
+                return this.dispatchWeaken(target);
+            }
+            
+            if (!moneyReady) {
+                return this.dispatchGrowPrep(target);
+            }
+            
+            return this.dispatchHWGW(target);
+            
+        } catch (error) {
+            const errorMsg = error.message || error.toString() || 'Unknown error';
+            const errorStack = error.stack || 'No stack trace available';
+            
+            this.log.error(`Error in dispatchBatch(${target}): ${errorMsg}`);
+            this.log.error(`Stack: ${errorStack}`);
+            
+            return { success: false, error: errorMsg };
+        }
+    }
+    
+    dispatchWeaken(target) {
+        const totalRam = this.ramMgr.getTotalAvailableRam();
+        const weakenRam = this.ns.getScriptRam(CONFIG.WORKERS.WEAKEN);
+        const weakenThreads = Math.floor(totalRam / weakenRam);
+        
+        if (weakenThreads === 0) {
+            return { success: false, error: "No RAM" };
+        }
+        
+        // ✅ NOUVEAU v0.12.4 : Split weaken en batches
+        const batches = this.splitJob(weakenThreads);
+        let totalAllocated = 0;
+        let batchesDispatched = 0;
+        
+        for (let i = 0; i < batches.length; i++) {
+            const allocation = this.ramMgr.allocateThreads(batches[i]);
+            
+            if (allocation.allocations.length === 0) continue;
+            
+            this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+                type: 'WEAKEN_BATCH',
+                target: target,
+                allocations: allocation.allocations,
+                script: CONFIG.WORKERS.WEAKEN,
+                delay: i * 10, // Stagger de 10ms entre batches
+                uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+            });
+            
+            totalAllocated += allocation.allocated;
+            batchesDispatched++;
+        }
+        
+        const currentSec = this.ns.getServerSecurityLevel(target);
+        const minSec = this.ns.getServerMinSecurityLevel(target);
+        
+        const batchInfo = batches.length > 1 ? ` (${batches.length}×)` : '';
+        this.log.info(`🔧 WEAKEN${batchInfo}: ${totalAllocated} threads | Sec: ${currentSec.toFixed(1)}/${minSec.toFixed(1)}`);
+        
+        return {
+            success: true,
+            mode: 'WEAKEN',
+            totalThreads: totalAllocated,
+            jobsDispatched: batchesDispatched
+        };
+    }
+    
+    dispatchGrowPrep(target) {
+        const totalRam = this.ramMgr.getTotalAvailableRam();
+        const growRam = this.ns.getScriptRam(CONFIG.WORKERS.GROW);
+        const weakenRam = this.ns.getScriptRam(CONFIG.WORKERS.WEAKEN);
+        
+        const growBudget = totalRam * 0.85;
+        const weakenBudget = totalRam * 0.15;
+        
+        let growThreads = Math.floor(growBudget / growRam);
+        const weakenThreads = Math.floor(weakenBudget / weakenRam);
+        
+        // ✅ NOUVEAU v0.12.4.2 : CAP threads GROW pour éviter batches massifs
+        const MAX_GROW_THREADS = 500000; // 500k max par cycle
+        if (growThreads > MAX_GROW_THREADS) {
+            growThreads = MAX_GROW_THREADS;
+            this.log.warn(`⚠️  ${target}: GROW threads capped at ${MAX_GROW_THREADS} (calculated: ${Math.floor(growBudget / growRam)})`);
+        }
+        
+        if (growThreads === 0) {
+            return { success: false, error: "No RAM for grow" };
+        }
+        
+        // ✅ NOUVEAU v0.12.4 : Split grow+weaken en batches
+        const growBatches = this.splitJob(growThreads);
+        const weakenBatches = this.splitJob(weakenThreads);
+        
+        let totalAllocated = 0;
+        let batchesDispatched = 0;
+        
+        // Dispatcher grow batches
+        for (let i = 0; i < growBatches.length; i++) {
+            const gAlloc = this.ramMgr.allocateThreads(growBatches[i]);
+            
+            if (gAlloc.allocations.length > 0) {
+                this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+                    type: 'GROW_BATCH',
+                    target: target,
+                    allocations: gAlloc.allocations,
+                    script: CONFIG.WORKERS.GROW,
+                    delay: i * 10,
+                    uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                });
+                
+                totalAllocated += gAlloc.allocated;
+                batchesDispatched++;
+            }
+        }
+        
+        // Dispatcher weaken batches
+        for (let i = 0; i < weakenBatches.length; i++) {
+            const wAlloc = this.ramMgr.allocateThreads(weakenBatches[i]);
+            
+            if (wAlloc.allocations.length > 0) {
+                this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+                    type: 'WEAKEN_BATCH',
+                    target: target,
+                    allocations: wAlloc.allocations,
+                    script: CONFIG.WORKERS.WEAKEN,
+                    delay: i * 10,
+                    uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                });
+                
+                totalAllocated += wAlloc.allocated;
+                batchesDispatched++;
+            }
+        }
+        
+        const currentMoney = this.ns.getServerMoneyAvailable(target);
+        const maxMoney = this.ns.getServerMaxMoney(target);
+        const moneyPercent = (currentMoney / maxMoney) * 100;
+        
+        const batchInfo = (growBatches.length + weakenBatches.length) > 2 ? ` (${growBatches.length}g+${weakenBatches.length}w)` : '';
+        this.log.info(`🌱 GROW+WEAKEN${batchInfo}: ${totalAllocated} threads | Money: ${moneyPercent.toFixed(1)}%`);
+        
+        return {
+            success: true,
+            mode: 'GROW_PREP',
+            totalThreads: totalAllocated,
+            jobsDispatched: batchesDispatched
+        };
+    }
+    
+    /**
+     * ✅ v0.12.3 : HWGW avec hackPercent DYNAMIQUE
+     * ✅ v0.12.3.3 : Guard contre growMultiplier Infinity
+     * ✅ NOUVEAU v0.12.4 : Job Splitting pour HWGW
+     */
+    dispatchHWGW(target) {
+        const hackPercent = this.calculateOptimalHackPercent();
+        const maxMoney = this.ns.getServerMaxMoney(target);
+        
+        this.log.debug(`━━━ dispatchHWGW(${target}) ━━━`);
+        this.log.debug(`  maxMoney: $${this.ns.formatNumber(maxMoney)}`);
+        this.log.debug(`  hackPercent: ${(hackPercent*100).toFixed(1)}% (DYNAMIC)`);
+        
+        // ════════════════════════════════════════════════════
+        // CALCUL THREADS avec math-ns.js
+        // ════════════════════════════════════════════════════
+        
+        const moneyToSteal = maxMoney * hackPercent;
+        const hackThreads = Math.max(1, Math.floor(
+            mathNS.hackThreads(this.ns, target, moneyToSteal)
+        ));
+        
+        const hackSec = mathNS.hackSecurity(this.ns, hackThreads, target);
+        const w1Threads = Math.max(0, mathNS.weakenThreads(hackSec));
+        
+        // Calculate pipelineDepth
+        const weakenTime = mathNS.weakenTime(this.ns, target);
+        const spacing = 200;
+        const pipelineDepth = Math.floor(weakenTime / spacing);
+        
+        this.log.debug(`  weakenTime: ${(weakenTime/1000).toFixed(1)}s`);
+        this.log.debug(`  spacing: ${spacing}ms`);
+        this.log.debug(`  pipelineDepth: ${pipelineDepth} batches`);
+        
+        // ✅ v0.12.3.3 : Guard contre Infinity
+        let growMultiplier = 1 / Math.pow(1 - hackPercent, pipelineDepth);
+        
+        if (!isFinite(growMultiplier) || growMultiplier < 1 || growMultiplier > 1e308) {
+            growMultiplier = 1e100;
+            this.log.warn(`⚠️  ${target}: growMultiplier capped to 1e100 (pipelineDepth=${pipelineDepth})`);
+        }
+        
+        this.log.debug(`  growMultiplier: ${growMultiplier.toExponential(2)}`);
+        
+        const growThreads = Math.max(1, 
+            mathNS.growThreads(this.ns, target, growMultiplier)
+        );
+        
+        const growSec = mathNS.growSecurity(this.ns, growThreads, target);
+        const w2Threads = Math.max(0, mathNS.weakenThreads(growSec));
+        
+        this.log.debug(`  ━━━ THREADS CALCULÉS ━━━`);
+        this.log.debug(`  H:  ${hackThreads}`);
+        this.log.debug(`  W1: ${w1Threads}`);
+        this.log.debug(`  G:  ${growThreads}`);
+        this.log.debug(`  W2: ${w2Threads}`);
+        this.log.debug(`  TOTAL: ${hackThreads + w1Threads + growThreads + w2Threads}`);
+        
+        // ════════════════════════════════════════════════════
+        // ✅ NOUVEAU v0.12.4 : JOB SPLITTING
+        // ════════════════════════════════════════════════════
+        
+        const MAX_BATCH_SIZE = 2000; // 2k threads max par batch (réduit pour éviter RAM exhausted)
+        
+        const hackBatches = this.splitJob(hackThreads, MAX_BATCH_SIZE);
+        const w1Batches = this.splitJob(w1Threads, MAX_BATCH_SIZE);
+        const growBatches = this.splitJob(growThreads, MAX_BATCH_SIZE);
+        const w2Batches = this.splitJob(w2Threads, MAX_BATCH_SIZE);
+        
+        this.log.debug(`  ━━━ JOB SPLITTING ━━━`);
+        this.log.debug(`  Hack batches:    ${hackBatches.length}`);
+        this.log.debug(`  Weaken1 batches: ${w1Batches.length}`);
+        this.log.debug(`  Grow batches:    ${growBatches.length}`);
+        this.log.debug(`  Weaken2 batches: ${w2Batches.length}`);
+        
+        // ════════════════════════════════════════════════════
+        // DELAYS BASES
+        // ════════════════════════════════════════════════════
+        
+        const hackDelayBase = 0;
+        const weaken1DelayBase = 50;
+        const growDelayBase = 100;
+        const weaken2DelayBase = 150;
+        
+        // ════════════════════════════════════════════════════
+        // DISPATCH BATCHES
+        // ════════════════════════════════════════════════════
+        
+        let totalAllocated = 0;
+        let totalBatches = 0;
+        
+        // Dispatch HACK batches
+        for (let i = 0; i < hackBatches.length; i++) {
+            const hAlloc = this.ramMgr.allocateThreads(hackBatches[i]);
+            
+            if (hAlloc.allocations.length > 0) {
+                this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+                    type: 'HACK_JOB',
+                    target: target,
+                    allocations: hAlloc.allocations,
+                    script: CONFIG.WORKERS.HACK,
+                    delay: hackDelayBase + (i * 10), // Stagger 10ms
+                    uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                });
+                
+                totalAllocated += hAlloc.allocated;
+                totalBatches++;
+            }
+        }
+        
+        // Dispatch WEAKEN1 batches
+        for (let i = 0; i < w1Batches.length; i++) {
+            const w1Alloc = this.ramMgr.allocateThreads(w1Batches[i]);
+            
+            if (w1Alloc.allocations.length > 0) {
+                this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+                    type: 'WEAKEN_JOB',
+                    target: target,
+                    allocations: w1Alloc.allocations,
+                    script: CONFIG.WORKERS.WEAKEN,
+                    delay: weaken1DelayBase + (i * 10),
+                    uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                });
+                
+                totalAllocated += w1Alloc.allocated;
+                totalBatches++;
+            }
+        }
+        
+        // Dispatch GROW batches
+        for (let i = 0; i < growBatches.length; i++) {
+            const gAlloc = this.ramMgr.allocateThreads(growBatches[i]);
+            
+            if (gAlloc.allocations.length > 0) {
+                this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+                    type: 'GROW_JOB',
+                    target: target,
+                    allocations: gAlloc.allocations,
+                    script: CONFIG.WORKERS.GROW,
+                    delay: growDelayBase + (i * 10),
+                    uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                });
+                
+                totalAllocated += gAlloc.allocated;
+                totalBatches++;
+            }
+        }
+        
+        // Dispatch WEAKEN2 batches
+        for (let i = 0; i < w2Batches.length; i++) {
+            const w2Alloc = this.ramMgr.allocateThreads(w2Batches[i]);
+            
+            if (w2Alloc.allocations.length > 0) {
+                this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
+                    type: 'WEAKEN_JOB',
+                    target: target,
+                    allocations: w2Alloc.allocations,
+                    script: CONFIG.WORKERS.WEAKEN,
+                    delay: weaken2DelayBase + (i * 10),
+                    uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                });
+                
+                totalAllocated += w2Alloc.allocated;
+                totalBatches++;
+            }
+        }
+        
+        const totalBatchCount = hackBatches.length + w1Batches.length + growBatches.length + w2Batches.length;
+        const batchInfo = totalBatchCount > 4 ? ` [${totalBatchCount}×]` : '';
+        const mode = `HWGW(${(hackPercent*100).toFixed(1)}%↑, d=${pipelineDepth})`;
+        
+        this.log.info(`💰 ${mode}${batchInfo}: H:${hackThreads} W1:${w1Threads} G:${growThreads} W2:${w2Threads} = ${totalAllocated} threads`);
+        
+        return {
+            success: true,
+            mode: mode,
+            totalThreads: totalAllocated,
+            jobsDispatched: totalBatches,
+            pipelineDepth: pipelineDepth,
+            hackPercent: hackPercent,
+            batchCount: totalBatchCount
+        };
+    }
+}

@@ -1,12 +1,11 @@
 {
-  "timestamp": "2026-03-27T00:11:17.295Z",
+  "timestamp": "2026-04-04T03:13:34.825Z",
   "versions": {
-    "/boot.js": "0.12.0",
+    "/boot.js": "0.12.4",
     "/core/orchestrator.js": "0.11.1",
-    "/core/batcher.js": "0.11.0",
+    "/core/batcher.js": "0.12.4",
     "/core/ram-manager.js": "0.10.1",
     "/core/dashboard.js": "0.12.1",
-    "/hack/controller.js": "0.11.1",
     "/lib/constants.js": "0.12.0"
   }
 }
