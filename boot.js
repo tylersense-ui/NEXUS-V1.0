@@ -1,10 +1,10 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.0 - Boot (FORTRESS)              ║
+ * ║ NEXUS v0.12.4.3 - Boot (PHASE 1 - Controller in /core/)  ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.0
- * @changes     Ajoute worker-manager + telemetry-daemon
+ * @version     0.12.4.3
+ * @changes     Controller déplacé: /hack/ → /core/
  */
 
 import { Network } from "/lib/network.js";
@@ -17,8 +17,8 @@ export async function main(ns) {
     
     ns.tprint("╔═══════════════════════════════════════════════════════════╗");
     ns.tprint("║                                                           ║");
-    ns.tprint("║   🔥 NEXUS v0.12.0 - BOOT SEQUENCE                        ║");
-    ns.tprint("║   'Fortress Architecture'                                 ║");
+    ns.tprint("║   🔥 NEXUS v0.12.4.3 - BOOT SEQUENCE (PHASE 1)            ║");
+    ns.tprint("║   'Job Splitting in Controller'                           ║");
     ns.tprint("║                                                           ║");
     ns.tprint("╚═══════════════════════════════════════════════════════════╝");
     ns.tprint("");
@@ -96,14 +96,14 @@ export async function main(ns) {
     ns.tprint("[BOOT] Lancement du système NEXUS...");
     ns.tprint("");
     
-    // 1. Controller
+    // 1. Controller (✅ DÉPLACÉ DANS /core/)
     ns.tprint("  [1/5] Lancement Controller...");
-    if (!ns.fileExists("/hack/controller.js")) {
-        ns.tprint("    ❌ ERREUR: /hack/controller.js introuvable");
+    if (!ns.fileExists("/core/controller.js")) {
+        ns.tprint("    ❌ ERREUR: /core/controller.js introuvable");
         return;
     }
     
-    const controllerPID = ns.run("/hack/controller.js");
+    const controllerPID = ns.run("/core/controller.js");
     if (controllerPID === 0) {
         ns.tprint("    ❌ ERREUR: Échec lancement controller");
         return;
@@ -141,7 +141,7 @@ export async function main(ns) {
         ns.tprint("    ⚠️  /core/dashboard.js introuvable");
     }
     
-    // 4. Worker Manager (NEW v0.12.0)
+    // 4. Worker Manager
     ns.tprint("  [4/5] Lancement Worker Manager...");
     if (ns.fileExists("/core/worker-manager.js")) {
         const workerMgrPID = ns.run("/core/worker-manager.js");
@@ -154,7 +154,7 @@ export async function main(ns) {
         ns.tprint("    ⚠️  /core/worker-manager.js introuvable");
     }
     
-    // 5. Telemetry Daemon (NEW v0.12.0)
+    // 5. Telemetry Daemon
     ns.tprint("  [5/5] Lancement Telemetry Daemon...");
     if (ns.fileExists("/tools/telemetry-daemon.js")) {
         const telemetryPID = ns.run("/tools/telemetry-daemon.js");
@@ -213,21 +213,21 @@ export async function main(ns) {
     // ════════════════════════════════════════════════════
     
     ns.tprint("╔═══════════════════════════════════════════════════════════╗");
-    ns.tprint("║   ✅ NEXUS v0.12.0 - BOOT COMPLETE                        ║");
+    ns.tprint("║   ✅ NEXUS v0.12.4.3 - BOOT COMPLETE (PHASE 1)            ║");
     ns.tprint("╚═══════════════════════════════════════════════════════════╝");
     ns.tprint("");
     ns.tprint("📊 ARCHITECTURE:");
-    ns.tprint("   Boot → Controller (écoute PORT 1)");
+    ns.tprint("   Boot → Controller (/core/ 🆕) (écoute PORT 1)");
     ns.tprint("        → Orchestrator (génère batches → PORT 1)");
     ns.tprint("        → Dashboard (monitoring)");
-    ns.tprint("        → Worker Manager (kill zombies auto) 🆕");
-    ns.tprint("        → Telemetry Daemon (metrics collector) 🆕");
+    ns.tprint("        → Worker Manager (kill zombies auto)");
+    ns.tprint("        → Telemetry Daemon (metrics collector)");
     ns.tprint("");
     ns.tprint("🎮 COMMANDES:");
-    ns.tprint("   tail /hack/controller.js        (jobs exécutés)");
+    ns.tprint("   tail /core/controller.js        (jobs exécutés) 🆕");
     ns.tprint("   tail /core/orchestrator.js      (batches générés)");
     ns.tprint("   tail /core/dashboard.js         (stats système)");
-    ns.tprint("   tail /core/worker-manager.js    (zombies killed) 🆕");
-    ns.tprint("   tail /tools/telemetry-daemon.js (métriques temps réel) 🆕");
+    ns.tprint("   tail /core/worker-manager.js    (zombies killed)");
+    ns.tprint("   tail /tools/telemetry-daemon.js (métriques temps réel)");
     ns.tprint("");
 }
