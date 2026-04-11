@@ -1,14 +1,14 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.4.4 - Controller (TIMING FIX)                ║
+ * ║ NEXUS v0.12.4.3 - Controller (JOB SPLIT IN CONTROLLER)   ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.4.4
- * @location    /core/controller.js
- * @changes     BASE: v0.12.4.3
- *              FIX: Preserve HWGW timing - no delay modification
- *              Sleep AFTER exec, not in delay parameter
- *              All chunks same delay = synchronized arrival
+ * @version     0.12.4.3
+ * @location    /core/controller.js (moved from /hack/)
+ * @changes     BASE: v0.11.1 (RAM-AWARE)
+ *              NEW: Job splitting IN controller (not batcher)
+ *              SPLIT: Max 2000 threads per exec() call
+ *              GAIN: -80% lag, +20-40% performance
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -26,7 +26,7 @@ export async function main(ns) {
     const POLL_INTERVAL = CONFIG.CONTROLLER.POLL_INTERVAL_MS;
     const COMMAND_PORT = CONFIG.PORTS.COMMANDS;
     
-    log.info(`🎮 Controller v0.12.4.4 démarré (TIMING FIX)`);
+    log.info(`🎮 Controller v0.12.4.3 démarré (Job Splitting IN Controller)`);
     log.info(`📨 Écoute port ${COMMAND_PORT} | Polling: ${POLL_INTERVAL}ms`);
     
     let totalBatchesReceived = 0;
@@ -103,7 +103,7 @@ export async function main(ns) {
                 ns.clearLog();
                 
                 ns.print(`╔═══════════════════════════════════════════════════╗`);
-                ns.print(`║          CONTROLLER REPORT v0.12.4.4              ║`);
+                ns.print(`║          CONTROLLER REPORT v0.12.4.3              ║`);
                 ns.print(`╚═══════════════════════════════════════════════════╝`);
                 ns.print(``);
                 ns.print(`📊 STATISTIQUES:`);
@@ -190,16 +190,11 @@ async function processHWGWBatch(ns, batch, failureReasons) {
         if (chunks.length > 1) split++;
         
         for (let i = 0; i < chunks.length; i++) {
-            const result = await execWorkerSafe(ns, scripts.hack, chunks[i].hostname, chunks[i].threads, target, delays.hack, failureReasons);
+            const result = await execWorkerSafe(ns, scripts.hack, chunks[i].hostname, chunks[i].threads, target, delays.hack + (i * 10), failureReasons);
             dispatched++;
             if (result === true) success++;
             else if (result === false) failed++;
             else skipped++;
-            
-            // Sleep AFTER exec to avoid freeze, but preserve timing
-            if (i < chunks.length - 1) {
-                await ns.sleep(10);
-            }
         }
     }
     
@@ -209,15 +204,11 @@ async function processHWGWBatch(ns, batch, failureReasons) {
         if (chunks.length > 1) split++;
         
         for (let i = 0; i < chunks.length; i++) {
-            const result = await execWorkerSafe(ns, scripts.weaken, chunks[i].hostname, chunks[i].threads, target, delays.weaken1, failureReasons);
+            const result = await execWorkerSafe(ns, scripts.weaken, chunks[i].hostname, chunks[i].threads, target, delays.weaken1 + (i * 10), failureReasons);
             dispatched++;
             if (result === true) success++;
             else if (result === false) failed++;
             else skipped++;
-            
-            if (i < chunks.length - 1) {
-                await ns.sleep(10);
-            }
         }
     }
     
@@ -227,15 +218,11 @@ async function processHWGWBatch(ns, batch, failureReasons) {
         if (chunks.length > 1) split++;
         
         for (let i = 0; i < chunks.length; i++) {
-            const result = await execWorkerSafe(ns, scripts.grow, chunks[i].hostname, chunks[i].threads, target, delays.grow, failureReasons);
+            const result = await execWorkerSafe(ns, scripts.grow, chunks[i].hostname, chunks[i].threads, target, delays.grow + (i * 10), failureReasons);
             dispatched++;
             if (result === true) success++;
             else if (result === false) failed++;
             else skipped++;
-            
-            if (i < chunks.length - 1) {
-                await ns.sleep(10);
-            }
         }
     }
     
@@ -245,15 +232,11 @@ async function processHWGWBatch(ns, batch, failureReasons) {
         if (chunks.length > 1) split++;
         
         for (let i = 0; i < chunks.length; i++) {
-            const result = await execWorkerSafe(ns, scripts.weaken, chunks[i].hostname, chunks[i].threads, target, delays.weaken2, failureReasons);
+            const result = await execWorkerSafe(ns, scripts.weaken, chunks[i].hostname, chunks[i].threads, target, delays.weaken2 + (i * 10), failureReasons);
             dispatched++;
             if (result === true) success++;
             else if (result === false) failed++;
             else skipped++;
-            
-            if (i < chunks.length - 1) {
-                await ns.sleep(10);
-            }
         }
     }
     
@@ -278,15 +261,11 @@ async function processWeakenBatch(ns, batch, failureReasons) {
         if (chunks.length > 1) split++;
         
         for (let i = 0; i < chunks.length; i++) {
-            const result = await execWorkerSafe(ns, script, chunks[i].hostname, chunks[i].threads, target, (batch.delay || 0), failureReasons);
+            const result = await execWorkerSafe(ns, script, chunks[i].hostname, chunks[i].threads, target, (batch.delay || 0) + (i * 10), failureReasons);
             dispatched++;
             if (result === true) success++;
             else if (result === false) failed++;
             else skipped++;
-            
-            if (i < chunks.length - 1) {
-                await ns.sleep(10);
-            }
         }
     }
     
@@ -311,15 +290,11 @@ async function processGrowBatch(ns, batch, failureReasons) {
         if (chunks.length > 1) split++;
         
         for (let i = 0; i < chunks.length; i++) {
-            const result = await execWorkerSafe(ns, script, chunks[i].hostname, chunks[i].threads, target, (batch.delay || 0), failureReasons);
+            const result = await execWorkerSafe(ns, script, chunks[i].hostname, chunks[i].threads, target, (batch.delay || 0) + (i * 10), failureReasons);
             dispatched++;
             if (result === true) success++;
             else if (result === false) failed++;
             else skipped++;
-            
-            if (i < chunks.length - 1) {
-                await ns.sleep(10);
-            }
         }
     }
     
@@ -344,15 +319,11 @@ async function processGrowPrepBatch(ns, batch, failureReasons) {
         if (chunks.length > 1) split++;
         
         for (let i = 0; i < chunks.length; i++) {
-            const result = await execWorkerSafe(ns, growScript, chunks[i].hostname, chunks[i].threads, target, 0, failureReasons);
+            const result = await execWorkerSafe(ns, growScript, chunks[i].hostname, chunks[i].threads, target, i * 10, failureReasons);
             dispatched++;
             if (result === true) success++;
             else if (result === false) failed++;
             else skipped++;
-            
-            if (i < chunks.length - 1) {
-                await ns.sleep(10);
-            }
         }
     }
     
@@ -361,15 +332,11 @@ async function processGrowPrepBatch(ns, batch, failureReasons) {
         if (chunks.length > 1) split++;
         
         for (let i = 0; i < chunks.length; i++) {
-            const result = await execWorkerSafe(ns, weakenScript, chunks[i].hostname, chunks[i].threads, target, 0, failureReasons);
+            const result = await execWorkerSafe(ns, weakenScript, chunks[i].hostname, chunks[i].threads, target, i * 10, failureReasons);
             dispatched++;
             if (result === true) success++;
             else if (result === false) failed++;
             else skipped++;
-            
-            if (i < chunks.length - 1) {
-                await ns.sleep(10);
-            }
         }
     }
     

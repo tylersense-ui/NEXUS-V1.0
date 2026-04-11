@@ -1,10 +1,13 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.4.3 - Boot (PHASE 1 - Controller in /core/)  ║
+ * ║ NEXUS v0.12.4.4 - Boot (RAM FIX COMPLETE)                ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.4.3
- * @changes     Controller déplacé: /hack/ → /core/
+ * @version     0.12.4.4
+ * @changes     Correction complète incohérence RAM
+ *              - RamManager v0.10.2 (scriptPath)
+ *              - Batcher v0.12.3.4 (passe scriptPath)
+ *              - Controller v0.12.4.4 (timing fix)
  */
 
 import { Network } from "/lib/network.js";
@@ -17,8 +20,8 @@ export async function main(ns) {
     
     ns.tprint("╔═══════════════════════════════════════════════════════════╗");
     ns.tprint("║                                                           ║");
-    ns.tprint("║   🔥 NEXUS v0.12.4.3 - BOOT SEQUENCE (PHASE 1)            ║");
-    ns.tprint("║   'Job Splitting in Controller'                           ║");
+    ns.tprint("║   🔥 NEXUS v0.12.4.4 - BOOT SEQUENCE (RAM FIX)            ║");
+    ns.tprint("║   'RamManager scriptPath Correction'                      ║");
     ns.tprint("║                                                           ║");
     ns.tprint("╚═══════════════════════════════════════════════════════════╝");
     ns.tprint("");
@@ -213,7 +216,7 @@ export async function main(ns) {
     // ════════════════════════════════════════════════════
     
     ns.tprint("╔═══════════════════════════════════════════════════════════╗");
-    ns.tprint("║   ✅ NEXUS v0.12.4.3 - BOOT COMPLETE (PHASE 1)            ║");
+    ns.tprint("║   ✅ NEXUS v0.12.4.4 - BOOT COMPLETE (RAM FIX)            ║");
     ns.tprint("╚═══════════════════════════════════════════════════════════╝");
     ns.tprint("");
     ns.tprint("📊 ARCHITECTURE:");

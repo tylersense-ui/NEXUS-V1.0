@@ -1,11 +1,24 @@
 {
-  "timestamp": "2026-04-04T03:13:34.825Z",
+  "timestamp": "2026-04-08T14:40:11.072Z",
   "versions": {
-    "/boot.js": "0.12.4",
+    "/boot.js": "0.12.4.3",
     "/core/orchestrator.js": "0.11.1",
-    "/core/batcher.js": "0.12.4",
+    "/core/batcher.js": "0.12.3.3",
     "/core/ram-manager.js": "0.10.1",
     "/core/dashboard.js": "0.12.1",
-    "/lib/constants.js": "0.12.0"
+    "/core/controller.js": "0.12.4.3",
+    "/core/worker-manager.js": "0.12.1",
+    "/lib/batch-calculator.js": "0.12.1",
+    "/lib/capabilities.js": "0.5",
+    "/lib/file-logger.js": "0.12.1",
+    "/lib/logger.js": "0.5",
+    "/lib/math-ns.js": "0.3.0",
+    "/lib/network.js": "0.12.2",
+    "/lib/state-manager.js": "0.12.1",
+    "/lib/timing.js": "0.5",
+    "/lib/utils.js": "0.2",
+    "/lib/constants.js": "0.12.0",
+    "/managers/server-manager.js": "0.12.1",
+    "/managers/stock-manager.js": "0.12.1"
   }
 }

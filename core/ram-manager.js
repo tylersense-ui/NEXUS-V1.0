@@ -1,11 +1,12 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.10.1 - RAM Manager (HOTFIX)                   ║
+ * ║ NEXUS v0.10.2 - RAM Manager (HOTFIX - SCRIPT SIZE)       ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
  * @file        /core/ram-manager.js
- * @version     0.10.1
- * @description Allocation RAM dynamique - UTILISE TOUS LES SERVEURS
+ * @version     0.10.2
+ * @changes     FIX: Prend en compte la taille RÉELLE du script
+ *              Au lieu de 1.75 GB codé en dur
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -40,7 +41,10 @@ export class RamManager {
         return totalAvailable;
     }
     
-    allocateThreads(totalThreads) {
+    /**
+     * ✅ v0.10.2 : Accepte maintenant scriptPath pour calculer la taille réelle
+     */
+    allocateThreads(totalThreads, scriptPath = '/workers/weaken.js') {
         if (totalThreads <= 0) {
             return {
                 success: false,
@@ -51,7 +55,20 @@ export class RamManager {
             };
         }
         
-        const servers = this.getAvailableServers();
+        // ✅ Calculer taille réelle du script
+        const scriptRam = this.ns.getScriptRam(scriptPath, 'home');
+        
+        if (scriptRam === 0) {
+            return {
+                success: false,
+                allocations: [],
+                allocated: 0,
+                remaining: totalThreads,
+                error: `Script ${scriptPath} not found or invalid`
+            };
+        }
+        
+        const servers = this.getAvailableServers(scriptRam);
         
         if (servers.length === 0) {
             return {
@@ -75,7 +92,7 @@ export class RamManager {
                 allocations.push({
                     hostname: server.hostname,
                     threads: threadsOnServer,
-                    ram: threadsOnServer * 1.75
+                    ram: threadsOnServer * scriptRam  // ✅ RAM réelle
                 });
                 
                 remainingThreads -= threadsOnServer;
@@ -90,7 +107,10 @@ export class RamManager {
         };
     }
     
-    getAvailableServers() {
+    /**
+     * ✅ v0.10.2 : Accepte scriptRam en paramètre
+     */
+    getAvailableServers(scriptRam = 1.75) {
         const servers = this.getAllServers();
         const available = [];
         
@@ -107,13 +127,14 @@ export class RamManager {
                 availableRam = Math.max(0, availableRam - reserveRam);
             }
             
-            if (availableRam >= 1.75) {
+            // ✅ Utilise scriptRam passé en paramètre
+            if (availableRam >= scriptRam) {
                 available.push({
                     hostname: hostname,
                     maxRam: maxRam,
                     usedRam: usedRam,
                     availableRam: availableRam,
-                    availableThreads: Math.floor(availableRam / 1.75)
+                    availableThreads: Math.floor(availableRam / scriptRam)
                 });
             }
         }

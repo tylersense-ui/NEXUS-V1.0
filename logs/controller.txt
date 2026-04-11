@@ -70,3 +70,11 @@
 [2026-04-04T03:44:39.564Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
 [2026-04-04T12:11:51.972Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4 démarré (Job Splitting Support)
 [2026-04-04T12:11:51.972Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-04T23:50:47.062Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-04-04T23:50:47.062Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-06T14:18:28.419Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-04-06T14:18:28.419Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-07T20:37:50.886Z] [INFO] [CONTROLLER] 🎮 Controller v0.11.1 démarré (RAM-AWARE)
+[2026-04-07T20:37:50.886Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-08T00:16:24.677Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4.3 démarré (Job Splitting IN Controller)
+[2026-04-08T00:16:24.677Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms

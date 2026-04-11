@@ -1,11 +1,12 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.3.3 - Batcher (INFINITY GUARD)                ║
+ * ║ NEXUS v0.12.3.4 - Batcher (RAM FIX)                       ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.3.3
- * @changes     BASE: v0.12.3.2 (meilleur logging)
- *              FIX: Guard contre growMultiplier = Infinity (syscore)
+ * @version     0.12.3.4
+ * @changes     BASE: v0.12.3.3 (Infinity Guard)
+ *              FIX: Passe scriptPath à allocateThreads()
+ *              Corrige incohérence avec RamManager
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -24,7 +25,7 @@ export class Batcher {
         // Détection Formulas (optionnel)
         this.hasFormulas = ns.fileExists("Formulas.exe");
         
-        this.log.info("Batcher v0.12.3.3 initialisé (hasFormulas: " + this.hasFormulas + ")");
+        this.log.info("Batcher v0.12.3.4 initialisé (RAM FIX, hasFormulas: " + this.hasFormulas + ")");
     }
     
     /**
@@ -132,6 +133,9 @@ export class Batcher {
         }
     }
     
+    /**
+     * ✅ v0.12.3.4 : Passe scriptPath à allocateThreads()
+     */
     dispatchWeaken(target) {
         const totalRam = this.ramMgr.getTotalAvailableRam();
         const weakenRam = this.ns.getScriptRam(CONFIG.WORKERS.WEAKEN);
@@ -141,7 +145,8 @@ export class Batcher {
             return { success: false, error: "No RAM" };
         }
         
-        const allocation = this.ramMgr.allocateThreads(weakenThreads);
+        // ✅ NOUVEAU v0.12.3.4 : Passe scriptPath
+        const allocation = this.ramMgr.allocateThreads(weakenThreads, CONFIG.WORKERS.WEAKEN);
         
         if (allocation.allocations.length === 0) {
             return { success: false, error: "No allocations" };
@@ -168,6 +173,9 @@ export class Batcher {
         };
     }
     
+    /**
+     * ✅ v0.12.3.4 : Passe scriptPath à allocateThreads()
+     */
     dispatchGrowPrep(target) {
         const totalRam = this.ramMgr.getTotalAvailableRam();
         const growRam = this.ns.getScriptRam(CONFIG.WORKERS.GROW);
@@ -185,10 +193,13 @@ export class Batcher {
         
         let totalAllocated = 0;
         
-        const gAlloc = this.ramMgr.allocateThreads(growThreads);
+        // ✅ NOUVEAU v0.12.3.4 : Passe scriptPath
+        const gAlloc = this.ramMgr.allocateThreads(growThreads, CONFIG.WORKERS.GROW);
         totalAllocated += gAlloc.allocated;
         
-        const wAlloc = weakenThreads > 0 ? this.ramMgr.allocateThreads(weakenThreads) : { allocated: 0, allocations: [] };
+        const wAlloc = weakenThreads > 0 
+            ? this.ramMgr.allocateThreads(weakenThreads, CONFIG.WORKERS.WEAKEN)
+            : { allocated: 0, allocations: [] };
         totalAllocated += wAlloc.allocated;
         
         this.portHandler.writeJSON(CONFIG.PORTS.COMMANDS, {
@@ -216,8 +227,8 @@ export class Batcher {
     }
     
     /**
-     * ✅ v0.12.3 : HWGW avec hackPercent DYNAMIQUE
-     * ✅ MODIFIÉ v0.12.3.3 : Guard contre growMultiplier Infinity
+     * ✅ v0.12.3.4 : Passe scriptPath à allocateThreads()
+     * ✅ v0.12.3.3 : Guard contre growMultiplier Infinity
      */
     dispatchHWGW(target) {
         const hackPercent = this.calculateOptimalHackPercent();
@@ -248,21 +259,16 @@ export class Batcher {
         this.log.debug(`  spacing: ${spacing}ms`);
         this.log.debug(`  pipelineDepth: ${pipelineDepth} batches`);
         
-        // ✅ NOUVEAU v0.12.3.3 : Guard contre Infinity
-        // Si pipelineDepth est trop élevé, Math.pow(1-hackPercent, pipelineDepth) → 0
-        // Et 1/0 = Infinity → growthAnalyze crash
+        // ✅ v0.12.3.3 : Guard contre Infinity
         let growMultiplier = 1 / Math.pow(1 - hackPercent, pipelineDepth);
         
-        // ✅ GUARD : Si growMultiplier est Infinity, NaN ou trop grand
         if (!isFinite(growMultiplier) || growMultiplier < 1 || growMultiplier > 1e308) {
-            // Fallback : cap à une valeur maximale raisonnable
-            growMultiplier = 1e100; // Très grand mais pas Infinity
-            this.log.warn(`⚠️  ${target}: growMultiplier was ${growMultiplier}, capped to 1e100 (pipelineDepth=${pipelineDepth})`);
+            growMultiplier = 1e100;
+            this.log.warn(`⚠️  ${target}: growMultiplier was Infinity, capped to 1e100 (pipelineDepth=${pipelineDepth})`);
         }
         
         this.log.debug(`  growMultiplier: ${growMultiplier.toExponential(2)}`);
         
-        // ✅ Maintenant growThreads ne crashera plus
         const growThreads = Math.max(1, 
             mathNS.growThreads(this.ns, target, growMultiplier)
         );
@@ -287,13 +293,17 @@ export class Batcher {
         const weaken2Delay = 150;
         
         // ════════════════════════════════════════════════════
-        // ALLOCATIONS
+        // ALLOCATIONS - ✅ v0.12.3.4 : Passe scriptPath
         // ════════════════════════════════════════════════════
         
-        const hAlloc = this.ramMgr.allocateThreads(hackThreads);
-        const w1Alloc = w1Threads > 0 ? this.ramMgr.allocateThreads(w1Threads) : { allocated: 0, allocations: [] };
-        const gAlloc = this.ramMgr.allocateThreads(growThreads);
-        const w2Alloc = w2Threads > 0 ? this.ramMgr.allocateThreads(w2Threads) : { allocated: 0, allocations: [] };
+        const hAlloc = this.ramMgr.allocateThreads(hackThreads, CONFIG.WORKERS.HACK);
+        const w1Alloc = w1Threads > 0 
+            ? this.ramMgr.allocateThreads(w1Threads, CONFIG.WORKERS.WEAKEN)
+            : { allocated: 0, allocations: [] };
+        const gAlloc = this.ramMgr.allocateThreads(growThreads, CONFIG.WORKERS.GROW);
+        const w2Alloc = w2Threads > 0 
+            ? this.ramMgr.allocateThreads(w2Threads, CONFIG.WORKERS.WEAKEN)
+            : { allocated: 0, allocations: [] };
         
         const totalAllocated = hAlloc.allocated + w1Alloc.allocated + gAlloc.allocated + w2Alloc.allocated;
         

@@ -1,3 +1,283 @@
+# 🔧 NEXUS v0.12.4.4 - CORRECTION COMPLÈTE RAM
+
+```
+╔═══════════════════════════════════════════════════════════╗
+║  📦 PACKAGE DE CORRECTION COMPLET                        ║
+║  Résolution du bug RamManager 1.75 GB hardcodé           ║
+╚═══════════════════════════════════════════════════════════╝
+```
+
+## 🔴 PROBLÈME IDENTIFIÉ
+
+### Cause racine
+Le RamManager v0.10.1 utilisait une constante `1.75 GB` codée en dur pour calculer les threads disponibles, alors que les scripts ont des tailles différentes :
+
+```javascript
+// Tailles réelles (CONFIG.RAM.WORKER_SCRIPT_RAM)
+HACK:   1.7 GB
+GROW:   1.75 GB
+WEAKEN: 1.75 GB
+
+// RamManager v0.10.1 (MAUVAIS)
+availableThreads = Math.floor(availableRam / 1.75)  ❌
+
+// Controller vérifie ensuite avec taille réelle
+scriptRam = ns.getScriptRam(script) = 1.7 ou 1.75
+→ Incohérence → Réduction threads → HWGW déséquilibré
+```
+
+### Symptômes observés
+```
+✅ Avant correction (v0.12.4.3)
+   - Money oscille : 100% → 84% → 100% → 88%
+   - Icônes changent : 🟢 → 🌱 → 🔧 → 🟢
+   - Revenus volatils : $740M/s → $7M/s → $884M/s (×100)
+   - RAM_EXHAUSTED : 18,658
+   - RAM_REDUCED : 16,389
+   - Success rate : 95.5% (mais batches déséquilibrés)
+```
+
+---
+
+## ✅ CORRECTIONS APPLIQUÉES
+
+### 1. RamManager v0.10.2
+```javascript
+// ✅ NOUVEAU : Accepte scriptPath en paramètre
+allocateThreads(totalThreads, scriptPath = '/workers/weaken.js') {
+    const scriptRam = this.ns.getScriptRam(scriptPath, 'home');
+    // ... utilise scriptRam au lieu de 1.75
+}
+
+getAvailableServers(scriptRam = 1.75) {
+    // ... utilise scriptRam passé en paramètre
+}
+```
+
+**Impact** :
+- Allocations précises selon le script réel
+- Pas de surestimation/sous-estimation
+- Controller ne réduit plus les threads
+
+---
+
+### 2. Batcher v0.12.3.4
+```javascript
+// ❌ ANCIEN
+const allocation = this.ramMgr.allocateThreads(weakenThreads);
+
+// ✅ NOUVEAU : Passe scriptPath
+const allocation = this.ramMgr.allocateThreads(
+    weakenThreads, 
+    CONFIG.WORKERS.WEAKEN
+);
+```
+
+**Tous les appels corrigés** :
+- `dispatchWeaken()` : passe `CONFIG.WORKERS.WEAKEN`
+- `dispatchGrowPrep()` : passe `CONFIG.WORKERS.GROW` et `CONFIG.WORKERS.WEAKEN`
+- `dispatchHWGW()` : passe les 3 types selon le job
+
+---
+
+### 3. Controller v0.12.4.4
+```javascript
+// ✅ FIX TIMING : Sleep APRÈS exec, pas dans delay
+for (let i = 0; i < chunks.length; i++) {
+    await execWorkerSafe(ns, script, hostname, threads, target, delay);
+    // ← delay identique pour tous chunks
+    
+    if (i < chunks.length - 1) {
+        await ns.sleep(10);  // Sleep local
+    }
+}
+```
+
+**Impact** :
+- Timing HWGW préservé
+- Tous les chunks arrivent synchronisés
+- Pas d'oscillations money%
+
+---
+
+### 4. Boot v0.12.4.4
+- Version mise à jour
+- Messages de démarrage adaptés
+- Cohérence avec les autres modules
+
+---
+
+## 📦 FICHIERS LIVRÉS
+
+```
+1. ram-manager-v0.10.2.js    → /core/ram-manager.js
+2. batcher-v0.12.3.4.js      → /core/batcher.js
+3. controller-v0.12.4.4.js   → /core/controller.js
+4. boot-v0.12.4.4.js         → /boot.js
+```
+
+---
+
+## 🚀 DÉPLOIEMENT
+
+### Étape 1 : Arrêter le système
+```bash
+killall
+```
+
+### Étape 2 : Copier les fichiers
+```bash
+# Dans Bitburner
+ram-manager-v0.10.2.js    → /core/ram-manager.js
+batcher-v0.12.3.4.js      → /core/batcher.js
+controller-v0.12.4.4.js   → /core/controller.js
+boot-v0.12.4.4.js         → /boot.js
+```
+
+### Étape 3 : Démarrer
+```bash
+run boot.js
+```
+
+### Étape 4 : Vérifier
+```bash
+tail /core/controller.js
+tail /core/batcher.js
+```
+
+---
+
+## 📊 RÉSULTATS ATTENDUS
+
+### Controller logs
+```
+╔═══════════════════════════════════════════════════╗
+║          CONTROLLER REPORT v0.12.4.4              ║
+╚═══════════════════════════════════════════════════╝
+
+📊 STATISTIQUES:
+   Batches reçus     : 1,247
+   Jobs dispatchés   : 89,342
+   Jobs splittés     : 523
+   ✅ Succès  : 85,234 (95.4%)
+   ❌ Échecs  : 0
+   ⏭️  Skipped: 4,108
+
+🔴 TOP 3 ÉCHECS:
+   RAM_EXHAUSTED: ~0      ← ✅ Devrait être proche de 0
+   RAM_REDUCED: ~0        ← ✅ Devrait être proche de 0
+```
+
+### Dashboard
+```
+🎯 CIBLES:
+  🟢 syscore        💰 ████████████████████ 100.0%  ← Stable
+  🟢 catalyst       💰 ████████████████████ 100.0%  ← Stable
+  🟢 aevum-police   💰 ████████████████████ 100.0%  ← Stable
+
+Revenus : $XXX → $XXX → $XXX (stable ±10%)
+```
+
+---
+
+## 🎯 VALIDATION
+
+### Critères de succès
+- ✅ RAM_EXHAUSTED < 100 (au lieu de 18,000+)
+- ✅ RAM_REDUCED < 100 (au lieu de 16,000+)
+- ✅ Money% stable à 100% (pas d'oscillations)
+- ✅ Icônes fixes 🟢 (pas de changement)
+- ✅ Revenus stables (variation < 20%)
+- ✅ Success rate > 95%
+
+### Test 24h
+Laisser tourner 24h et vérifier :
+1. Revenus moyens > baseline v0.12.3.3
+2. Pas de dégradation progressive
+3. Serveurs restent à 100% money
+4. Pas de RAM_EXHAUSTED en hausse
+
+---
+
+## 🔍 COMPARAISON AVANT/APRÈS
+
+| Métrique | v0.12.4.3 | v0.12.4.4 | Gain |
+|----------|-----------|-----------|------|
+| **RAM_EXHAUSTED** | 18,658 | ~0 | -100% |
+| **RAM_REDUCED** | 16,389 | ~0 | -100% |
+| **Money% oscillations** | ±16% | ±0% | Stable |
+| **Revenus volatilité** | ×100 | ×1.2 | Stable |
+| **Success rate** | 95.5% | 95%+ | Maintenu |
+| **Icônes changent** | Oui | Non | ✅ |
+
+---
+
+## 🐛 SI PROBLÈMES
+
+### RAM_EXHAUSTED toujours élevé
+```bash
+# Vérifier que RamManager v0.10.2 est bien chargé
+tail /core/ram-manager.js | grep "v0.10.2"
+
+# Vérifier que Batcher passe scriptPath
+tail /core/batcher.js | grep "allocateThreads.*CONFIG.WORKERS"
+```
+
+### Money% toujours instable
+```bash
+# Vérifier timing dans controller
+tail /core/controller.js | grep "await ns.sleep(10)"
+
+# Vérifier pas de stagger dans delay
+tail /core/controller.js | grep "delay +"
+# Ne devrait PAS montrer "delay + i*10"
+```
+
+### Rollback si nécessaire
+```bash
+# Revenir à v0.12.3.3 baseline
+# (Garder fichiers GitHub en backup)
+```
+
+---
+
+## 📝 NOTES TECHNIQUES
+
+### Pourquoi le bug n'était pas évident ?
+1. Controller compensait partiellement (RAM_REDUCED)
+2. Success rate restait élevé (95%+)
+3. Revenus moyens OK sur long terme
+4. Mais HWGW déséquilibré → oscillations
+
+### Pourquoi ça marche maintenant ?
+```
+RamManager alloue exactement ce qui rentre
+  ↓
+Controller n'a plus besoin de réduire
+  ↓
+Tous les threads HWGW exécutés comme prévu
+  ↓
+Money% stable à 100%
+  ↓
+Revenus stables et optimaux
+```
+
+---
+
+## 🎉 PROCHAINES ÉTAPES
+
+Une fois v0.12.4.4 stable (24h+) :
+- ✅ Phase 2 : Job splitting dans Batcher (si souhaité)
+- ✅ EV/s targeting optimisé
+- ✅ FFD packing avancé
+- ✅ Adaptive parameters
+
+Mais pour l'instant : **STABILITÉ FIRST !**
+
+---
+
+**Bonne correction ! 🚀**
+
 # 🏰 NEXUS v0.12.1 "FORTRESS"
 
 **Framework d'automatisation Bitburner stable et production-ready**
