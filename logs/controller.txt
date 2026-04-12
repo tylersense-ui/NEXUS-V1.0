@@ -78,3 +78,9 @@
 [2026-04-07T20:37:50.886Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
 [2026-04-08T00:16:24.677Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4.3 démarré (Job Splitting IN Controller)
 [2026-04-08T00:16:24.677Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-08T20:46:13.117Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4.4 démarré (TIMING FIX)
+[2026-04-08T20:46:13.117Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-11T20:57:13.407Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4.4 démarré (TIMING FIX)
+[2026-04-11T20:57:13.408Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms
+[2026-04-11T21:03:10.580Z] [INFO] [CONTROLLER] 🎮 Controller v0.12.4.4 démarré (TIMING FIX)
+[2026-04-11T21:03:10.580Z] [INFO] [CONTROLLER] 📨 Écoute port 1 | Polling: 50ms

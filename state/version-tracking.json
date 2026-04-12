@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-04-08T14:40:11.072Z",
+  "timestamp": "2026-04-12T10:15:43.776Z",
   "versions": {
-    "/boot.js": "0.12.4.3",
+    "/boot.js": "0.12.4.4",
     "/core/orchestrator.js": "0.11.1",
-    "/core/batcher.js": "0.12.3.3",
-    "/core/ram-manager.js": "0.10.1",
+    "/core/batcher.js": "0.12.3.4",
+    "/core/ram-manager.js": "0.10.2",
     "/core/dashboard.js": "0.12.1",
-    "/core/controller.js": "0.12.4.3",
+    "/core/controller.js": "0.12.4.4",
     "/core/worker-manager.js": "0.12.1",
     "/lib/batch-calculator.js": "0.12.1",
     "/lib/capabilities.js": "0.5",
