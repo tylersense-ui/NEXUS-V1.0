@@ -337,8 +337,7 @@ NEXUS v0.12.1 "FORTRESS"
 │   ├── batcher.js             # Calcul HWGW
 │   ├── ram-manager.js         # Allocation RAM
 │   ├── dashboard.js           # Monitoring visuel
-│   └── worker-manager.js      # Zombie cleanup
-├── hack/                      # Système hack
+│   ├── worker-manager.js      # Zombie cleanup
 │   └── controller.js          # Exécuteur batches
 ├── workers/                   # Workers one-shot
 │   ├── hack.js
