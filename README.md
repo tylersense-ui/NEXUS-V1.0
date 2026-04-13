@@ -1,3 +1,183 @@
+# 🔧 NEXUS v0.12.3.5 - FIX PIPELINE CRITIQUE
+
+```
+╔═══════════════════════════════════════════════════════════╗
+║  🔴 PROBLÈME TROUVÉ: pipelineDepth ASTRONOMIQUE          ║
+║  Génération de batches de 700K threads impossibles       ║
+╚═══════════════════════════════════════════════════════════╝
+```
+
+---
+
+## 🔴 PROBLÈME IDENTIFIÉ
+
+### Calcul actuel (CATASTROPHIQUE)
+```javascript
+// batcher.js v0.12.3.4 (ligne 260)
+const weakenTime = mathNS.weakenTime(this.ns, target);  // 600,000 ms
+const spacing = 200;
+const pipelineDepth = Math.floor(weakenTime / spacing); // 3000 !
+
+growMultiplier = 1 / (1 - 0.15)^3000  // Infinity
+growMultiplier = 1e100  // Capped
+growThreads = 658,146  // IMPOSSIBLE
+```
+
+### Conséquences
+```
+Batcher génère:
+  💰 HWGW(15.0%↑, d=3314): G:658146 threads
+  💰 HWGW(15.0%↑, d=4285): G:754869 threads
+  💰 HWGW(15.0%↑, d=2936): G:708498 threads
+
+15 cibles × 700K threads × 5 batches/sec = 50M threads/sec !
+
+Résultat:
+  ❌ RAM saturée immédiatement
+  ❌ RAM_EXHAUSTED: 2,958,717
+  ❌ Success rate: 32.7%
+  ❌ Revenus ÷1000
+```
+
+---
+
+## ✅ CORRECTION v0.12.3.5
+
+### Changement ligne 260
+```javascript
+// ❌ AVANT v0.12.3.4
+const weakenTime = mathNS.weakenTime(this.ns, target);
+const spacing = 200;
+const pipelineDepth = Math.floor(weakenTime / spacing);
+// → pipelineDepth = 3000+
+
+// ✅ APRÈS v0.12.3.5
+const pipelineDepth = 1;  // Throttled mode
+// → pipelineDepth = 1
+```
+
+### Pourquoi pipelineDepth = 1 ?
+
+**Orchestrator throttled** :
+- Lance 1 batch toutes les 200ms
+- Round-robin entre 15 cibles
+- Donc 1 batch par cible toutes les 3 secondes
+
+**Donc** :
+- Seulement 1 batch en vol par cible max
+- On compense 1 seul hack
+- growMultiplier = 1/(1-0.15) = 1.18 (simple !)
+- growThreads raisonnables (~200-500)
+
+---
+
+## 📊 RÉSULTATS ATTENDUS
+
+### Avant (v0.12.3.4)
+```
+💰 HWGW(15.0%↑, d=3314): H:150 G:658146 = 658K threads
+RAM_EXHAUSTED: 2,958,717
+Success rate: 32.7%
+Revenus: $341/s (devrait être $100T/s)
+```
+
+### Après (v0.12.3.5)
+```
+💰 HWGW(15.0%, d=1): H:150 G:180 = 340 threads ✅
+RAM_EXHAUSTED: ~0
+Success rate: 95%+
+Revenus: $XXX T/s (optimaux)
+```
+
+---
+
+## 🚀 DÉPLOIEMENT
+
+### Étape 1 : Arrêter
+```bash
+killall
+```
+
+### Étape 2 : Copier le fichier
+```
+batcher-v0.12.3.5-PIPELINE-FIX.js → /core/batcher.js
+```
+
+### Étape 3 : Redémarrer
+```bash
+run boot.js
+```
+
+### Étape 4 : Vérifier (après 30s)
+```bash
+tail /core/batcher.js
+```
+
+**Devrait montrer** :
+```
+💰 HWGW(15.0%, d=1): H:XXX G:XXX (threads raisonnables)
+```
+
+---
+
+## 📝 EXPLICATION TECHNIQUE
+
+### Pourquoi le calcul weakenTime/spacing était faux
+
+**Théorie** :
+- pipelineDepth = nombre de batches en parallèle
+- Spacing = 200ms entre batches
+- Si weakenTime = 600s, on pourrait lancer 3000 batches
+
+**MAIS en réalité** :
+- Orchestrator throttled lance 1 batch/200ms pour TOUTES les cibles
+- Round-robin entre 15 cibles
+- Donc 1 batch par cible toutes les 3s
+- Donc **1 seul batch en vol** par cible !
+
+**L'erreur** :
+- Le calcul supposait qu'on lance un batch toutes les 200ms pour UNE cible
+- Mais le système lance pour 15 cibles en rotation
+- Donc beaucoup moins de batches parallèles
+
+---
+
+## 🎯 VALIDATION
+
+### Controller logs
+```
+📊 STATISTIQUES:
+   RAM_EXHAUSTED: ~100  ← Au lieu de 2,958,717
+   RAM_REDUCED: ~50     ← Au lieu de 51,334
+   Success rate: 95%+   ← Au lieu de 32.7%
+```
+
+### Revenus
+```
+Revenue devrait être de l'ordre de $XXX billion/s
+(Au lieu de $341/s actuellement)
+```
+
+---
+
+## 💡 ALTERNATIVE (pour plus tard)
+
+Si tu veux un système **non-throttled** qui lance plein de batches en parallèle :
+
+1. Calculer pipelineDepth selon RAM disponible :
+   ```javascript
+   const totalRam = ramMgr.getTotalAvailableRam();
+   const batchCost = hackThreads + w1Threads + growThreads + w2Threads;
+   const maxBatches = Math.floor(totalRam / (batchCost * scriptRam));
+   const pipelineDepth = Math.min(5, maxBatches);
+   ```
+
+2. Mais pour l'instant : **throttled = pipelineDepth = 1** ✅
+
+---
+
+**Copie le fichier et redémarre !** 🚀
+
 # 🔧 NEXUS v0.12.4.4 - CORRECTION COMPLÈTE RAM
 
 ```

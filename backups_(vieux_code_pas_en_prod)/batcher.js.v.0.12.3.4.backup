@@ -1,12 +1,12 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.12.3.6 - Batcher (CONSERVATIVE)                  ║
+ * ║ NEXUS v0.12.3.4 - Batcher (RAM FIX)                       ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.12.3.6
- * @changes     BASE: v0.12.3.5 (PIPELINE FIX)
- *              FIX: hackPercent réduit à 5% pour éviter saturation RAM
- *              Threads par batch divisés par 3
+ * @version     0.12.3.4
+ * @changes     BASE: v0.12.3.3 (Infinity Guard)
+ *              FIX: Passe scriptPath à allocateThreads()
+ *              Corrige incohérence avec RamManager
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -25,7 +25,7 @@ export class Batcher {
         // Détection Formulas (optionnel)
         this.hasFormulas = ns.fileExists("Formulas.exe");
         
-        this.log.info("Batcher v0.12.3.6 initialisé (CONSERVATIVE 5%, hasFormulas: " + this.hasFormulas + ")");
+        this.log.info("Batcher v0.12.3.4 initialisé (RAM FIX, hasFormulas: " + this.hasFormulas + ")");
     }
     
     /**
@@ -71,18 +71,27 @@ export class Batcher {
     }
     
     /**
-     * ✅ v0.12.3.6 : RÉDUIT à 5% max pour throttled mode
-     * Évite saturation RAM progressive
+     * ✅ v0.12.3 : Calculate optimal hack percent dynamically
      */
     calculateOptimalHackPercent() {
         const totalRamGB = this.calculateTotalNetworkRam();
         
-        // ✅ v0.12.3.6 : Réduit à 5% fixe pour stabilité
-        // En mode throttled (1 batch/200ms), même 5% sature progressivement la RAM
         let hackPercent = 0.05;
         
-        // Plus de scaling - reste à 5% pour éviter saturation
-        hackPercent = 0.05;
+        if (totalRamGB > 20000) {
+            hackPercent = 0.08;
+        }
+        if (totalRamGB > 50000) {
+            hackPercent = 0.10;
+        }
+        if (totalRamGB > 100000) {
+            hackPercent = 0.12;
+        }
+        if (totalRamGB > 200000) {
+            hackPercent = 0.15;
+        }
+        
+        hackPercent = Math.max(0.05, Math.min(0.15, hackPercent));
         
         return hackPercent;
     }
@@ -136,7 +145,7 @@ export class Batcher {
             return { success: false, error: "No RAM" };
         }
         
-        // ✅ v0.12.3.4 : Passe scriptPath
+        // ✅ NOUVEAU v0.12.3.4 : Passe scriptPath
         const allocation = this.ramMgr.allocateThreads(weakenThreads, CONFIG.WORKERS.WEAKEN);
         
         if (allocation.allocations.length === 0) {
@@ -184,7 +193,7 @@ export class Batcher {
         
         let totalAllocated = 0;
         
-        // ✅ v0.12.3.4 : Passe scriptPath
+        // ✅ NOUVEAU v0.12.3.4 : Passe scriptPath
         const gAlloc = this.ramMgr.allocateThreads(growThreads, CONFIG.WORKERS.GROW);
         totalAllocated += gAlloc.allocated;
         
@@ -218,7 +227,6 @@ export class Batcher {
     }
     
     /**
-     * ✅ v0.12.3.5 : Fix pipelineDepth = 1 pour throttled mode
      * ✅ v0.12.3.4 : Passe scriptPath à allocateThreads()
      * ✅ v0.12.3.3 : Guard contre growMultiplier Infinity
      */
@@ -242,17 +250,24 @@ export class Batcher {
         const hackSec = mathNS.hackSecurity(this.ns, hackThreads, target);
         const w1Threads = Math.max(0, mathNS.weakenThreads(hackSec));
         
-        // ✅ v0.12.3.5 : NOUVEAU - pipelineDepth = 1 pour throttled mode
-        // Le système lance 1 batch toutes les 200ms (orchestrator throttled)
-        // Donc on ne compense qu'UN seul hack en vol
-        const pipelineDepth = 1;
+        // Calculate pipelineDepth
+        const weakenTime = mathNS.weakenTime(this.ns, target);
+        const spacing = 200;
+        const pipelineDepth = Math.floor(weakenTime / spacing);
         
-        this.log.debug(`  pipelineDepth: ${pipelineDepth} (THROTTLED MODE)`);
+        this.log.debug(`  weakenTime: ${(weakenTime/1000).toFixed(1)}s`);
+        this.log.debug(`  spacing: ${spacing}ms`);
+        this.log.debug(`  pipelineDepth: ${pipelineDepth} batches`);
         
-        // growMultiplier simple avec d=1
-        const growMultiplier = 1 / (1 - hackPercent);
+        // ✅ v0.12.3.3 : Guard contre Infinity
+        let growMultiplier = 1 / Math.pow(1 - hackPercent, pipelineDepth);
         
-        this.log.debug(`  growMultiplier: ${growMultiplier.toFixed(2)}`);
+        if (!isFinite(growMultiplier) || growMultiplier < 1 || growMultiplier > 1e308) {
+            growMultiplier = 1e100;
+            this.log.warn(`⚠️  ${target}: growMultiplier was Infinity, capped to 1e100 (pipelineDepth=${pipelineDepth})`);
+        }
+        
+        this.log.debug(`  growMultiplier: ${growMultiplier.toExponential(2)}`);
         
         const growThreads = Math.max(1, 
             mathNS.growThreads(this.ns, target, growMultiplier)
@@ -317,7 +332,7 @@ export class Batcher {
             uuid: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
         });
         
-        const mode = `HWGW(${(hackPercent*100).toFixed(1)}%, d=${pipelineDepth})`;
+        const mode = `HWGW(${(hackPercent*100).toFixed(1)}%↑, d=${pipelineDepth})`;
         this.log.info(`💰 ${mode}: H:${hackThreads} W1:${w1Threads} G:${growThreads} W2:${w2Threads} = ${totalAllocated} threads`);
         
         return {
