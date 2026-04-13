@@ -297,8 +297,21 @@ function collectVersionInfo(ns) {
         "/core/batcher.js",
         "/core/ram-manager.js",
         "/core/dashboard.js",
-        "/hack/controller.js",
-        "/lib/constants.js"
+        "/core/controller.js",
+        "/core/worker-manager.js",
+        "/lib/batch-calculator.js",
+        "/lib/capabilities.js",
+        "/lib/file-logger.js",
+        "lib/formula-helper.js",
+        "/lib/logger.js",
+        "/lib/math-ns.js",
+        "/lib/network.js",
+        "/lib/state-manager.js",
+        "/lib/timing.js",
+        "/lib/utils.js",
+        "/lib/constants.js",
+        "/managers/server-manager.js",
+        "/managers/stock-manager.js"
     ];
     
     const versions = {};

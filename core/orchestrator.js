@@ -1,10 +1,13 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║ NEXUS v0.11.1 - Orchestrator (THROTTLED)                  ║
+ * ║ NEXUS v0.11.2 - Orchestrator (SLOW MODE)                  ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 
- * @version     0.11.1
- * @changes     Génère 1 batch à la fois pour éviter RAM exhausted
+ * @version     0.11.2
+ * @changes     BASE: v0.11.1 (Throttled)
+ *              FIX: CYCLE_DELAY 200ms → 5000ms
+ *              FIX: Limite à 5 cibles au lieu de 15-20
+ *              Évite accumulation RAM progressive
  */
 
 import { CONFIG } from "/lib/constants.js";
@@ -21,7 +24,7 @@ export async function main(ns) {
     ns.tail();
     
     ns.print("╔═══════════════════════════════════════════════════════════╗");
-    ns.print("║   🔥 NEXUS v0.11.1 - ORCHESTRATOR (THROTTLED)             ║");
+    ns.print("║   🔥 NEXUS v0.11.2 - ORCHESTRATOR (SLOW MODE)             ║");
     ns.print("╚═══════════════════════════════════════════════════════════╝");
     ns.print("");
     
@@ -41,16 +44,18 @@ export async function main(ns) {
         ns.print("");
         
         const REFRESH_INTERVAL = CONFIG.ORCHESTRATOR.REFRESH_INTERVAL_MS;
-        const CYCLE_DELAY = CONFIG.ORCHESTRATOR.CYCLE_DELAY_MS;
         
-        log.info("✅ NEXUS v0.11.1 opérationnel !");
+        // ✅ v0.11.2 : CYCLE_DELAY très long pour éviter accumulation
+        const CYCLE_DELAY = 5000;  // 5 secondes au lieu de 200ms
+        
+        log.info(`✅ NEXUS v0.11.2 opérationnel ! (CYCLE_DELAY: ${CYCLE_DELAY}ms)`);
         ns.print("");
         
         await ns.sleep(2000);
         
         let lastRefreshTime = Date.now();
         let cycleCount = 0;
-        let currentTargetIndex = 0; // ← NOUVEAU : Round-robin entre cibles
+        let currentTargetIndex = 0;
         
         while (true) {
             cycleCount++;
@@ -58,7 +63,7 @@ export async function main(ns) {
             
             ns.clearLog();
             ns.print("╔═══════════════════════════════════════════════════════════╗");
-            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.11.1                           ║");
+            ns.print("║   🔥 NEXUS ORCHESTRATOR v0.11.2 (SLOW MODE)              ║");
             ns.print("╚═══════════════════════════════════════════════════════════╝");
             ns.print("");
             ns.print(`━━━━━━━━━━ CYCLE ${cycleCount} ━━━━━━━━━━`);
@@ -98,26 +103,24 @@ export async function main(ns) {
             }
             
             // ════════════════════════════════════════════════════
-            // SÉLECTION CIBLES (tous les targets disponibles)
+            // SÉLECTION CIBLES - ✅ v0.11.2 : LIMITE À 5 CIBLES
             // ════════════════════════════════════════════════════
             
             let allTargets = [];
             
             try {
-                allTargets = network.getTopTargets(20); // Get top 20
+                // ✅ v0.11.2 : Seulement 5 cibles au lieu de 15-20
+                allTargets = network.getTopTargets(5);
                 
                 if (allTargets.length === 0) {
                     ns.print("⚠️  Aucune cible disponible");
                     ns.print("");
                 } else {
-                    ns.print(`🎯 Cibles disponibles (${allTargets.length}):`);
-                    for (const t of allTargets.slice(0, 5)) { // Show top 5
+                    ns.print(`🎯 Cibles disponibles (${allTargets.length}/5 max):`);
+                    for (const t of allTargets) {
                         const money = ns.getServerMaxMoney(t);
                         const level = ns.getServerRequiredHackingLevel(t);
                         ns.print(`  • ${t} ($${ns.formatNumber(money)}, lvl ${level})`);
-                    }
-                    if (allTargets.length > 5) {
-                        ns.print(`  ... et ${allTargets.length - 5} autres`);
                     }
                 }
                 ns.print("");
@@ -132,13 +135,12 @@ export async function main(ns) {
             // ════════════════════════════════════════════════════
             
             if (allTargets.length > 0) {
-                // ✅ NOUVEAU v0.11.1 : Round-robin entre cibles
                 const target = allTargets[currentTargetIndex % allTargets.length];
                 currentTargetIndex++;
                 
                 try {
                     const result = batcher.dispatchBatch(target, {
-                        hackPercent: 0.05, // ← RÉDUIT de 10% à 5% pour économiser RAM
+                        hackPercent: 0.05,
                         maxThreadsPerJob: 50000
                     });
                     
@@ -168,7 +170,9 @@ export async function main(ns) {
             ns.print(`💰 Money: $${ns.formatNumber(money)}`);
             ns.print(`🎯 Level: ${caps.hackingLevel}`);
             ns.print(`⏱️  Cycle: ${cycleDuration}ms`);
-            ns.print(`🔄 Target rotation: ${currentTargetIndex}/${allTargets.length}`);
+            ns.print(`🐌 Delay: ${CYCLE_DELAY}ms (SLOW MODE)`);
+            ns.print(`🎯 Targets: ${allTargets.length}/5 max`);
+            ns.print(`🔄 Rotation: ${currentTargetIndex}/${allTargets.length}`);
             ns.print("");
             
             await ns.sleep(CYCLE_DELAY);
